@@ -1,0 +1,81 @@
+{namespace sav=SAV\SavLibraryMvc\ViewHelpers}
+<f:layout name="DefaultSavLibraryMvcLayout.html" />
+
+<f:section name="content">
+<f:format.raw>
+	<div class="singleView view">
+		<div
+			class="titleBar {f:if(condition:general.isInDraftWorkspace,then:'draftWorkspace')}">
+			<f:render partial="TitleBars/SingleView/Default.html"
+				arguments="{general:general}" />
+		</div>
+		<f:if condition="{folders}">
+			<div class="folderTabs">
+				<ul class="folderTabs">
+					<f:for each="{folders}" as="folder" key="folderKey">
+						<li<f:if condition="{folderKey} == {general.activeFolder}"> class="currentTab"</f:if>>
+							<f:link.action action="single"
+								arguments="{
+          	special:'{sav:changeCompressedParameters(arguments:{folder:folderKey})}'}">
+								<span>{folder.label}</span>
+							</f:link.action></li>
+					</f:for>
+				</ul>
+				<div class="right"></div>
+			</div>
+		</f:if>
+		<div class="items">
+			<f:for each="{fields}" as="field">
+				<sav:typoscript.wrap configuration="{field.wrapItem}">
+					<f:if condition="{field.folder} == {general.activeFolder}">
+						<f:comment>
+							<!-- cutter for the fusion and cut conditions-->
+						</f:comment>
+						<f:if condition="{field.cutDivItemBegin}!=1">
+							<div class="{field.classItem}">
+						</f:if>
+						<f:comment>
+							<!-- cutter for the fusion and cut conditions-->
+						</f:comment>
+						<f:if condition="{field.cutDivItemInner}!=1">
+							<div class="{field.classField}">
+								<f:if condition="{field.cutLabel}!=1">
+									<div class="{field.classLabel}"
+										{f:if(condition:'{field.styleLabel}',then:' style=""')}>
+										<f:format.raw>{field.label}</f:format.raw>
+									</div>
+								</f:if>
+								<f:if
+									condition="{field.fieldType} == 'RelationManyToManyAsSubform'">
+									<f:then>
+										<f:render partial="Types/Default/{field.fieldType}.html"
+											arguments="{field:field, general:general}" />
+									</f:then>
+									<f:else>
+										<div class="{field.classValue}"
+											{f:if(condition:'{field.styleValue}',then:' style=""')}>
+											<f:render partial="Types/Default/{field.fieldType}.html"
+												arguments="{field:field, general:general}" />
+										</div>
+									</f:else>
+								</f:if>
+							</div>
+						</f:if>
+						<f:comment>
+							<!-- cutter for the fusion and cut conditions-->
+						</f:comment>
+						<f:if condition="{field.cutDivItemEnd}!=1">
+							<div class="right"></div>
+		</div>
+		</f:if>
+		</f:if>
+		</sav:typoscript.wrap>
+		</f:for>
+	</div>
+	<div class="footer">
+		<f:render partial="Footers/SingleView/Default.html"
+			arguments="{general:general}" />
+	</div>
+	</div>
+</f:format.raw>
+</f:section>

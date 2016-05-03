@@ -1,0 +1,15 @@
+      <div class="titleIconLeft">
+        <sav:form.image name="save" src="{sav:buildSrc(fileName:'Resources/Private/Icons/save.gif')}" alt="{f:translate(key:'button.save')}" title="{f:translate(key:'button.save')}" additionalAttributes="{onclick:'rteUpdate();'}" />
+        <sav:form.image name="saveAndClose" src="{sav:buildSrc(fileName:'Resources/Private/Icons/saveandclose.gif')}" alt="{f:translate(key:'button.saveandclose')}" title="{f:translate(key:'button.saveandclose')}" additionalAttributes="{onclick:'rteUpdate();'}" />
+        <sav:form.image name="saveAndShow" src="{sav:buildSrc(fileName:'Resources/Private/Icons/saveandshow.gif')}" alt="{f:translate(key:'button.saveandshow')}" title="{f:translate(key:'button.saveandshow')}" additionalAttributes="{onclick:'rteUpdate();'}" />
+        <f:if condition="{configuration.general.saveAndNew}">
+        <sav:form.image name="saveAndNew" src="{sav:buildSrc(fileName:'Resources/Private/Icons/saveandnew.gif')}" alt="{f:translate(key:'button.saveandnew')}" title="{f:translate(key:'button.saveandnew')}" additionalAttributes="{onclick:'rteUpdate();'}" />
+        </f:if>
+        <f:link.action action="list{f:if(condition:configuration.general.currentMode,then:'InEditMode')}" controller="{configuration.general.controllerName}" extensionName="{configuration.general.extensionName}" arguments="{special:configuration.general.special}" additionalAttributes="{onclick:'return submitIfChanged();'}">
+          <f:image src="{sav:buildSrc(fileName:'Resources/Private/Icons/close.gif')}" alt="{f:translate(key:'button.close')}" title="{f:translate(key:'button.close')}"  />
+        </f:link.action>
+      </div>
+      <f:if condition="{configuration.general.title}">
+      <div class="titleLabel"><f:if condition="{configuration.general.titleNeedsFormat}"><f:then><f:format.html>{configuration.general.title}</f:format.html></f:then><f:else>{configuration.general.title}</f:else></f:if></div>
+      </f:if>
+      <div class="right"></div>

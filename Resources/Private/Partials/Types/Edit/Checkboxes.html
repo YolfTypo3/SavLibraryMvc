@@ -1,0 +1,17 @@
+{namespace sav=SAV\SavLibraryMvc\ViewHelpers}
+<f:for each="{field.items}" as="item" key="itemKey">
+	<div
+		class="checkbox item{itemKey}{f:if(condition:'{itemKey->sav:CheckBreakCondition(breakCount:field.cols)}', then:' clearLeft')}">
+		<f:alias map="{count:'{f:count(subject:field.items)}'}">
+			<f:form.hidden property="{field.propertyName}.{itemKey}" value="0" />
+			<f:form.checkbox class="checkbox"
+				property="{field.propertyName}.{itemKey}" value="1"
+				checked="{field.value->sav:GetItem(key:itemKey)}"
+				additionalAttributes="{onchange:'document.changed=1;'}" />
+			<span class="checkbox"><f:translate key="{item.0}" /></span>
+		</f:alias>
+	</div>
+</f:for>
+
+
+

@@ -1,0 +1,2 @@
+<f:form.hidden property="{field.name}" value="0"  />
+<f:form.checkbox name="data[{field.name}]" value="1"  checked="{field.value}==1" additionalAttributes="{onchange:'document.changed=1;'}" />

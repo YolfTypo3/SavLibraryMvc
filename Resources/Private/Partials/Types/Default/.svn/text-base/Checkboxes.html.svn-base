@@ -1,0 +1,36 @@
+<sav:comment><!-- Multiple checkboxes --></sav:comment>
+<f:for each="{field.items}" as="item" key="itemKey">
+<f:alias map="{count:'{f:count(subject:field.items)}'}">
+<f:if condition="{itemKey} < {f:if(condition:field.nbItems, then:field.nbItems, else:count)}">
+  <f:if condition="{field.value.{itemKey}}">
+    <f:then><sav:comment><!-- The checkbox is checked --></sav:comment>
+      <f:if condition="{field.displayAsImage}">
+        <f:then><sav:comment><!-- Displays the checkbox as an image --></sav:comment>
+          <f:image class="checkboxSelected" src="{sav:buildSrc(fileName:'Resources/Private/Icons/checkboxSelected.gif')}" alt="" />
+        </f:then>
+        <f:else><sav:comment><!-- Displays the checkbox as a message --></sav:comment>
+          <f:translate key="itemviewer.yesMult" />
+        </f:else>
+      </f:if>
+      <span class="checkbox"><f:translate key="{item.0}" /></span>
+    </f:then>
+    <f:else><sav:comment><!-- The checkbox is not checked --></sav:comment>
+      <f:if condition="{field.doNotDisplayIfNotChecked} !=  1"><sav:comment><!-- Check if the checkoxes must be displayed --></sav:comment>
+        <f:if condition="{field.displayAsImage}">
+          <f:then><sav:comment><!-- Displays the checkbox as an image --></sav:comment>
+            <f:image class="checkboxNotSelected" src="{sav:buildSrc(fileName:'Resources/Private/Icons/checkboxNotSelected.gif')}" alt="" />
+          </f:then>
+          <f:else><sav:comment><!-- Displays the checkbox as a message --></sav:comment>
+            <f:translate key="itemviewer.noMult" />
+          </f:else>
+        </f:if>
+        <span class="checkbox"><f:translate key="{item.0}" /></span>
+      </f:if>
+    </f:else>
+  </f:if>
+  <f:if condition="{itemKey->sav:CheckBreakCondition(breakCount:field.cols)}">
+  <br class="checkbox" />
+  </f:if>
+</f:if>
+</f:alias>
+</f:for>

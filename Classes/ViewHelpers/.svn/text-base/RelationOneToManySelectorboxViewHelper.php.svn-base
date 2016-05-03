@@ -1,0 +1,72 @@
+<?php
+
+/*                                                                        *
+ * This script is part of the TYPO3 project - inspiring people to share!  *
+ *                                                                        *
+ * TYPO3 is free software; you can redistribute it and/or modify it under *
+ * the terms of the GNU General Public License version 2 as published by  *
+ * the Free Software Foundation.                                          *
+ *                                                                        *
+ * This script is distributed in the hope that it will be useful, but     *
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
+ * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
+ * Public License for more details.                                       *
+ *                                                                        */
+
+/**
+ * A view helper for building the options for the field selector.
+ *
+ * = Examples =
+ *
+ * <code title="BuildOptionsForFieldSelectorbox">
+ * <sav:BuildOptionsForFieldSelectorbox />
+ * </code>
+ *
+ * Output:
+ * the options
+ *
+ * @package SavLibraryKickstarter
+ * @subpackage ViewHelpers
+ */
+class Tx_SavLibraryMvc_ViewHelpers_RelationOneToManySelectorboxViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
+
+	/**
+	 * @param array $field The fields
+	 * @param array $configuration The configuration
+	 * @param string $action The action to execute
+	 *    	
+   * @return string the options array
+	 * @author Laurent Foulloy <yolf.typo3@orange.fr>
+	 */
+	public function render($field = NULL, $configuration = NULL, $action = NULL) {
+    if ($field === NULL) {
+      $field = $this->renderChildren();
+    }
+
+    // Gets the repository
+    $manager = $configuration['manager'];
+    $repositoryName = preg_replace('/^tx_[^_]+_domain_model_(.+)$/e', 'Tx_SavLibraryMvc_Utility_Conversion::upperCamel($1)', $field['foreign_table']);
+    $repository = $manager->getRepository($repositoryName);
+
+    $labelFieldGetter = 'get' . Tx_SavLibraryMvc_Utility_Conversion::upperCamel($repository->getDataMapFactory()->getLabelField());
+
+    switch($action) {
+      case 'buildOption':
+        if (is_array($field['items'][0])) {
+          $options = array('0' => $field['items'][0][0]);
+        } else {
+          $options = array();
+        }
+        $objects = $repository->findAll();
+        foreach($objects as $object) {
+          $options[$object->getUid()] = $object->$labelFieldGetter();
+        }
+        return $options;
+      case 'buildValue':
+        return is_object($field['value']) ? $field['value']->$labelFieldGetter() : $field['items'][0][0];
+    }
+	}
+
+}
+?>
+

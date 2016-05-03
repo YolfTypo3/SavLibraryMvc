@@ -1,0 +1,20 @@
+<f:link.action action="list"
+	arguments="{
+	special:'{sav:changeCompressedParameters(arguments:{orderLink:field.orderDesc})}'}">
+	<f:if
+		condition="{configuration.general.orderLink} == {field.orderDesc}">
+		<f:then>
+			<f:image class="orderDesc"
+				src="{sav:getIconSrc(fileName:'orderDescSelected.gif')}"
+				alt="{f:translate(key:'button.orderDesc', extensionName:'SavLibraryMvc')}"
+				title="{f:translate(key:'button.orderDesc', extensionName:'SavLibraryMvc')}" />
+		</f:then>
+		<f:else>
+			<f:image class="orderDesc"
+				src="{sav:getIconSrc(fileName:'orderDesc.gif')}"
+				alt="{f:translate(key:'button.orderDesc', extensionName:'SavLibraryMvc')}"
+				title="{f:translate(key:'button.orderDesc', extensionName:'SavLibraryMvc')}" />
+		</f:else>
+	</f:if>
+</f:link.action>
+

@@ -1,0 +1,13 @@
+{namespace sav=SAV\SavLibraryMvc\ViewHelpers}
+<f:for each="{sav:range(low:1, high:field.maxitems)}" as="range"
+	key="key">
+	<f:alias map="{file:'{field.files->sav:getItem(key:key)}'}">
+		<div class="file item{key}">
+			<f:form.textfield class="fileText"
+				name="temp[files][name][{field.fieldName}][{key}]"
+				value="{file.shortFileName}" />
+			<f:form.upload class="file" property="{field.propertyName}.{key}"
+				additionalAttributes="{onchange:'document.changed=1;'}" />
+		</div>
+	</f:alias>
+</f:for>

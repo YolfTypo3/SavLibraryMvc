@@ -1,0 +1,26 @@
+{namespace sav=SAV\SavLibraryMvc\ViewHelpers}
+<div class="titleBar">
+	<div class="titleIconLeft">
+		<f:form.submit name="save" value="" class="save"
+			title="{f:translate(key:'button.save', extensionName:'SavLibraryMvc')}" />
+		<f:if condition="{general.saveAndNew}">
+			<f:form.submit name="saveAndNew" value="" class="saveAndNew"
+				title="{f:translate(key:'button.save', extensionName:'SavLibraryMvc')}" />
+		</f:if>
+		<f:if condition="{general.newButtonIsAllowed}">
+			<f:link.action action="edit"
+				arguments="{
+        special:'{sav:changeCompressedParameters(arguments:{subformKey:general.subformKey, subformUidLocal:general.subformUidLocal, subformUidForeign:\'-1\'})}'}">
+				<f:image class="new" src="{sav:getIconSrc(fileName:'new.gif')}"
+					alt="{f:translate(key:'button.new', extensionName:'SavLibraryMvc')}"
+					title="{f:translate(key:'button.new', extensionName:'SavLibraryMvc')}" />
+			</f:link.action>
+		</f:if>
+	</div>
+	<f:if condition="{general.title}">
+		<div class="titleLabel">
+			<f:format.raw>{general.title}</f:format.raw>
+		</div>
+	</f:if>
+	<div class="titleIconRight"></div>
+</div>

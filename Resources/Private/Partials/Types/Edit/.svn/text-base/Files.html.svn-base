@@ -1,0 +1,4 @@
+<f:for each="{sav:range(low:1,high:field.maxitems)}" as="range" key="key">
+  <f:form.textbox class="fileText" name="temp[files][name][{field.name}][{key}]" value="{field.value.{key}}" />
+  <f:form.upload class="file" name="data[{field.name}][{key}]"  additionalAttributes="{onchange:'document.changed=1;'}"/>
+</f:for>

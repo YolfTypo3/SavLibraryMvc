@@ -1,0 +1,25 @@
+<sav:comment><!-- Single checkbox --></sav:comment>
+<f:if condition="{field.value}">
+  <f:then><sav:comment><!-- The checkbox is checked --></sav:comment>
+    <f:if condition="{field.displayAsImage}">
+      <f:then><sav:comment><!-- Displays the checkbox as an image --></sav:comment>
+        <f:image src="{sav:buildSrc(fileName:'Resources/Private/Icons/checkboxSelected.gif')}" alt="" />
+      </f:then>
+      <f:else><sav:comment><!-- Displays the checkbox as a message --></sav:comment>
+        <f:translate key="itemviewer.yes" />
+      </f:else>
+    </f:if>
+  </f:then>
+  <f:else><sav:comment><!-- The checkbox is not checked --></sav:comment>
+    <f:if condition="{item.doNotDisplatIfNotChecked} !=  1"><sav:comment><!-- Check if the checkoxes must be displayed --></sav:comment>
+      <f:if condition="{field.displayAsImage}">
+        <f:then><sav:comment><!-- Displays the checkbox as an image --></sav:comment>
+          <f:image src="{sav:buildSrc(fileName:'Resources/Private/Icons/checkboxNotSelected.gif')}" alt="" />
+        </f:then>
+        <f:else><sav:comment><!-- Displays the checkox as a message--></sav:comment>
+          <f:translate key="itemviewer.no" />
+        </f:else>
+      </f:if>
+    </f:if>
+  </f:else>
+</f:if>

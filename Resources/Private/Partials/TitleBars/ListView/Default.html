@@ -1,0 +1,30 @@
+{namespace sav=SAV\SavLibraryMvc\ViewHelpers}
+<f:if condition="{general.newButtonIsAllowed}">
+	<div class="titleIconLeft">
+		<f:link.action action="edit"
+			arguments="{
+				special:'{sav:changeCompressedParameters(arguments:{uid:0})}'}">
+			<f:image class="new" src="{sav:getIconSrc(fileName:'new.gif')}"
+				alt="{f:translate(key:'button.new', extensionName:'SavLibraryMvc')}"
+				title="{f:translate(key:'button.new', extensionName:'SavLibraryMvc')}" />
+		</f:link.action>
+	</div>
+</f:if>
+<f:if condition="{general.title}">
+	<div class="titleLabel">
+		<f:format.raw>{general.title}</f:format.raw>
+	</div>
+</f:if>
+<div class="right"></div>
+<f:if condition="{general.userIsAllowedToInputData}">
+	<div class="titleIconRight">
+		<f:link.action action="list"
+			arguments="{
+        special:'{sav:changeCompressedParameters(arguments:{mode:\'{f:if(condition:general.currentMode,then:0, else:1)}\'})}'}">
+			<f:image src="{sav:getIconSrc(fileName:'enterEditMode.gif')}"
+				alt="{f:translate(key:'button.enterEditMode', extensionName:'SavLibraryMvc')}"
+				title="{f:translate(key:'button.enterEditMode', extensionName:'SavLibraryMvc')}" />
+		</f:link.action>
+	</div>
+</f:if>
+

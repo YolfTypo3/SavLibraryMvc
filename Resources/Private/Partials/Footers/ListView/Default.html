@@ -1,0 +1,66 @@
+{namespace sav=SAV\SavLibraryMvc\ViewHelpers}
+<div class="footer">
+	<f:if condition="{general.lastPage} > 0">
+		<f:link.action action="list"
+			arguments="{
+          	special:'{sav:changePage(arguments:{action:\'firstPage\'})}'}">
+			<f:image class="backwardFirstPage"
+				src="{sav:getIconSrc(fileName:'backwardFirstPage.gif')}"
+				alt="{f:translate(key:'button.backwardFirstPage', extensionName:'SavLibraryMvc')}"
+				title="{f:translate(key:'button.backwardFirstPage', extensionName:'SavLibraryMvc')}" />
+		</f:link.action>
+		<f:if condition="{general.page} > 0">
+			<f:then>
+				<f:link.action action="list"
+					arguments="{
+          	special:'{sav:changePage(arguments:{action:\'previousPage\'})}'}">
+					<f:image class="backwardPage"
+						src="{sav:getIconSrc(fileName:'backwardPage.gif')}"
+						alt="{f:translate(key:'button.backwardPage', extensionName:'SavLibraryMvc')}"
+						title="{f:translate(key:'button.backwardPage', extensionName:'SavLibraryMvc')}" />
+				</f:link.action>
+			</f:then>
+			<f:else>
+				<f:image class="backwardPage"
+					src="{sav:getIconSrc(fileName:'backwardPageNotPossible.gif')}"
+					alt="{f:translate(key:'button.backwardPage', extensionName:'SavLibraryMvc')}"
+					title="{f:translate(key:'button.backwardPage', extensionName:'SavLibraryMvc')}" />
+			</f:else>
+		</f:if>
+		<f:for each="{general.pages}" as="page" key="pageKey">
+			<f:link.action action="list"
+				arguments="{
+          	special:'{sav:changePage(arguments:{page:pageKey, action:\'changePage\'})}'}"
+				class="{f:if(condition:'{general.page} == {pageKey}',then:'selected',else:'notSelected')}">
+          {page}
+        </f:link.action>
+		</f:for>
+		<f:if condition="{general.page} < {general.lastPage}">
+			<f:then>
+				<f:link.action action="list"
+					arguments="{
+          	special:'{sav:changePage(arguments:{action:\'nextPage\'})}'}">
+					<f:image class="forwardPage"
+						src="{sav:getIconSrc(fileName:'forwardPage.gif')}"
+						alt="{f:translate(key:'button.forwardPage', extensionName:'SavLibraryMvc')}"
+						title="{f:translate(key:'button.forwardPage', extensionName:'SavLibraryMvc')}" />
+				</f:link.action>
+			</f:then>
+			<f:else>
+				<f:image class="forwardPage"
+					src="{sav:getIconSrc(fileName:'forwardPageNotPossible.gif')}"
+					alt="{f:translate(key:'button.forwardPage', extensionName:'SavLibraryMvc')}"
+					title="{f:translate(key:'button.forwardPage', extensionName:'SavLibraryMvc')}" />
+			</f:else>
+		</f:if>
+		<f:link.action action="list"
+			arguments="{
+          	special:'{sav:changePage(arguments:{lastPage:general.lastPage, action:\'lastPage\'})}'}">
+			<f:image class="forwardLastPage"
+				src="{sav:getIconSrc(fileName:'forwardLastPage.gif')}"
+				alt="{f:translate(key:'button.forwardLastPage', extensionName:'SavLibraryMvc')}"
+				title="{f:translate(key:'button.forwardLastPage', extensionName:'SavLibraryMvc')}" />
+		</f:link.action>
+	</f:if>
+</div>
+

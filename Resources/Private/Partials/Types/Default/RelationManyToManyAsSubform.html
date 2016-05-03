@@ -1,0 +1,66 @@
+{namespace sav=SAV\SavLibraryMvc\ViewHelpers}
+<f:alias
+	map="{configurationInSubform:'{field->sav:RenderRelationManyToManyAsSubform()}'}">
+	<f:render partial="TitleBars/SingleView/Subform.html"
+		arguments="{general:configurationInSubform.general}" />
+	<div class="items">
+		<f:for each="{configurationInSubform.items}" as="fields">
+			<div class="subformItem">
+				<f:for each="{fields}" as="fieldInSubform">
+					<sav:typoscript.wrap configuration="{fieldInSubform.wrapItem}">
+						<f:comment>
+							<!-- cutter for the fusion and cut conditions-->
+						</f:comment>
+						<f:if condition="{fieldInSubform.cutDivItemBegin}!=1">
+							<div class="{fieldInSubform.classItem}">
+						</f:if>
+						<f:comment>
+							<!-- cutter for the fusion and cut conditions-->
+						</f:comment>
+						<f:if condition="{fieldInSubform.cutDivItemInner}!=1">
+							<div class="{fieldInSubform.classField}">
+								<f:if condition="{fieldInSubform.cutLabel}!=1">
+									<div
+										class="{fieldInSubform.classLabel}{f:if(condition:'{fieldInSubform.error}',then:' error')}"
+										{f:if(condition:'{fieldInSubform.styleLabel}', then:' style=""')}>
+										<f:format.raw>{fieldInSubform.label}</f:format.raw>
+										<f:if condition="{fieldInSubform.required}">
+											<f:image src="{sav:getIconSrc(fileName:'required.gif')}"
+												class="required" alt="{f:translate(key:'icon.required')}"
+												title="{f:translate(key:'icon.required')}" />
+										</f:if>
+									</div>
+								</f:if>
+								<f:if
+									condition="{fieldInSubform.fieldType} == 'RelationManyToManyAsSubform'">
+									<f:then>
+										<f:render
+											partial="Types/Default/{fieldInSubform.fieldType}.html"
+											arguments="{field:fieldInSubform, general:configurationInSubform.general}" />
+									</f:then>
+									<f:else>
+										<div class="{fieldInSubform.classValue}"
+											{f:if(condition:'{field.styleValue}', then:' style=""')}>
+											<f:render
+												partial="Types/Default/{fieldInSubform.fieldType}.html"
+												arguments="{field:fieldInSubform, general:configurationInSubform.general}" />
+										</div>
+									</f:else>
+								</f:if>
+							</div>
+						</f:if>
+						<f:comment>
+							<!-- cutter for the fusion and cut conditions-->
+						</f:comment>
+						<f:if condition="{fieldInSubform.cutDivItemEnd}!=1">
+							<div class="right"></div>
+			</div>
+			</f:if>
+			</sav:typoscript.wrap>
+		</f:for>
+	</div>
+	</f:for>
+	</div>
+	<f:render partial="Footers/SingleView/Subform.html"
+		arguments="{general:configurationInSubform.general}" />
+</f:alias>

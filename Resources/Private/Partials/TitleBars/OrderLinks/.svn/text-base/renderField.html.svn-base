@@ -1,0 +1,5 @@
+<f:for each="{field.orderLinkInTitleSetup->sav:explode(delimiter:':')}" as="orderLink">
+<f:if condition="{orderLink}">
+<sav:render partial="TitleBars/OrderLinks/{orderLink}.html" arguments="{field:field, configuration:configuration}" />
+</f:if>
+</f:for>

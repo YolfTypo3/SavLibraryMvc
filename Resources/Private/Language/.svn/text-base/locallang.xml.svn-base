@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3locallang>
+	<meta type="array">
+		<type>module</type>
+		<description>Language labels for &quot;sav_library&quot;</description>
+	</meta>
+	<data type="array">
+		<languageKey index="default" type="array">
+      <!-- Extension flexform message -->
+			<label index="extensionFlexform.sheetTitle.sDEF">General</label>
+			<label index="extensionFlexform.formId">Select form</label>
+			<label index="extensionFlexform.allowedGroups">Allowed groups</label>
+			<label index="extensionFlexform.inputAdminField">Input Admin Field</label>
+			<label index="extensionFlexform.noFilterShowAll">Show all if no filter</label>
+			<label index="extensionFlexform.inputOnForm">Input on form</label>
+			<label index="extensionFlexform.inputStartDate">Input start date</label>
+			<label index="extensionFlexform.inputEndDate">Input end date</label>
+			<label index="extensionFlexform.inputApplyLimit">Apply date limit to</label>
+			<label index="extensionFlexform.inputApplyLimit.I.0">Nobody</label>
+			<label index="extensionFlexform.inputApplyLimit.I.1">All</label>
+			<label index="extensionFlexform.inputApplyLimit.I.2">&quot;Admin plus&quot; users</label>
+			<label index="extensionFlexform.inputApplyLimit.I.3">All excluding &quot;Super Admin&quot;</label>
+			<label index="extensionFlexform.showNoAvailableInformation">If no information available</label>
+			<label index="extensionFlexform.showNoAvailableInformation.I.0">Show a message</label>
+			<label index="extensionFlexform.showNoAvailableInformation.I.1">Do not show a message</label>
+			<label index="extensionFlexform.showNoAvailableInformation.I.2">Hide the extension</label>
+			<label index="extensionFlexform.maxItems">Max number of items</label>
+			<label index="extensionFlexform.sheetTitle.sInput">Input controls</label>
+			<label index="extensionFlexform.noNewButton">No &quot;new&quot; button</label>
+			<label index="extensionFlexform.noEditButton">No &quot;edit&quot; button</label>
+			<label index="extensionFlexform.noDeleteButton">No &quot;delete&quot; button</label>
+			<label index="extensionFlexform.deleteButtonOnlyForCruser">Add a &quot;delete&quot; button only for records created by the user</label>
+			<label index="extensionFlexform.submitButton">Add a &quot;submit&quot; button (to be used with a form)</label>
+			<label index="extensionFlexform.sheetTitle.sAdvanced">Advanced</label>
+			<label index="extensionFlexform.permanentFilter">Permanent filter</label>
+			<label index="extensionFlexform.addFragment">Add a fragment(#content id) to links</label>
+			<label index="extensionFlexform.allowQueryProperty">Allow the use of the &quot;query&quot; property</label>
+			<label index="extensionFlexform.helpPage">Help page</label>
+			<label index="extensionFlexform.help">Help</label>
+			<label index="extensionFlexform.storagePage">Storage page</label>
+
+      <!-- Messages -->
+			<label index="message.noAvailableInformation">No available information</label>
+			
+      <!-- Error messages -->
+			<label index="error.maxFileSizeExceededInUpload">The file size is bigger than the maximum allowed size.</label>
+			<label index="error.cannotCreateDirectoryInUpload">Error in creating the upload directory.</label>
+			<label index="error.forbiddenFileTypeInUpload">This type of file cannot be uploaded.</label>
+			<label index="error.unknownGetMethod">Error in the configuration. The getter associated with the following field is unknown: %s.</label>
+			<label index="error.unknownParameterInSpecial">Unknown parameter in "special" argument.</label>
+      <label index="error.uploadAborted">The upload was aborted.</label>
+
+      <!-- Unchecked labels -->
+			<label index="message.clikToUpdate">Clik on the right button at the top or the bottom of the form to validate data.</label>
+			<label index="message.dataSaved">Your data were saved.</label>
+			<label index="message.forTests">Message for tests: %s.</label>
+			<label index="message.sameFieldName">Several fields have the same name in a view (the first one was kept). Please check: %s.</label>
+			<label index="warning.delete">Are you sure you want to delete this record?</label>
+			<label index="warning.save">Save this record?</label>
+			<label index="warning.noRecord">No record returned.</label>
+			<label index="error.configurationNeeded">A configuration file is needed and the defaut file was not found. Please contact the WebMaster.</label>
+			<label index="error.extensionNotAllowed">Error: invalid file type.</label>
+			<label index="error.fieldRequired">Error: missing required values(s).</label>
+			<label index="error.fieldVoid">Error: the field must not be empty.</label>
+			<label index="error.fieldIncorrectValue">Error: incorrect value for this field.</label>
+			<label index="error.fileDoesNotExist">File does not exist: %s.</label>
+			<label index="error.fileOpenError">File open error: %s.</label>
+			<label index="error.fileReadError">File read error: %s.</label>
+			<label index="error.fileWriteError">File write error: %s.</label>
+			<label index="error.incorrectAlias">Error: incorrect alias: %s.</label>
+			<label index="error.incorrectDateFormat">Error: incorrect date format.</label>
+			<label index="error.incorrectDateOption">Error: incorrect date option.</label>
+			<label index="error.incorrectCompressedString">Error: incorrect parameter.</label>
+			<label index="error.incorrectCSS">Error: unknown CSS file.</label>
+			<label index="error.incorrectSession">Error: incorrect session. Close your brower and try again.</label>
+			<label index="error.incorrectPluginConfiguration_2">Edit and save the plugin configuration to take the flexform parameters into consideration.</label>
+			<label index="error.incorrectRTFSaveFileName">Save file name is missing ( saveFileRTF=filename; is missing in the field configuration).</label>
+			<label index="error.incorrectRTFTemplateFileConfig">Incorrect RTF template configuration (templateRTF=filename; is missing in the field configration).</label>
+			<label index="error.incorrectRTFTemplateFileExtension">Incorrect RTF template file extension.</label>
+			<label index="error.incorrectRTFTemplateFileName">Unknown RTF template file. Check the path.</label>
+			<label index="error.incorrectQuery">Error in the query associated with the view: %s.</label>
+			<label index="error.incorrectQueryInsertNew">Error in creating the new record. It may occur if you try to insert a field which does not exist in the table (e.g. field with the type &quot;Shown only in SAV Form&quot;).</label>
+			<label index="error.incorrectQueryInReqValue">Error in the query associated with the property &quot;reqValue&quot; in the field: %s.</label>
+			<label index="error.incorrectQueryInQueryProperty">Error in the query associated with the property &quot;query&quot;.</label>
+			<label index="error.incorrectQueryInContent">Error in the query associated with the property &quot;content&quot; in the field: %s.</label>
+			<label index="error.incorrectQueryForeignTable">The &quot;foreign table&quot; field in the query must start either by inner join, left join, right join or by a comma.</label>
+			<label index="error.incorrectVersion">Please contact the Webmaster. Extension and library have not the same version. Open the extension with the kickstater and save it.</label>
+			<label index="error.incorrectXmlFile">The XML file contains syntax errors: %s.</label>
+			<label index="error.incorrectXmlProducedFile">The XML file produced during the export contains syntax errors. It may come from your template xml file.</label>
+			<label index="error.incorrectXsltFile">The XSL tranformation file contains syntax errors: %s.</label>
+			<label index="error.incorrectXsltProcess">The XSL tranformation failed.</label>
+			<label index="error.isValidLength">The input has a length greater than the allowed length.</label>
+			<label index="error.isValidInterval">The input is not in the given interval.</label>
+			<label index="error.isValidPattern">The input does not verify the expected pattern.</label>
+			<label index="error.isValidQuery">The input does not verify the query verifier.</label>
+			<label index="error.missingDot">Separate the field name from the table name by a dot &quot;.&quot; in: %s.</label>
+			<label index="error.missingEqualSign">The sign = is missing in parameter: %s.</label>
+			<label index="error.missingLabel">Please contact the webMaster. Missing label: %s.</label>
+			<label index="error.mkdirIncorrect">Error: mkdir aborted.</label>
+			<label index="error.noFieldSelectedInForm">Please contact the Webmaster. No field was selected in the form. Select at least a field with the kickstarter.</label>
+			<label index="error.noFieldSelectedInSubForm">Please contact the Webmaster. No field was selected in the subform. Select at least a field with the kickstarter.</label>
+			<label index="error.noFormSelectedInFlexform">Error: no form selected in the flexform of the extension: %s.</label>
+			<label index="error.notSavedElapsedTime">Your latest changes could not been saved because the allocated time for inputs was over.</label>
+			<label index="error.onlySelectQueryAllowed">Error: only SELECT query is allowed in the field: %s.</label>
+			<label index="error.queryPropertyNotAllowed">Error: the use of the &quot;query&quot; property is not allowed in this extension.</label>
+			<label index="error.templateNeeded">A template file is needed and the defaut template was not found. Please contact the WebMaster.</label>
+			<label index="error.underMaintenance">This service is temporarily unavailable due to maintenance - please come back later.</label>
+			<label index="error.unknownFunctionInWhere">The following function, used in a WHERE clause(###func:whereClause###), is not defined: %s.</label>
+			<label index="error.unknownMarker">The following marker is unknown: %s.</label>
+			<label index="error.unknownType">Please contact the Webmaster. The following type is unknown: %s.</label>
+			<label index="error.uploadedIncorrect">Error: Upload aborted.</label>
+			<label index="error.verifierUnknown">Extension configuration error: unknown verifier.</label>
+			<label index="error.verifierInvalidIntervalParameter">Extension configuration error: invalid interval.</label>
+			<label index="error.xmlIdMissing">An xml &quot;sav_id&quot; attribute must be used with the following &quot;sav_type&quot; attribute: %s.</label>
+			<label index="fatal.incorrectTCA">Fatal error. The local table has an incorrect TCA. You may not have not used the correct name in the &quot;Local table&quot; field of the query associated with your form.</label>
+			<label index="fatal.notAuthenticated">Fatal error. You must be authenticated to save these data.</label>
+			
+			
+			<label index="button.edit">Edit</label>
+			<label index="button.save">Save</label>
+			<label index="button.saveandclose">Save and close</label>
+			<label index="button.saveandnew">Save and new</label>
+			<label index="button.close">Close</label>
+			<label index="button.export">Export in csv</label>
+			<label index="button.new">New</label>
+			<label index="button.delete">Delete</label>
+			<label index="button.enterEditMode">Enter in the edit mode</label>
+			<label index="button.leaveEditMode">Leave the edit mode</label>
+			<label index="button.generateRTF">Generate RTF</label>
+			<label index="button.search">Search</label>
+			<label index="button.previous">Previous</label>
+			<label index="button.next">Next</label>
+			<label index="button.backward">Previous</label>
+			<label index="button.forward">Next</label>
+			<label index="button.backwardFirst">First</label>
+			<label index="button.forwardLast">Last</label>
+			<label index="button.up">Up</label>
+			<label index="button.down">Down</label>
+			<label index="button.deleteItem">Delete Item</label>
+			<label index="button.print">Print</label>
+			<label index="button.help">Help</label>
+			<label index="button.mail">Send the email</label>
+			<label index="button.submit">Submit the form</label>
+			<label index="button.orderAsc">Sort by ascending order</label>
+			<label index="button.orderDesc">Sort by descending order</label>
+			<label index="button.saveExportConfiguration">Save export configuration</label>
+			<label index="button.loadExportConfiguration">Load export configuration</label>
+			<label index="button.deleteExportConfiguration">Delete export configuration</label>
+			<label index="button.toggleExportDisplay_1">Display all fields</label>
+			<label index="button.toggleExportDisplay_0">Display only selected fields</label>
+			<label index="icon.required">Required field</label>
+			<label index="icon.new">New</label>
+			<label index="itemviewer.days.0">Monday</label>
+			<label index="itemviewer.days.1">Twesday</label>
+			<label index="itemviewer.days.2">Wednesday</label>
+			<label index="itemviewer.days.3">Thursday</label>
+			<label index="itemviewer.days.4">Friday</label>
+			<label index="itemviewer.days.5">Saturday</label>
+			<label index="itemviewer.days.6">Sunday</label>
+			<label index="itemviewer.checkboxSelected">Selected</label>
+			<label index="itemviewer.checkboxNotSelected">Not selected</label>
+			<label index="itemviewer.radioButtonSelected">Selected</label>
+			<label index="itemviewer.radioButtonNotSelected">Not selected</label>
+			<label index="itemviewer.yes">Yes</label>
+			<label index="itemviewer.no">No</label>
+			<label index="itemviewer.yesMult">X</label>
+			<label index="itemviewer.noMult">-</label>
+			<label index="itemviewer.configuration">Configuration</label>
+			<label index="itemviewer.configurationGroup">Group</label>
+			<label index="itemviewer.xmlFile">XML file</label>
+			<label index="itemviewer.xsltFile">XSLT file</label>
+			<label index="itemviewer.whereClause">Where clause</label>
+			<label index="itemviewer.orderClause">Order clause</label>
+			<label index="itemviewer.error">Error</label>
+			<label index="itemviewer.warning">Warning</label>
+			<label index="itemviewer.additionalTables">Additional tables</label>
+			<label index="itemviewer.additionalFields">Additional fields</label>
+			<label index="itemviewer.exportMM">Export MM records</label>
+			<label index="itemviewer.groupBy">Group By Clause</label>
+			<label index="itemviewer.includeAllFields">Include all fields</label>
+			<label index="itemviewer.exportFieldNames">Export field names</label>
+			<label index="itemviewer.orderedFieldList">Order of the fields</label>
+			<label index="general.clickHere">Click here</label>
+			<label index="general.new">New</label>
+			
+      </languageKey>
+	</data>
+	<orig_hash type="array">
+	</orig_hash>
+	<orig_text type="array">
+	</orig_text>
+</T3locallang>

@@ -1,0 +1,42 @@
+<?php
+
+/*                                                                        *
+ * This script is part of the TYPO3 project - inspiring people to share!  *
+ *                                                                        *
+ * TYPO3 is free software; you can redistribute it and/or modify it under *
+ * the terms of the GNU General Public License version 2 as published by  *
+ * the Free Software Foundation.                                          *
+ *                                                                        *
+ * This script is distributed in the hope that it will be useful, but     *
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
+ * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
+ * Public License for more details.                                       *
+ *                                                                        */
+
+/**
+ * Change a compressed parameter a string
+ *
+ * @package SavLibraryMvc
+ * @version $Id:
+ */
+class Tx_SavLibraryMvc_ViewHelpers_ChangeCompressedParametersViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
+
+	/**
+	 * Explode viewhelper.
+	 *
+	 * @param string $parameters The compressed parameters
+	 * @param string $key The key of the parameter to change
+	 * @param string $value The value of the parameter to change
+	 * @return string The modified compressed parameters
+	 * @author Laurent Foulloy <yolf.typo3@orange.fr>
+	 * @api
+	 */
+	public function render($parameters = NULL, $key, $value) {
+    if ($parameters === NULL) {
+      $parameters = $this->renderChildren();
+    }
+
+		return Tx_SavLibraryMvc_Managers_GeneralManager::changeCompressedParameters($parameters, $key, $value);
+	}
+}
+?>

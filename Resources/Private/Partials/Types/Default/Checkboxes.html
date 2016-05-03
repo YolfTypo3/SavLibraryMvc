@@ -1,0 +1,58 @@
+{namespace sav=SAV\SavLibraryMvc\ViewHelpers}
+<f:for each="{field.items}" as="item" key="itemKey">
+	<div
+		class="checkbox item{itemKey}{f:if(condition:'{itemKey->sav:CheckBreakCondition(breakCount:field.cols)}', then:' clearLeft')}">
+		<f:alias map="{count:'{f:count(subject:field.items)}'}">
+			<f:if condition="{field.value->sav:getItem(key:itemKey)}">
+				<f:then>
+					<f:comment>
+						<!-- The checkbox is checked -->
+					</f:comment>
+					<f:if condition="{field.displayAsImage}">
+						<f:then>
+							<f:comment>
+								<!-- Displays the checkbox as an image -->
+							</f:comment>
+							<f:image class="checkboxSelected"
+								src="{sav:getIconSrc(fileName:'checkboxSelected.gif')}" alt="" />
+						</f:then>
+						<f:else>
+							<f:comment>
+								<!-- Displays the checkbox as a message -->
+							</f:comment>
+							<f:translate key="itemviewer.yesMult" />
+						</f:else>
+					</f:if>
+					<span class="checkboxMessage"><f:translate key="{item.0}" /></span>
+				</f:then>
+				<f:else>
+					<f:comment>
+						<!-- The checkbox is not checked -->
+					</f:comment>
+					<f:if condition="{field.doNotDisplayIfNotChecked} !=  1">
+						<f:comment>
+							<!-- Check if the checkoxes must be displayed -->
+						</f:comment>
+						<f:if condition="{field.displayAsImage}">
+							<f:then>
+								<f:comment>
+									<!-- Displays the checkbox as an image -->
+								</f:comment>
+								<f:image class="checkboxNotSelected"
+									src="{sav:getIconSrc(fileName:'checkboxNotSelected.gif')}"
+									alt="" />
+							</f:then>
+							<f:else>
+								<f:comment>
+									<!-- Displays the checkbox as a message -->
+								</f:comment>
+								<f:translate key="itemviewer.noMult" />
+							</f:else>
+						</f:if>
+						<span class="checkboxMessage"><f:translate key="{item.0}" /></span>
+					</f:if>
+				</f:else>
+			</f:if>
+		</f:alias>
+	</div>
+</f:for>

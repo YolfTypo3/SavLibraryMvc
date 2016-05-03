@@ -1,0 +1,36 @@
+<?php
+
+/*                                                                        *
+ * This script is part of the TYPO3 project - inspiring people to share!  *
+ *                                                                        *
+ * TYPO3 is free software; you can redistribute it and/or modify it under *
+ * the terms of the GNU General Public License version 2 as published by  *
+ * the Free Software Foundation.                                          *
+ *                                                                        *
+ * This script is distributed in the hope that it will be useful, but     *
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
+ * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
+ * Public License for more details.                                       *
+ *                                                                        */
+
+/**
+ * Checks if a file exists.
+ *
+ * @package SavLibraryMvc
+ * @version $Id:
+ */
+class Tx_SavLibraryMvc_ViewHelpers_FileExistsViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
+
+	/**
+	 * FileExists viewhelper.
+	 *
+	 * @param string src The file ource
+	 * @return boolean True if the file exists
+	 * @author Laurent Foulloy <yolf.typo3@oranage.fr>
+	 * @api
+	 */
+	public function render($src) {
+		return file_exists(PATH_site . $src);
+	}
+}
+?>

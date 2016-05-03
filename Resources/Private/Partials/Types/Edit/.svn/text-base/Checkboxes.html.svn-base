@@ -1,0 +1,12 @@
+<f:for each="{field.items}" as="item" key="itemKey">
+<f:alias map="{count:'{f:count(subject:field.items)}'}">
+<f:if condition="{itemKey} < {f:if(condition:field.nbItems, then:field.nbItems, else:count)}">
+  <f:form.hidden name="data[{field.name}][{itemKey}]" value="0"  />
+  <f:form.checkbox class="checkbox" name="data[{field.name}][{itemKey}]" value="1"  checked="{field.value.{itemKey}}" additionalAttributes="{onchange:'document.changed=1;'}" />
+  <span class="checkbox"><f:translate key="{item.0}" /></span>
+</f:if>
+</f:alias>
+</f:for>
+
+
+

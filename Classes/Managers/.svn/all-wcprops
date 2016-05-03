@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/TYPO3v4/Extensions/!svn/ver/37393/sav_library_kickstarter/sav_library_mvc/trunk/Classes/Managers
+END
+FrontendUserManager.php
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/TYPO3v4/Extensions/!svn/ver/37394/sav_library_kickstarter/sav_library_mvc/trunk/Classes/Managers/FrontendUserManager.php
+END
+FieldConfigurationManager.php
+K 25
+svn:wc:ra_dav:version-url
+V 127
+/TYPO3v4/Extensions/!svn/ver/37394/sav_library_kickstarter/sav_library_mvc/trunk/Classes/Managers/FieldConfigurationManager.php
+END
+GeneralManager.php
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/TYPO3v4/Extensions/!svn/ver/41062/sav_library_kickstarter/sav_library_mvc/trunk/Classes/Managers/GeneralManager.php
+END

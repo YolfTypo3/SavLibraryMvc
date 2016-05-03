@@ -1,0 +1,2 @@
+<f:form.textbox property="{field.name}" value="{field.value}" size="{field.size}" additionalAttributes="{onchange:'document.changed=1;'}" />
+

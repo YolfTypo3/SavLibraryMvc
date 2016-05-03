@@ -1,0 +1,13 @@
+<f:alias map="{special:'{sav:changeCompressedParameters(parameters:configuration.general.special,key:\'orderLink\',value:field.orderAsc)}'}">
+<f:link.action action="list{f:if(condition:configuration.general.currentMode,then:'InEditMode')}" controller="{configuration.general.controllerName}" extensionName="{configuration.general.extensionName}" arguments="{special:special}">
+  <f:if condition="{configuration.general.orderLink} == {field.orderAsc}" >
+  <f:then>
+  <f:image class="orderAsc" src="{sav:buildSrc(fileName:'Resources/Private/Icons/orderAscSelected.gif')}" alt="{f:translate(key:'button.orderAsc')}" title="{f:translate(key:'button.orderAsc')}" />
+  </f:then>
+  <f:else>
+  <f:image class="orderAsc" src="{sav:buildSrc(fileName:'Resources/Private/Icons/orderAsc.gif')}" alt="{f:translate(key:'button.orderAsc')}" title="{f:translate(key:'button.orderAsc')}" />
+  </f:else>
+  </f:if>
+</f:link.action>
+</f:alias>
+

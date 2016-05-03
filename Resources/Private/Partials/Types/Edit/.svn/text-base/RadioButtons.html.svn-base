@@ -1,0 +1,10 @@
+<f:for each="{field.items}" as="item" key="itemKey">
+  <f:form.radio class="radioButton" name="data[{field.name}]" value="{item.1}"  checked="{field.value} == {item.1}" additionalAttributes="{onchange:'document.changed=1;'}" />
+  <span class="radioButton"><f:translate key="{item.0}" /></span>
+  <f:if condition="{itemKey->sav:CheckBreakCondition(breakCount:field.cols)}">
+  <br class="radioButton" />
+  </f:if>
+</f:for>
+
+
+

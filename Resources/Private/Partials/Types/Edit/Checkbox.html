@@ -1,0 +1,7 @@
+{namespace sav=SAV\SavLibraryMvc\ViewHelpers}
+<div class="checkbox">
+	<f:form.hidden property="{field.propertyName}" value="0" />
+	<f:form.checkbox property="{field.propertyName}" value="1"
+		checked="{field.value}==1"
+		additionalAttributes="{onchange:'document.changed=1;'}" />
+</div>

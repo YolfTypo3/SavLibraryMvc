@@ -1,0 +1,77 @@
+<?php
+
+/***************************************************************
+*  Copyright notice
+*
+*  (c) 2009 Laurent Foulloy <yolf.typo3@orange.fr>
+*  All rights reserved
+*
+*  This script is part of the TYPO3 project. The TYPO3 project is
+*  free software; you can redistribute it and/or modify
+*  it under the terms of the GNU General Public License as published by
+*  the Free Software Foundation; either version 2 of the License, or
+*  (at your option) any later version.
+*
+*  The GNU General Public License can be found at
+*  http://www.gnu.org/copyleft/gpl.html.
+*
+*  This script is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*  GNU General Public License for more details.
+*
+*  This copyright notice MUST APPEAR in all copies of the script!
+***************************************************************/
+
+/**
+ * RenderViewHelper
+ *
+ * @version $Id:$
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
+ * @entity
+ */
+class Tx_SavLibraryMvc_ViewHelpers_RenderViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
+
+  const PARTIALS_DIRECTORY = 'Resources/Private/Partials/';
+
+	/**
+	 * Renders the content.
+	 *
+	 * @param string $partial Reference to a partial.
+	 * @param array $arguments Arguments to pass to the partial.
+	 * @param string $directory If not null, it replaces the PARTIALS_DIRECTORY constant.
+	 * @return string Rendered string
+	 */
+	public function render($partial, $arguments = array(), $directory = NULL) {
+    if ($directory === NULL) {
+      $directory = self::PARTIALS_DIRECTORY;
+    }
+    
+    // Gets the extension key from the ExtbaseFrameworkConfiguration
+    $extbaseFrameworkConfiguration = Tx_Extbase_Dispatcher::getExtbaseFrameworkConfiguration();
+    $extensionKey = t3lib_div::camelCaseToLowerCaseUnderscored($extbaseFrameworkConfiguration['extensionName']);
+
+    // Checks if the file exists in the extension
+    $filePath = t3lib_extMgm::siteRelPath($extensionKey) . $directory . $partial;
+    if (!file_exists($filePath)) {
+      $filePath = t3lib_extMgm::siteRelPath('sav_library_mvc') . $directory . $partial;
+      if (!file_exists($filePath)) {
+        throw new RuntimeException('Unknown file name: "'. $directory . $partial . '".');
+      }
+    }
+    
+    // Gets the file content
+    $fileContent = file_get_contents($filePath);
+    
+    $templateParser = t3lib_div::makeInstance('Tx_SavLibraryMvc_Parser_TemplateParser');
+    $templateParser->setViewHelperVariableContainer($this->viewHelperVariableContainer);
+    $templateParser->setControllerContext($this->controllerContext);
+
+		return $templateParser->parseTemplate($fileContent, $arguments);
+	}
+}
+
+
+?>

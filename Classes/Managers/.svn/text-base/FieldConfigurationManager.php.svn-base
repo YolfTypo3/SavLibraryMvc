@@ -1,0 +1,448 @@
+<?php
+/***************************************************************
+ *  Copyright notice
+ *
+ *  (c) 2009 Jochen Rau <jochen.rau@typoplanet.de>
+ *  All rights reserved
+ *
+ *  This script is part of the TYPO3 project. The TYPO3 project is
+ *  free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  The GNU General Public License can be found at
+ *  http://www.gnu.org/copyleft/gpl.html.
+ *
+ *  This script is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  This copyright notice MUST APPEAR in all copies of the script!
+ ***************************************************************/
+
+/**
+ * Field configurataion manager.
+ *
+ * @package SavLibraryMvc
+ * @subpackage Managers
+ * @author Laurent Foulloy <yolf.typo3@orange.fr>
+ * @version $ID:$
+ */
+class Tx_SavLibraryMvc_Managers_FieldConfigurationManager {
+
+  const CUT_IF_PATTERN = '/
+    (?:
+      (?:
+        \s+
+        (?P<connector>[\|&]|or|and)
+        \s+
+      )?
+      (?P<expression>
+        (?:\#{3})?
+        (?P<rootFields>(?:\w+\.)+)?(?P<lhs>\w+)
+        (?P<operator>=|!=)
+        (?P<rhs>\w+|\#{3}user\#{3}|\#{3}cruser\#{3})
+        (?:\#{3})?
+      )
+    )
+  /x';
+
+  /**
+   * @var string
+   **/
+  protected $tableName;
+
+  /**
+   * @var Tx_Extbase_DomainObject_AbstractEntity
+   **/
+  protected $domainObject;
+
+   /**
+   * @var Tx_SavLibraryMvc_Managers_GeneralManager
+   **/
+  protected $generalManager;
+
+  /**
+   * @var integer
+   **/
+  protected $viewIdentifier;
+
+  /**
+   * @var boolean
+   **/
+  protected $cutFlag;
+
+	/**
+	 * Constructor.
+	 */
+	public function __construct($tableName) {
+		$this->tableName = $tableName;
+  }
+
+	/**
+	 * domainObject setter.
+	 * @param Tx_Extbase_DomainObject_AbstractEntity $domainObject
+	 *
+	 * @return void
+	 */
+	public function setObject($domainObject) {
+		$this->domainObject = $domainObject;
+  }
+
+	/**
+	 * domainObject getter.
+	 *
+	 * @return Tx_Extbase_DomainObject_AbstractEntity
+	 */
+	public function getObject() {
+		return $this->domainObject;
+  }
+
+	/**
+	 * Sets the general manager.
+	 *
+	 * @param Tx_SavLibraryMvc_Managers_GeneralManager $generalManager The manager
+	 * return none
+	 */
+  public function setGeneralManager($generalManager) {
+    $this->generalManager = $generalManager;
+  }
+
+	/**
+	 * fieldName setter.
+	 * @param string $fieldName
+	 *
+	 * @return void
+	 */
+	public function setFieldName($fieldName) {
+		$this->fieldName = $fieldName;
+  }
+
+	/**
+	 * viewIdentifier setter.
+	 * @param integer $viewIdentifier
+	 *
+	 * @return void
+	 */
+	public function setViewIdentifier($viewIdentifier) {
+		$this->viewIdentifier = $viewIdentifier;
+  }
+
+	/**
+	 * fieldConfiguration setter.
+	 * @param array $fieldConfiguration
+	 *
+	 * @return void
+	 */
+	public function setFieldConfiguration($fieldConfiguration) {
+		$this->fieldConfiguration = $fieldConfiguration;
+  }
+
+	/**
+	 * Builds the configuration for the selected field.
+	 *
+	 * @return array
+	 */
+	public function getSelectedFieldConfiguration() {
+    // Adds the value
+    $selectedFieldConfiguration['value'] = $this->getValue();
+
+    // Adds the default class label
+    $selectedFieldConfiguration['classLabel'] = $this->getClassLabel();
+
+    // Adds the default class value
+    $selectedFieldConfiguration['classValue'] = $this->getClassValue();
+
+    // Adds the cutters (fusion and field)
+    $this->setCutFlag();
+    $selectedFieldConfiguration['cutDivItemBegin'] = $this->getCutDivItemBegin();
+    $selectedFieldConfiguration['cutDivItemInner'] = $this->getCutDivItemInner();
+    $selectedFieldConfiguration['cutDivItemEnd'] = $this->getCutDivItemEnd();
+
+    // Adds the item wrapper
+    $selectedFieldConfiguration['wrapItem'] = $this->processLocalizationTags($this->fieldConfiguration['wrapItem']);
+
+    return $selectedFieldConfiguration;
+  }
+
+	/**
+	 * Builds the value content.
+	 *
+	 * @return string
+	 */
+	protected function getValue() {
+    if ($config['stdWrapValue']) {
+      // The value is wrapped using the stdWrap TypoScript
+      $configuration = $this->processLocalizationTags($this->fieldConfiguration['stdWrapValue']);
+      $TSparser = t3lib_div::makeInstance('t3lib_TSparser');
+      $TSparser->parse($configuration);
+      $contentObject = t3lib_div::makeInstance('tslib_cObj');
+      return $contentObject->stdWrap($value, $TSparser->setup);
+    } elseif ($this->fieldConfiguration['tsProperties']) {
+      // The value is generated from TypoScript
+      $configuration = $this->processLocalizationTags($this->fieldConfiguration['tsProperties']);
+      $TSparser = t3lib_div::makeInstance('t3lib_TSparser');
+      $TSparser->parse($configuration);
+      if ($this->fieldConfiguration['tsObject']) {
+        $contentObject = t3lib_div::makeInstance('tslib_cObj');
+        return $contentObject->cObjGetSingle($this->fieldConfiguration['tsObject'], $TSparser->setup);
+      }
+    }
+    // If none of the above conditions is true, the value is obtained through one of the object getters
+    $fieldName = ($this->fieldConfiguration['alias'] ? $this->fieldConfiguration['alias'] : $this->fieldName);
+    $method = 'get' . ucfirst($fieldName);
+    return $this->domainObject->$method();
+  }
+
+	/**
+	 * Builds the class for the label.
+	 *
+	 * @return string
+	 */
+	protected function getClassLabel() {
+    if (empty($this->fieldConfiguration['classLabel'])) {
+      return 'label';
+    } else {
+      return 'label ' . $this->fieldConfiguration['classLabel'];
+    }
+	}
+
+	/**
+	 * Builds the class for the value.
+	 *
+	 * @return string
+	 */
+	protected function getClassValue() {
+    if (empty($this->fieldConfiguration['classValue'])) {
+      return 'value';
+    } else {
+      return 'value ' . $this->fieldConfiguration['classValue'];
+    }
+	}
+
+	/**
+	 * <DIV class="item"> cutter: checks if the beginning of the <DIV> must be cut
+	 * Returns true if the <DIV> must be cut.
+	 *
+	 * @return boolean
+	 */
+	protected function getCutDivItemBegin() {
+    if ($this->fieldConfiguration['fusion'] == 'begin') {
+      $fusionBegin = TRUE;
+    }
+    $cut = (
+      ($this->fusionInProgress && !$fusionBegin) |
+      ($this->getCutFlag() && !$this->fusionInProgress)
+    );
+    if ($fusionBegin) {
+      $this->fusionInProgress = TRUE;
+    }
+    return $cut;
+	}
+
+	/**
+	 * <DIV class="item"> cutter: checks if the endt of the <DIV> must be cut
+	 * Returns true if the <DIV> must be cut.
+	 *
+	 * @return boolean
+	 */
+	protected function getCutDivItemEnd() {
+    if ($this->fieldConfiguration['fusion'] == 'end') {
+      $fusionEnd = TRUE;
+    }
+    $cut = (
+      ($this->fusionInProgress && !$fusionEnd) |
+      ($this->getCutFlag() && !$this->fusionInProgress)
+    );
+    if ($fusionEnd) {
+      $this->fusionInProgress = FALSE;
+    }
+    return $cut;
+	}
+
+	/**
+	 * <DIV class="item"> cutter: checks if the inner content of the <DIV> must be cut
+	 * Returns true if the <DIV> must be cut.
+	 *
+	 * @return boolean
+	 */
+	protected function getCutDivItemInner() {
+    $cut = (
+      $this->getCutFlag()
+    );
+    return $cut;
+	}
+
+	/**
+	 * Gets the cut flag. If true the content must be cut.
+	 *
+	 * @return boolean
+	 */
+	protected function getCutFlag() {
+    return $this->cutFlag;
+  }
+
+	/**
+	 * Sets the cut flag
+	 *
+	 * @return void
+	 */
+	protected function setCutFlag() {
+    $this->cutFlag = $this->cutIfEmpty() | $this->cutIf();
+  }
+
+	/**
+	 * Content cutter: checks if the content is empty
+	 * Returns true if the content must be cut.
+	 *
+	 * @return boolean
+	 */
+	protected function cutIfEmpty() {
+    if ($this->fieldConfiguration['cutIfNull'] || $this->fieldConfiguration['cutIfEmpty']) {
+      $value = $this->getValue();
+      return empty($value);
+    } else {
+      return FALSE;
+    }
+	}
+
+	/**
+	 * Content cutter: checks if the content is empty
+	 * Returns true if the content must be cut.
+	 *
+	 * @return boolean
+	 */
+	protected function cutIf() {
+
+    if ($this->fieldConfiguration['cutIf']) {
+      // Matchs the pattern
+      preg_match_all(self::CUT_IF_PATTERN, $this->fieldConfiguration['cutIf'], $matches);
+
+      // Processes the expressions
+      foreach($matches['expression'] as $matchKey => $match) {
+        // Processes the left hand side
+        $lhs = $matches['lhs'][$matchKey];
+        switch ($lhs) {
+          case 'group':
+// TODO Add the group case
+            break;
+          case 'usergroup':
+// TODO Add the usergroup case
+            break;
+          default:
+            $rootFields = $matches['rootFields'][$matchKey];
+
+            // Checks if a short field name is used.
+            if(empty($rootFields)) {
+              // The value is taken from the  main repository
+              $method = 'get' . ucfirst($lhs);
+              if (!method_exists($this->domainObject, $method)) {
+                $this->generalManager->getFlashMessageContainer()->add(
+                  sprintf(Tx_Extbase_Utility_Localization::translate('error.unknownGetMethod', 'sav_library_mvc'), $lhs)
+                );
+                return FALSE;
+              }
+              $lhsValue = $this->domainObject->$method();
+            } else {
+              // Root fields are used, processes them first
+              $rootFieldsArray = explode('.', substr($rootFields, 0, -1));
+              $lshValue = $this->domainObject;
+              foreach($rootFieldsArray as $rootField) {
+                $rootMethod = 'get' . ucfirst($rootField);
+                if (!method_exists($lshValue, $rootMethod)) {
+                  $this->generalManager->getFlashMessageContainer()->add(
+                    sprintf(Tx_Extbase_Utility_Localization::translate('error.unknownGetMethod', 'sav_library_mvc'), $rootField)
+                  );
+                  return FALSE;
+                }
+                $lshValue  = $lshValue->$rootMethod();
+              }
+
+              $method = 'get' . ucfirst($lhs);
+              if (!method_exists($lshValue, $method)) {
+                $this->generalManager->getFlashMessageContainer()->add(
+                  sprintf(Tx_Extbase_Utility_Localization::translate('error.unknownGetMethod', 'sav_library_mvc'), $rootField)
+                );
+                return FALSE;
+              }
+              $lhsValue = $lshValue->$method();
+            }
+        }
+        // Processes the right hand side
+        $rhs = $matches['rhs'][$matchKey];
+        $rhsValue = $rhs;
+// TODO Add special markers for compatibility ###user### and ###cruser###
+
+        // Processes the condition
+        switch ($matches['operator'][$matchKey]) {
+          case '=':
+            $condition = ($lhsValue == $rhsValue);
+            break;
+          case '!=':
+            $condition = ($lhsValue != $rhsValue);
+            break;
+        }
+
+        // Processes the connector
+        $connector = $matches['connector'][$matchKey];
+        switch ($connector) {
+          case '|':
+          case 'or':
+            $cut = $cut || $condition;
+            break;
+          case '&':
+          case 'and':
+            $cut = $cut && $condition;
+            break;
+          case '':
+            $cut = $condition;
+            break;
+        }
+      }
+      return $cut;
+    } else {
+      return FALSE;
+    }
+	}
+
+	/**
+	 * Processes localization tags
+	 *
+	 * @param $input string String to process
+	 * @return string
+	 */
+  public function processLocalizationTags($input) {
+    // Processes labels associated with fields
+    if (preg_match_all('/\$\$\$label\[([^\]]+)\]\$\$\$/', $input, $matches)) {
+
+      foreach ($matches[1] as $matchKey => $match) {
+        // Check if the label is in language files, no default table is assumed
+        // In that case the full name must be used, i.e. tableName.fieldName
+        $label= Tx_Extbase_Utility_Localization::translate($match, $this->generalManager->getExtensionName());
+        if (!empty($label)) {
+          $input = str_replace($matches[0][$matchKey], $label, $input);
+        } else {
+          // Checks if the label is associated with the current table
+          $label= Tx_Extbase_Utility_Localization::translate($this->tableName . '.' . $match, $this->generalManager->getExtensionName());
+          if (!empty($label)) {
+            $input = str_replace($matches[0][$matchKey], $label, $input);
+          } else {
+            $this->generalManager->getFlashMessageContainer()->add(Tx_Extbase_Utility_Localization::translate('error.missingLabel', 'sav_library_mvc'));
+          }
+        }
+      }
+    }
+
+    // Processes labels as $$$label$$$
+    preg_match_all('/\$\$\$([^\$]+)\$\$\$/', $input, $matches);
+    foreach ($matches[1] as $matchKey => $match) {
+      $label = Tx_Extbase_Utility_Localization::translate($match, $this->generalManager->getExtensionName());
+      $input = str_replace($matches[0][$matchKey], $label, $input);
+    }
+
+    return $input;
+  }
+
+}

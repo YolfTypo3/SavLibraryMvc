@@ -1,0 +1,38 @@
+<?php
+
+/*                                                                        *
+ * This script is part of the TYPO3 project - inspiring people to share!  *
+ *                                                                        *
+ * TYPO3 is free software; you can redistribute it and/or modify it under *
+ * the terms of the GNU General Public License version 2 as published by  *
+ * the Free Software Foundation.                                          *
+ *                                                                        *
+ * This script is distributed in the hope that it will be useful, but     *
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
+ * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
+ * Public License for more details.                                       *
+ *                                                                        */
+
+/**
+ * Returns an array of number
+ *
+ * @package SavLibraryMvc
+ * @version $Id:
+ */
+class Tx_SavLibraryMvc_ViewHelpers_RangeViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
+
+	/**
+	 * Range viewhelper.
+	 *
+	 * @param integer $low The low value
+	 * @param integer $high The high value
+	 * @param integer step The step value
+	 * @return array The range array
+	 * @author Laurent Foulloy <yolf.typo3@oranage.fr>
+	 * @api
+	 */
+	public function render($low, $high, $step = 1) {
+		return range($low, $high, $step);
+	}
+}
+?>

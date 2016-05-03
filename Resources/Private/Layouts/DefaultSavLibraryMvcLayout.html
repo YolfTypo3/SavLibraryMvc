@@ -1,0 +1,13 @@
+{namespace sav=SAV\SavLibraryMvc\ViewHelpers}
+
+<f:format.raw><sav:removeEmptyLines>
+<f:if condition="{configuration.general.hideExtension} != 1">
+	<div class="savLibraryMvc">
+		<div class="message">
+			<sav:flashMessages />
+		</div>
+		<f:render partial="Errors" arguments="{object:data}" />
+		<f:render section="content" />
+	</div>
+</f:if>
+</sav:removeEmptyLines></f:format.raw>

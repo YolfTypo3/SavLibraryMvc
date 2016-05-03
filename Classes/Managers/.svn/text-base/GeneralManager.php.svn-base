@@ -1,0 +1,361 @@
+<?php
+/***************************************************************
+*  Copyright notice
+*
+*  (c) 2010 Laurent Foulloy <yolf.typo3@orange.fr>
+*  All rights reserved
+*
+*  This class is a backport of the corresponding class of FLOW3. 
+*  All credits go to the v5 team.
+*
+*  This script is part of the TYPO3 project. The TYPO3 project is
+*  free software; you can redistribute it and/or modify
+*  it under the terms of the GNU General Public License as published by
+*  the Free Software Foundation; either version 2 of the License, or
+*  (at your option) any later version.
+*
+*  The GNU General Public License can be found at
+*  http://www.gnu.org/copyleft/gpl.html.
+*
+*  This script is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*  GNU General Public License for more details.
+*
+*  This copyright notice MUST APPEAR in all copies of the script!
+***************************************************************/
+
+/**
+ * General manager
+ *
+ * @package SavLibraryMvc
+ * @subpackage Managers
+ * @author Laurent Foulloy <yolf.typo3@orange.fr>
+ * @version $Id:
+ */
+class Tx_SavLibraryMvc_Managers_GeneralManager {
+
+	/**
+	 * @var Tx_Extbase_MVC_Request
+	 */
+  protected $request;
+
+	/**
+	 * @var array
+	 */
+  protected $extbaseFrameworkConfiguration;
+  
+	/**
+	 * @var Tx_SavLibraryMvc_Managers_FrontendUserManager
+	 */
+  protected $frontendUserManager;
+
+	/**
+	 * @var Tx_SavLibraryMvc_Managers_QueryManager
+	 */
+  protected $queryManager;
+  
+	/**
+	 * Contains the settings of the current extension
+	 *
+	 * @var array
+	 */
+	protected $settings;
+
+	/**
+	 * @var Tx_Extbase_MVC_Controller_FlashMessages
+	 */
+	protected $flashMessageContainer;
+
+	/**
+	 * @var array
+	 */
+  protected $generalConfiguration = array();
+  
+	/**
+	 * @var string
+	 *
+	 * The main repository name
+	 */
+  private $mainRepositoryName;
+
+	/**
+	 * @var array Array of repository
+	 *
+	 */
+  protected $repositories = array();
+
+  // Variable to encode/decode form parameters
+  private static $specialParameters = array (
+    'page',               // 0
+    'mode',               // 1
+    'folder',             // 2
+    'orderLink',          // 3
+    'realUid',            // 4
+  );
+
+	/**
+	 * Constructor.
+	 *
+	 * @param Tx_Extbase_MVC_Request $request
+   * @return void
+	 */
+  public function __construct($request) {
+    $this->request = $request;
+    $this->setGeneralConfigurationValue('manager', $this);
+    $this->extbaseFrameworkConfiguration = Tx_Extbase_Dispatcher::getExtbaseFrameworkConfiguration();
+    $this->settings = $this->extbaseFrameworkConfiguration['settings'];
+    $this->frontendUserManager = t3lib_div::makeInstance('Tx_SavLibraryMvc_Managers_FrontendUserManager');
+    Tx_SavLibraryMvc_Core_Parser_ParserConfiguration::changePatternSorthandSyntaxObjectAccessors();
+  }
+
+	/**
+	 * Gets the controller.
+	 *
+	 * return Tx_Extbase_MVC_Request
+	 */
+  public function getRequest() {
+    return $this->request;
+  }
+
+	/**
+	 * Gets a setting.
+	 *
+	 * @param string $settingName The setting name
+	 * return mixed
+	 */
+  public function getSetting($settingName) {
+    return $this->settings[$settingName];
+  }
+
+	/**
+	 * Gets the frontend user manager.
+	 *
+	 * return Tx_SavLibraryMvc_Managers_FrontendUserManager
+	 */
+  public function getFrontendUserManager() {
+    return $this->frontendUserManager;
+  }
+
+	/**
+	 * Sets the flash message container.
+	 *
+	 * @param Tx_Extbase_MVC_Controller_FlashMessages $flashMessageContainer The flash message container
+	 * return mixed
+	 */
+  public function setFlashMessageContainer($flashMessageContainer) {
+    $this->flashMessageContainer = $flashMessageContainer;
+  }
+  
+  /**
+	 * Gets the flash message container.
+	 *
+	 * return Tx_Extbase_MVC_Controller_FlashMessages The flash message container
+	 */
+  public function getFlashMessageContainer() {
+    return $this->flashMessageContainer;
+  }
+
+	/**
+	 * Sets the main repository name.
+	 *
+	 * @param string $mainRepositoryName The main repository name
+	 * return none
+	 */
+  public function setMainRepositoryName($mainRepositoryName) {
+    $this->mainRepositoryName = $mainRepositoryName;
+  }
+
+	/**
+	 * Gets the main repository name.
+	 *
+	 * return string The main repository name
+	 */
+  public function getMainRepositoryName() {
+    return $this->mainRepositoryName;
+  }
+
+	/**
+	 * Creates a repository.
+	 *
+	 * @param string $repositoryName The repository name
+	 * @param string $repositoryClass The repository class
+	 * return none
+	 */
+  public function createRepository($repositoryName, $repositoryClass) {
+    $repository = t3lib_div::makeInstance($repositoryClass);
+    $this->repositories[$repositoryName] = $repository;
+    $repository->setGeneralManager($this);
+  }
+
+	/**
+	 * Gets the main repository.
+	 *
+	 * return object The main repository
+	 */
+  public function getMainRepository() {
+    return $this->getRepository($this->mainRepositoryName);
+  }
+
+	/**
+	 * Gets a repository.
+	 *
+	 * @param string $repositoryName The repository name
+	 * return object The repository
+	 */
+  public function getRepository($repositoryName) {
+    return $this->repositories[$repositoryName];
+  }
+
+	/**
+	 * Gets the extension name.
+	 *
+	 * return string The extension name
+	 */
+  public function getExtensionName() {
+    return $this->extbaseFrameworkConfiguration['extensionName'];
+  }
+
+ 	/**
+	 * Gets the controller name.
+	 *
+	 * return string The controller name
+	 */
+  public function getControllerName() {
+    return $this->extbaseFrameworkConfiguration['controller'];
+  }
+  
+ 	/**
+	 * Gets the plugin name.
+	 *
+	 * return string The plugin name
+	 */
+  public function getPluginName() {
+    return $this->extbaseFrameworkConfiguration['pluginName'];
+  }
+
+ 	/**
+	 * Gets the storage page.
+	 *
+	 * return integer The storage page
+	 */
+  public function getStoragePage() {
+    return $this->extbaseFrameworkConfiguration['persistence']['storagePid'];
+  }
+  
+ 	/**
+	 * Sets a value to the general configuration.
+	 *
+	 * @param string $key The key
+	 * @param mixed $value The value
+	 * return none
+	 */
+  public function setGeneralConfigurationValue($key, $value) {
+    $this->generalConfiguration[$key] = $value;
+  }
+  
+ 	/**
+	 * Gets a value to the general configuration.
+	 *
+	 * @param string $key The key
+	 * return mixed
+	 */
+  public function getGeneralConfigurationValue($key) {
+    return $this->generalConfiguration[$key];
+  }
+
+	/**
+	 * Gets the general configuration.
+	 *
+	 * return array
+	 */
+  public function getGeneralConfiguration() {
+    return $this->generalConfiguration;
+  }
+
+	/**
+	 * Uncompresses a parameter string into an array
+	 *
+	 * @param string $compressedParameters The compressed parameter
+	 * @return array The uncompressed parameter array
+	 */
+  public static function uncompressParameters($compressedParameters) {
+    $parameters = array();
+    while (!empty($compressedParameters)) {
+      // Reads the index
+      list($parameterIndex) = sscanf($compressedParameters, '%1x');
+      $parameterKey = self::$specialParameters[$parameterIndex];
+      if (!isset($parameterKey)) {
+        return $parameters;
+      }
+      $compressedParameters = substr($compressedParameters, 1);
+
+      // Reads the length
+      list($length) = sscanf($compressedParameters, '%1x');
+      $compressedParameters = substr($compressedParameters, 1);
+
+      // Reads the value
+      list($parameterValue) = sscanf($compressedParameters, '%' . $length . 's');
+      $compressedParameters = substr($compressedParameters, $length);
+      
+      // Sets the parameter
+      $parameters[$parameterKey] = $parameterValue;
+    }
+    return $parameters;
+  }
+
+
+	/**
+	 * Compresses an array of parameters
+	 *
+	 * @param array $parameters The parameter array to compress
+	 * @return string The compressed parameter string
+	 */
+  public static function compressParameters($parameters) {
+    $compressedParameters = '';
+    foreach($parameters as $parameterKey => $parameter) {
+      $parameterIndex = array_search($parameterKey, self::$specialParameters);
+      if ($parameterIndex === false) {
+        return '';
+      } else {
+        $compressedParameters .= dechex($parameterIndex);
+      }
+      $compressedParameters .= sprintf('%01x%s',strlen($parameter), $parameter);
+    }
+    return $compressedParameters;
+  }
+  
+	/**
+	 * Changes a parameter in the compressed parameters string
+	 *
+	 * @param string $compressedParameters The compressed parameters string
+	 * @param string $key The key of the parameter to change
+	 * @paraam mixed $value The value of the parameter to change
+	 *
+	 * @return string The modified compressed parameter string
+	 */
+  public static function changeCompressedParameters($compressedParameters, $key, $value) {
+    $uncompressParameters = self::uncompressParameters($compressedParameters);
+    $uncompressParameters[$key] = $value;
+    return self::compressParameters($uncompressParameters);
+  }
+
+	/**
+	 * Checks if the preview mode is active
+	 *
+	 * @return boolean True if the preview mode is active
+	*/
+  public function isInPreviewMode() {
+    return ($GLOBALS['TSFE']->sys_page->versioningPreview ? TRUE : FALSE);
+  }
+
+	/**
+	 * Gets the versioning workspace id
+	 *
+	 * @return integer The versioning workspace id
+	*/
+  public function getVersioningWorkspaceId() {
+    return (isset($GLOBALS['TSFE']->sys_page->versioningWorkspaceId) ? $GLOBALS['TSFE']->sys_page->versioningWorkspaceId : NULL);
+  }
+}
+?>

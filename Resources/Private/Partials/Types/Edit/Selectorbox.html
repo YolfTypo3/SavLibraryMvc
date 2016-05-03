@@ -1,0 +1,4 @@
+{namespace sav=SAV\SavLibraryMvc\ViewHelpers}
+<f:form.select property="{field.propertyName}"
+	options="{field.items->sav:RenderSelectorbox()}" value="{field.value}"
+	additionalAttributes="{onchange:'document.changed=1;'}" />

@@ -1,0 +1,11 @@
+<f:if condition="{configuration.general.currentPage} > 0">
+  <f:link.action action="previousPage" controller="{configuration.general.controllerName}" extensionName="{configuration.general.extensionName}" arguments="{special:configuration.general.special}">
+    <f:image class="previous" src="{sav:buildSrc(fileName:'Resources/Private/Icons/previous.gif')}" alt="{f:translate(key:'button.previous')}" title="{f:translate(key:'button.previous')}" />
+  </f:link.action>
+</f:if>
+<f:if condition="{configuration.general.currentPage} < {configuration.general.lastPage}">
+  <f:link.action action="nextPage" controller="{configuration.general.controllerName}" extensionName="{configuration.general.extensionName}" arguments="{special:configuration.general.special}">
+    <f:image class="next" src="{sav:buildSrc(fileName:'Resources/Private/Icons/next.gif')}" alt="{f:translate(key:'button.next')}" title="{f:translate(key:'button.next')}" />
+  </f:link.action>
+</f:if>
+

@@ -1,0 +1,91 @@
+{namespace sav=SAV\SavLibraryMvc\ViewHelpers}
+<f:alias
+	map="{configurationInSubform:'{field->sav:RenderRelationManyToManyAsSubform()}'}">
+	<f:render partial="TitleBars/EditView/Subform.html"
+		arguments="{general:configurationInSubform.general}" />
+	<div class="items">
+		<f:for each="{configurationInSubform.items}" as="fields"
+			key="fieldsKey">
+			<div class="subformItem">
+				<f:form.hidden property="{field.propertyName}.{fieldsKey}.uid"
+					value="{fieldsKey}" />	
+				<f:if condition="{fieldsKey} == '-1'">
+					<f:form.hidden name="newSubformItemPath"
+						value="{field.propertyName}.-1" />
+				</f:if>
+				<f:for each="{fields}" as="fieldInSubform">
+					<sav:typoscript.wrap configuration="{fieldInSubform.wrapItem}">
+						<f:comment>Cutter for the fusion and cut conditions</f:comment>
+						<f:if condition="{fieldInSubform.cutDivItemBegin}!=1">
+							<div class="{fieldInSubform.classItem}">
+								<div class="itemIconLeft">
+									<f:if condition="{fieldInSubform.isFirstField}">
+										<f:if
+											condition="{configurationInSubform.general.deleteButtonIsAllowed}">
+											<f:link.action action="deleteInSubform"
+												arguments="{
+              	special:'{sav:changeCompressedParameters(arguments:{subformKey:field.subformKey, subformUidLocal:configurationInSubform.general.subformUidLocal, subformUidForeign:fieldsKey})}'}">
+												<f:image src="{sav:getIconSrc(fileName:'delete.gif')}"
+													alt="{f:translate(key:'button.delete', extensionName:'SavLibraryMvc')}"
+													title="{f:translate(key:'button.delete', extensionName:'SavLibraryMvc')}" />
+											</f:link.action>
+										</f:if>
+										<f:if
+											condition="{configurationInSubform.general.upDownButtonIsAllowed}">
+											<f:link.action action="upInSubform"
+												arguments="{
+              	special:'{sav:changeCompressedParameters(arguments:{subformKey:field.subformKey, subformUidLocal:configurationInSubform.general.subformUidLocal, subformUidForeign:fieldsKey})}'}">
+												<f:image src="{sav:getIconSrc(fileName:'up.gif')}"
+													alt="{f:translate(key:'button.up', extensionName:'SavLibraryMvc')}"
+													title="{f:translate(key:'button.up', extensionName:'SavLibraryMvc')}" />
+											</f:link.action>
+											<f:link.action action="downInSubform"
+												arguments="{
+              	special:'{sav:changeCompressedParameters(arguments:{subformKey:field.subformKey, subformUidLocal:configurationInSubform.general.subformUidLocal, subformUidForeign:fieldsKey})}'}">
+												<f:image src="{sav:getIconSrc(fileName:'down.gif')}"
+													alt="{f:translate(key:'button.down', extensionName:'SavLibraryMvc')}"
+													title="{f:translate(key:'button.down', extensionName:'SavLibraryMvc')}" />
+											</f:link.action>
+										</f:if>
+									</f:if>
+								</div>
+						</f:if>
+						<f:comment>Cutter for the fusion and cut conditions</f:comment>
+						<f:if condition="{fieldInSubform.cutDivItemInner}!=1">
+							<div class="{fieldInSubform.classField}">
+								<f:if condition="{fieldInSubform.cutLabel}!=1">
+									<div class="{fieldInSubform.classLabel}"
+										{f:if(condition:'{fieldInSubform.styleLabel}', then:' style=""')}>
+										<f:format.raw>{fieldInSubform.label}</f:format.raw>
+									</div>
+								</f:if>
+								<f:if
+									condition="{fieldInSubform.fieldType} == 'RelationManyToManyAsSubform'">
+									<f:then>
+										<f:render partial="Types/Edit/{fieldInSubform.fieldType}.html"
+											arguments="{field:fieldInSubform, general:configurationInSubform.general}" />
+									</f:then>
+									<f:else>
+										<div class="{fieldInSubform.classValue}"
+											{f:if(condition:'{field.styleValue}', then:' style=""')}>
+											<f:render
+												partial="Types/Edit/{fieldInSubform.fieldType}.html"
+												arguments="{field:fieldInSubform, general:configurationInSubform.general}" />
+										</div>
+									</f:else>
+								</f:if>
+							</div>
+						</f:if>
+						<f:comment>Cutter for the fusion and cut conditions</f:comment>
+						<f:if condition="{fieldInSubform.cutDivItemEnd}!=1">
+							<div class="right"></div>
+			</div>
+			</f:if>
+			</sav:typoscript.wrap>
+		</f:for>
+	</div>
+	</f:for>
+	</div>
+	<f:render partial="Footers/EditView/Subform.html"
+		arguments="{general:configurationInSubform.general}" />
+</f:alias>

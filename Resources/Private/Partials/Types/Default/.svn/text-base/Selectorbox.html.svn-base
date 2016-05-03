@@ -1,0 +1,8 @@
+<f:for each="{field.items}" as="item">
+  <f:if condition="{item.1} == {field.value}">
+    <f:translate key="{item.0}" />
+  </f:if>
+</f:for>
+
+
+
