@@ -127,7 +127,7 @@ abstract class AbstractViewConfiguration
      */
     protected function getViewType()
     {
-        $viewType = GeneralUtility::lcfirst(preg_replace('/^.+?\\\\(\w+)Configuration$/', '$1', get_class($this)));
+        $viewType = lcfirst(preg_replace('/^.+?\\\\(\w+)Configuration$/', '$1', get_class($this)));
         return $viewType;
     }
 

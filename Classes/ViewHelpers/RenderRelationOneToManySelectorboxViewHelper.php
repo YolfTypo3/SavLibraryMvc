@@ -24,6 +24,7 @@ namespace SAV\SavLibraryMvc\ViewHelpers;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use SAV\SavLibraryMvc\Domain\Repository\AbstractRepository;
 use SAV\SavLibraryMvc\Controller\AbstractController;
 
@@ -49,7 +50,7 @@ class RenderRelationOneToManySelectorboxViewHelper extends \TYPO3\CMS\Fluid\Core
      *            The fields
      * @param string $action
      *            The action to execute
-     *            
+     *
      * @return string the options array
      * @author Laurent Foulloy <yolf.typo3@orange.fr>
      */
@@ -58,35 +59,36 @@ class RenderRelationOneToManySelectorboxViewHelper extends \TYPO3\CMS\Fluid\Core
         if ($field === NULL) {
             $field = $this->renderChildren();
         }
-        
+
         // Returns an empty string if the field is null
         if ($field === NULL) {
             return '';
-        } 
-        
+        }
+
         // Gets the controller
         $controller = $this->objectManager->get(AbstractController::getControllerObjectName());
-        
+
         // Gets the repository
         $repositoryClassName = AbstractRepository::resolveRepositoryClassNameFromTableName($field['foreign_table']);
         $repository = $this->objectManager->get($repositoryClassName);
         $repository->setController($controller);
-        
+
         // Defines the label field getter
         $labelFieldGetter = 'get' . GeneralUtility::underscoredToUpperCamelCase($repository->getDataMapFactory()->getLabelField());
-        
+
         // Processes the action
         switch ($action) {
             case 'options':
                 if (is_array($field['items'][0])) {
+                    $extensionKey = AbstractController::getControllerExtensionKey();
                     $options = array(
-                        '0' => $field['items'][0][0]
+                        '0' => LocalizationUtility::translate($field['items'][0][0], $extensionKey)
                     );
                 } else {
                     $options = array();
                 }
                 $objects = $repository->findAll();
-                
+
                 foreach ($objects as $object) {
                     $options[$object->getUid()] = $object->$labelFieldGetter();
                 }

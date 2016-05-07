@@ -23,7 +23,7 @@ namespace SAV\SavLibraryMvc\ViewHelpers;
  *
  * This copyright notice MUST APPEAR in all copies of the script!
  */
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use SAV\SavLibraryMvc\Controller\AbstractController;
 use SAV\SavLibraryMvc\Domain\Repository\AbstractRepository;
 use SAV\SavLibraryMvc\Managers\FieldConfigurationManager;
@@ -67,7 +67,7 @@ class RenderRelationManyToManyAsSubformViewHelper extends \TYPO3\CMS\Fluid\Core\
 
         // Gets the view type
         $controllerActionName = $this->controllerContext->getRequest()->getControllerActionName();
-        $viewType = GeneralUtility::lcfirst($controllerActionName) . 'View';
+        $viewType = lcfirst($controllerActionName) . 'View';
 
         // Gets the view identifier
         $viewIdentifier = $controller->getViewerConfiguration($controllerActionName)->getViewIdentifier($viewType);

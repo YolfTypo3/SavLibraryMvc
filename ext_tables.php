@@ -16,13 +16,13 @@ if (! function_exists('user_savlibraryMvcHelp')) {
         $cshTag = $PA['fieldConf']['config']['userFuncParameters']['cshTag'];
 
         if (version_compare(TYPO3_version, '7.0', '<')) {
-            $cshTag = \TYPO3\CMS\Core\Utility\GeneralUtility::lcfirst($cshTag);
+            $cshTag = lcfirst($cshTag);
             $languageService = $GLOBALS['LANG'];
             $message = $languageService->sL('LLL:EXT:' . $extensionKey . '/Resources/Private/Language/locallang.xlf:extensionFlexform.help');
             $moduleToken = \TYPO3\CMS\Core\FormProtection\FormProtectionFactory::get()->generateToken('moduleCall', 'help_cshmanual');
             $helpUrl = 'mod.php?M=help_cshmanual&moduleToken=' . $moduleToken . '&';
         } else {
-            $cshTag = \TYPO3\CMS\Core\Utility\GeneralUtility::lcfirst($cshTag);
+            $cshTag = lcfirst($cshTag);
             $languageService = $GLOBALS['LANG'];
             $message = $languageService->sL('LLL:EXT:' . $extensionKey . '/Resources/Private/Language/locallang.xlf:extensionFlexform.help');
             $moduleToken = \TYPO3\CMS\Core\FormProtection\FormProtectionFactory::get()->generateToken('moduleCall', 'help_CshmanualCshmanual');
