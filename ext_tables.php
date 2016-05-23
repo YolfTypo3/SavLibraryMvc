@@ -29,7 +29,7 @@ if (! function_exists('user_savlibraryMvcHelp')) {
             $helpUrl = 'index.php?M=help_CshmanualCshmanual&moduleToken=' . $moduleToken . '&tx_cshmanual_help_cshmanualcshmanual[controller]=Help&tx_cshmanual_help_cshmanualcshmanual[action]=detail&';
         }
 
-        $iconSrcAttribute = 'src="../typo3conf/ext/' . $extensionKey . '/Resources/Private/Icons/helpbubble.gif"';
+        $iconSrcAttribute = 'src="../typo3conf/ext/' . $extensionKey . '/Resources/Public/Icons/helpbubble.gif"';
         $icon = '<img ' . $iconSrcAttribute . ' class="typo3-csh-icon" alt="' . $cshTag . '" />';
 
         return '<a href="#" onclick="vHWin=window.open(\'' . $helpUrl . 'tx_cshmanual_help_cshmanualcshmanual[table]=xEXT_' . $extensionKey . ($cshTag ? '_' . $cshTag : '') . '\',\'viewFieldHelp\',\'height=400,width=600,status=0,menubar=0,scrollbars=1\');vHWin.focus();return FALSE;">' . $icon . ' ' . $message . '</a>';
