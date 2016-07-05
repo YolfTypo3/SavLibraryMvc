@@ -21,6 +21,7 @@ Changelog
 =======  ===========================================================================
 Version  Changes
 =======  ===========================================================================
+1.0.1    - Controller improved 
 1.0.0    - New beta version
 0.0.2    - Processing for the flexform selector “If no available information” added.
          - Small bugs corrected.
