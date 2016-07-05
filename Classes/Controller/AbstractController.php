@@ -214,10 +214,7 @@ abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\Acti
             $action = str_replace('Action', '', ucfirst($actionMethodName));
             $viewerConfigurationClass = 'SAV\\SavLibraryMvc\\ViewConfiguration\\' . $action . 'ViewConfiguration';
             if (! $this->objectManager->isRegistered($viewerConfigurationClass)) {
-                // TODO Modify
-                var_dump($viewerConfigurationClass, '$viewerConfigurationClass');
-                var_dump($actionMethodName, '$actionMethodName');
-                var_dump(get_class($this), 'get_class($this)');
+                // TODO Adds an error message
                 return NULL;
             }
             // Gets the viewer configuration object
@@ -243,8 +240,10 @@ abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\Acti
      */
     public function getViewIdentifiers()
     {
-        return $this->viewIdentifiers;
+        $dataMapFactory = $this->mainRepository->getDataMapFactory();
+        return $dataMapFactory->getSavLibraryMvcControllerViewIdentifiers(self::$controllerName);
     }
+
 
     /**
      * Gets the view title bar
@@ -255,7 +254,8 @@ abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\Acti
      */
     public function getViewTitleBar($viewType)
     {
-        return $this->viewTileBars[$viewType];
+        $dataMapFactory = $this->mainRepository->getDataMapFactory();
+        return $dataMapFactory->getSavLibraryMvcControllerViewTitleBar(self::$controllerName, $viewType);
     }
 
     /**
@@ -267,7 +267,8 @@ abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\Acti
      */
     public function getViewItemTemplate($viewType)
     {
-        return $this->viewItemTemplates[$viewType];
+        $dataMapFactory = $this->mainRepository->getDataMapFactory();
+        return $dataMapFactory->getSavLibraryMvcControllerViewItemTemplate(self::$controllerName, $viewType);
     }
 
     /**
@@ -279,7 +280,8 @@ abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\Acti
      */
     public function getFolders($viewType)
     {
-        return $this->folders[$viewType];
+        $dataMapFactory = $this->mainRepository->getDataMapFactory();
+        return $dataMapFactory->getSavLibraryMvcControllerFolders(self::$controllerName, $viewType);
     }
 
     /**

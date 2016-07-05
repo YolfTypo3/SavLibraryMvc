@@ -67,9 +67,16 @@ class DataMapFactory extends \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataM
     protected $savLibraryMvcCtrl;
 
     /**
+     * Controllers configuration
+     *
+     * @var array
+     */
+    protected $savLibraryMvcControllers;
+
+    /**
      * Initializes the data map factory
      *
-     * @param string $domainObjectName            
+     * @param string $domainObjectName
      * @return void
      */
     public function initialize($domainObjectName)
@@ -91,6 +98,7 @@ class DataMapFactory extends \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataM
         $this->savLibraryMvcConfiguration = is_array($this->controlSection['EXT']['sav_library_mvc']) ? $this->controlSection['EXT']['sav_library_mvc'] : array();
         $this->savLibraryMvcColumns = is_array($this->savLibraryMvcConfiguration['columns']) ? $this->savLibraryMvcConfiguration['columns'] : array();
         $this->savLibraryMvcCtrl = is_array($this->savLibraryMvcConfiguration['ctrl']) ? $this->savLibraryMvcConfiguration['ctrl'] : array();
+        $this->savLibraryMvcControllers = is_array($this->savLibraryMvcConfiguration['controllers']) ? $this->savLibraryMvcConfiguration['controllers'] : array();
     }
 
     /**
@@ -116,7 +124,7 @@ class DataMapFactory extends \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataM
     /**
      * Gets the SAV Library Mvc Ctrl field.
      *
-     * @param string $fieldName            
+     * @param string $fieldName
      *
      * @return array
      */
@@ -126,9 +134,76 @@ class DataMapFactory extends \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataM
     }
 
     /**
+     * Gets the SAV Library Mvc Controller view identifiers.
+     *
+     * @param string $controllerName
+     *
+     * @return array
+     */
+    public function getSavLibraryMvcControllerViewIdentifiers($controllerName)
+    {
+        if (is_array($this->savLibraryMvcControllers[$controllerName]) && is_array($this->savLibraryMvcControllers[$controllerName]['viewIdentifiers'])) {
+            return $this->savLibraryMvcControllers[$controllerName]['viewIdentifiers'];
+        } else {
+            return array();
+        }
+    }
+
+    /**
+     * Gets the SAV Library Mvc Controller view title bar.
+     *
+     * @param string $controllerName
+     * @param string $viewType
+     *
+     * @return array
+     */
+    public function getSavLibraryMvcControllerViewTitleBar($controllerName, $viewType)
+    {
+        if (is_array($this->savLibraryMvcControllers[$controllerName]) && is_array($this->savLibraryMvcControllers[$controllerName]['viewTileBars'])) {
+            return $this->savLibraryMvcControllers[$controllerName]['viewTileBars'][$viewType];
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * Gets the SAV Library Mvc Controller view item template.
+     *
+     * @param string $controllerName
+     * @param string $viewType
+     *
+     * @return array
+     */
+    public function getSavLibraryMvcControllerViewItemTemplate($controllerName, $viewType)
+    {
+        if (is_array($this->savLibraryMvcControllers[$controllerName]) && is_array($this->savLibraryMvcControllers[$controllerName]['viewItemTemplates'])) {
+            return $this->savLibraryMvcControllers[$controllerName]['viewItemTemplates'][$viewType];
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * Gets the SAV Library Mvc Controller folders.
+     *
+     * @param string $controllerName
+     * @param string $viewType
+     *
+     * @return array
+     */
+    public function getSavLibraryMvcControllerFolders($controllerName, $viewType)
+    {
+        if (is_array($this->savLibraryMvcControllers[$controllerName]) && is_array($this->savLibraryMvcControllers[$controllerName]['folders'])) {
+            return $this->savLibraryMvcControllers[$controllerName]['folders'][$viewType];
+        } else {
+            return array();
+        }
+    }
+
+    /**
      * Gets the TCAFieldConfiguration.
      *
-     * @param string $fieldName            
+     * @param string $fieldName
      * @return array
      */
     public function getTCAFieldConfiguration($fieldName)
@@ -139,7 +214,7 @@ class DataMapFactory extends \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataM
     /**
      * Gets the TCAFieldLabel.
      *
-     * @param string $fieldName            
+     * @param string $fieldName
      * @return string
      */
     public function getTCAFieldLabel($fieldName)
@@ -160,7 +235,7 @@ class DataMapFactory extends \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataM
     /**
      * Gets the type of the field.
      *
-     * @param string $fieldName            
+     * @param string $fieldName
      * @return string
      */
     public function getFieldType($fieldName)
@@ -171,7 +246,7 @@ class DataMapFactory extends \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataM
     /**
      * Gets the SavLibraryMvc field configuration.
      *
-     * @param string $fieldName            
+     * @param string $fieldName
      * @return array
      */
     public function getSavLibraryMvcFieldConfiguration($fieldName)

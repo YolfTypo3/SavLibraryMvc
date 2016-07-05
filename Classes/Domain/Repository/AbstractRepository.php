@@ -25,6 +25,7 @@ namespace SAV\SavLibraryMvc\Domain\Repository;
  */
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use SAV\SavLibraryMvc\Controller\AbstractController;
+use SAV\SavLibraryMvc\Persistence\Mapper\DataMapFactory;
 
 /**
  * Abstract Repository for the SAV Library MVC
@@ -107,9 +108,10 @@ abstract class AbstractRepository extends \TYPO3\CMS\Extbase\Persistence\Reposit
     public function getDataMapFactory()
     {
         if ($this->dataMapFactory === NULL) {
-            $this->dataMapFactory = $this->objectManager->get('SAV\\SavLibraryMvc\\Persistence\\Mapper\\DataMapFactory');
-            $this->dataMapFactory->initialize($this->resolveModelClassName());
+            $this->dataMapFactory = $this->objectManager->get(DataMapFactory::class);
         }
+        $this->dataMapFactory->initialize($this->resolveModelClassName());
+
         return $this->dataMapFactory;
     }
 
@@ -122,7 +124,7 @@ abstract class AbstractRepository extends \TYPO3\CMS\Extbase\Persistence\Reposit
     {
         $object = $this->objectManager->get($this->resolveModelClassName());
 
-        // TODO Check before return
+        // TODO Add an error message
         return $object;
     }
 }
