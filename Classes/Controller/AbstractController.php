@@ -77,7 +77,7 @@ abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\Acti
      *
      * @var string
      */
-    protected static $allowedIconFileNameExtensions = '.gif,.png,.jpg,.jpeg';
+    protected static $allowedIconFileNameExtensions = '.gif,.png,.jpg,.jpeg,.svg';
 
     // Variable to encode/decode the special parameters
     protected static $specialParameters = array(
@@ -100,48 +100,56 @@ abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\Acti
 
 
     /**
+     * Controller object name
      *
      * @var string
      */
     protected static $controllerObjectName;
 
     /**
+     * Controller extension key
      *
      * @var string
      */
     protected static $controllerExtensionKey;
 
     /**
+     * Controller name
      *
      * @var string
      */
     protected static $controllerName;
 
     /**
+     * Original arguments
      *
      * @var array
      */
     protected static $originalArguments;
 
     /**
+     * Extension settings
      *
      * @var array
      */
     protected static $extensionSettings;
 
     /**
+     * Extbase framework configuration
      *
      * @var array
      */
     protected static $extbaseFrameworkConfiguration;
 
     /**
+     * Front end user manager
      *
      * @var \SAV\SavLibraryMvc\Managers\FrontendUserManager
      */
     protected $frontendUserManager;
 
     /**
+     * Viewer configuration
      *
      * @var \SAV\SavLibraryMvc\ViewConfiguration\AbstractViewConfiguration
      */
