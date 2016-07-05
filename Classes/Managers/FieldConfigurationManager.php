@@ -26,6 +26,8 @@ namespace SAV\SavLibraryMvc\Managers;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Resource\AbstractFile;
 use TYPO3\CMS\Core\Imaging\IconFactory;
+use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
+use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use SAV\SavLibraryMvc\Controller\AbstractController;
 use SAV\SavLibraryMvc\Controller\FlashMessages;
@@ -261,7 +263,7 @@ class FieldConfigurationManager
     {
         $addedFieldConfiguration = array();
 
-        if ($this->fieldConfiguration['value'] instanceof \TYPO3\CMS\Extbase\Persistence\ObjectStorage) {
+        if ($this->fieldConfiguration['value'] instanceof ObjectStorage) {
             $files = array();
             foreach ($this->fieldConfiguration['value'] as $object) {
                 $fileConfiguration = array();
@@ -304,7 +306,7 @@ class FieldConfigurationManager
 
                         // Processes the addIcon attribute
                         if ($this->fieldConfiguration['addIcon']) {
-                            $iconFactory = $this->objectManager->get('TYPO3\\CMS\\Core\\Imaging\\IconFactory');
+                            $iconFactory = $this->objectManager->get(IconFactory::class);
                             $pathParts = pathinfo($originalResource->getName());
                             $fileConfiguration['icon'] = $iconFactory->getIconForFileExtension($pathParts['extension'], \TYPO3\CMS\Core\Imaging\Icon::SIZE_SMALL)->getMarkup();
                         }
@@ -324,7 +326,7 @@ class FieldConfigurationManager
             $addedFieldConfiguration['alt'] = $this->fieldsConfiguration[$fieldAlt]['value'];
         }
         if (empty($this->fieldConfiguration['alt']) && empty($fieldAlt)) {
-            $addedFieldConfiguration['alt'] = $this->fieldConfiguration['value'];
+            $addedFieldConfiguration['alt'] = $this->fieldConfigurationc;
         }
 
         return $addedFieldConfiguration;
@@ -556,7 +558,7 @@ class FieldConfigurationManager
 
         $TSparser = $this->getGeneralManager()
             ->getObjectManager()
-            ->get('TYPO3\\CMS\\Core\\TypoScript\\Parser\\TypoScriptParser');
+            ->get(TypoScriptParser::class);
         $TSparser->parse($configuration);
         $contentObject = $this->getGeneralManager()
             ->getController()
@@ -593,7 +595,7 @@ class FieldConfigurationManager
 
         $TSparser = $this->getGeneralManager()
             ->getObjectManager()
-            ->get('TYPO3\\CMS\\Core\\TypoScript\\Parser\\TypoScriptParser');
+            ->get(TypoScriptParser::class);
         $TSparser->parse($configuration);
 
         $contentObject = $this->getGeneralManager()
