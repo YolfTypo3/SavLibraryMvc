@@ -72,9 +72,6 @@
 			<trans-unit id="extensionFlexform.deleteButtonOnlyForCruser" xml:space="preserve">
 				<source>Add a &quot;delete&quot; button only for records created by the user</source>
 			</trans-unit>
-			<trans-unit id="extensionFlexform.submitButton" xml:space="preserve">
-				<source>Add a &quot;submit&quot; button (to be used with a form)</source>
-			</trans-unit>
 			<trans-unit id="extensionFlexform.sheetTitle.sAdvanced" xml:space="preserve">
 				<source>Advanced</source>
 			</trans-unit>
@@ -87,14 +84,8 @@
 			<trans-unit id="extensionFlexform.allowQueryProperty" xml:space="preserve">
 				<source>Allow the use of the &quot;query&quot; property</source>
 			</trans-unit>
-			<trans-unit id="extensionFlexform.helpPage" xml:space="preserve">
-				<source>Help page</source>
-			</trans-unit>
 			<trans-unit id="extensionFlexform.help" xml:space="preserve">
 				<source>Help</source>
-			</trans-unit>
-			<trans-unit id="extensionFlexform.storagePage" xml:space="preserve">
-				<source>Storage page</source>
 			</trans-unit>
 			<trans-unit id="message.noAvailableInformation" xml:space="preserve">
 				<source>No available information</source>
@@ -141,9 +132,6 @@
 			<trans-unit id="warning.noRecord" xml:space="preserve">
 				<source>No record returned.</source>
 			</trans-unit>
-			<trans-unit id="error.configurationNeeded" xml:space="preserve">
-				<source>A configuration file is needed and the defaut file was not found. Please contact the WebMaster.</source>
-			</trans-unit>
 			<trans-unit id="error.extensionNotAllowed" xml:space="preserve">
 				<source>Error: invalid file type.</source>
 			</trans-unit>
@@ -179,9 +167,6 @@
 			</trans-unit>
 			<trans-unit id="error.incorrectCompressedString" xml:space="preserve">
 				<source>Error: incorrect parameter.</source>
-			</trans-unit>
-			<trans-unit id="error.incorrectCSS" xml:space="preserve">
-				<source>Error: unknown CSS file.</source>
 			</trans-unit>
 			<trans-unit id="error.incorrectSession" xml:space="preserve">
 				<source>Error: incorrect session. Close your brower and try again.</source>
@@ -351,12 +336,6 @@
 			<trans-unit id="button.show" xml:space="preserve">
 				<source>Show</source>
 			</trans-unit>
-			<trans-unit id="button.previousPage" xml:space="preserve">
-				<source>Previous</source>
-			</trans-unit>
-			<trans-unit id="button.nextPage" xml:space="preserve">
-				<source>Next</source>
-			</trans-unit>
 			<trans-unit id="button.backwardPage" xml:space="preserve">
 				<source>Previous</source>
 			</trans-unit>
@@ -416,27 +395,6 @@
 			</trans-unit>
 			<trans-unit id="icon.new" xml:space="preserve">
 				<source>New</source>
-			</trans-unit>
-			<trans-unit id="itemviewer.days.0" xml:space="preserve">
-				<source>Monday</source>
-			</trans-unit>
-			<trans-unit id="itemviewer.days.1" xml:space="preserve">
-				<source>Twesday</source>
-			</trans-unit>
-			<trans-unit id="itemviewer.days.2" xml:space="preserve">
-				<source>Wednesday</source>
-			</trans-unit>
-			<trans-unit id="itemviewer.days.3" xml:space="preserve">
-				<source>Thursday</source>
-			</trans-unit>
-			<trans-unit id="itemviewer.days.4" xml:space="preserve">
-				<source>Friday</source>
-			</trans-unit>
-			<trans-unit id="itemviewer.days.5" xml:space="preserve">
-				<source>Saturday</source>
-			</trans-unit>
-			<trans-unit id="itemviewer.days.6" xml:space="preserve">
-				<source>Sunday</source>
 			</trans-unit>
 			<trans-unit id="itemviewer.checkboxSelected" xml:space="preserve">
 				<source>Selected</source>
