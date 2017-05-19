@@ -62,52 +62,41 @@ class FieldConfigurationManager
   /x';
 
     /**
-     *
      * @var array
      */
     protected $savLibraryMvcColumns = array();
 
     /**
-     *
      * @var array
      */
     protected $fieldsConfiguration = array();
 
     /**
-     *
      * @var array
      */
     protected $fieldConfiguration = array();
 
     /**
-     *
      * @var boolean
-     *
      */
     protected $cutFlag;
 
     /**
-     *
      * @var integer
      */
     protected $viewIdentifier;
 
     /**
-     *
      * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage $object
-     *
      */
     protected $object = NULL;
 
     /**
-     *
      * @var \SAV\SavLibraryMvc\Domain\Repository\DefaultRepository $repository
-     *
      */
     protected $repository;
 
     /**
-     *
      * @var \TYPO3\CMS\Extbase\Object\ObjectManagerInterface
      */
     protected $objectManager;
@@ -182,6 +171,7 @@ class FieldConfigurationManager
 
             // Merges the TCA and the configuration frim the kickstarter
             $this->fieldConfiguration = array_merge($repository->getDataMapFactory()->getTCAFieldConfiguration($fieldName), $this->getSavLibraryMvcFieldConfigurationByView($fieldName));
+
             // Adds the label
             if (empty($this->fieldConfiguration['label'])) {
                 $this->fieldConfiguration['label'] = $repository->getDataMapFactory()->getTCAFieldLabel($fieldName);
@@ -192,6 +182,8 @@ class FieldConfigurationManager
             $this->fieldConfiguration['fieldType'] = $repository->getDataMapFactory()->getFieldType($fieldName);
             // Adds the folder
             $this->fieldConfiguration['folder'] = $this->getFolder($fieldName);
+            // Checks if the field should be displayed
+            $this->fieldConfiguration['display'] = ($this->fieldConfiguration['doNotDisplay'] ? 0 : 1);
             // Adds the required attribute
             $this->fieldConfiguration['required'] = $this->fieldConfiguration['required'] || preg_match('/required/', $this->fieldConfiguration['eval']) > 0;
             // Adds the default class label
@@ -230,7 +222,7 @@ class FieldConfigurationManager
             $this->fieldConfiguration['cutDivItemEnd'] = $this->getCutDivItemEnd();
 
             // Adds the property name
-            $this->fieldConfiguration['propertyName'] = $this->fieldConfiguration['fieldName'];
+            $this->fieldConfiguration['propertyName'] = GeneralUtility::underscoredToLowerCamelCase($this->fieldConfiguration['fieldName']);
 
             // Adds specific configuration depending on the type
             $addTypeBasedMethod = 'addFieldsConfigurationFor' . ucfirst($this->fieldConfiguration['fieldType']);
@@ -389,8 +381,8 @@ class FieldConfigurationManager
         $controller = $this->repository->getController();
 
         // Sets the flag to show first and last buttons
-        $addedFieldConfiguration['general']['showFirstLastButtons'] = $this->fieldConfiguration['nofirstlast'] ? 0 : 1;
-        unset($this->fieldsConfiguration[$fieldName]['nofirstlast']);
+        $addedFieldConfiguration['general']['showFirstLastButtons'] = $this->fieldConfiguration['noFirstLast'] ? 0 : 1;
+        unset($this->fieldsConfiguration[$fieldName]['noFirstLast']);
 
         // Computes the last page id in a subform
         $maximumItemsInSubform = $this->fieldConfiguration['maxSubformItems'];
@@ -508,7 +500,6 @@ class FieldConfigurationManager
      */
     protected function getValue()
     {
-
         // Gets the value directly from the kickstarter (specific and rare case)
         $value = $this->getSavLibraryMvcFieldAttributeByView($this->fieldConfiguration['fieldName'], 'value');
         if (! empty($value)) {
@@ -519,7 +510,7 @@ class FieldConfigurationManager
             // TODO Parse field tags
             // $value = $querier->parseFieldTags($value);
 
-        } elseif (! empty($this->fieldConfiguration['reqvalue'])) {
+        } elseif (! empty($this->fieldConfiguration['reqValue'])) {
             $value = $this->getValueFromRequest();
         } else {
             // If none of the above conditions is true, the value is obtained through one of the object getters
@@ -529,8 +520,8 @@ class FieldConfigurationManager
                 $fieldName = $this->fieldConfiguration['fieldName'];
             }
 
-            $method = 'get' . ucfirst($fieldName);
-            $value = $this->object->$method();
+            $getterName = 'get' . GeneralUtility::underscoredToUpperCamelCase($fieldName);
+            $value = $this->object->$getterName();
             // TODO Modify with default value
             if ($value === NULL) {
                 $value = '';
@@ -686,10 +677,10 @@ class FieldConfigurationManager
      */
     protected function getClassLabel()
     {
-        if (empty($this->fieldConfiguration['classlabel'])) {
+        if (empty($this->fieldConfiguration['classLabel'])) {
             return 'label';
         } else {
-            return 'label ' . $this->fieldConfiguration['classlabel'];
+            return 'label ' . $this->fieldConfiguration['classLabel'];
         }
     }
 
@@ -700,10 +691,10 @@ class FieldConfigurationManager
      */
     protected function getClassValue()
     {
-        if (empty($this->fieldConfiguration['classvalue'])) {
+        if (empty($this->fieldConfiguration['classValue'])) {
             $class = 'value';
         } else {
-            $class = 'value ' . $this->fieldConfiguration['classvalue'];
+            $class = 'value ' . $this->fieldConfiguration['classValue'];
         }
 
         return $class;
@@ -737,10 +728,10 @@ class FieldConfigurationManager
      */
     protected function getClassItem()
     {
-        if (empty($this->fieldConfiguration['classitem'])) {
+        if (empty($this->fieldConfiguration['classItem'])) {
             $class = 'item';
         } else {
-            $class = 'item ' . $this->fieldConfiguration['classitem'];
+            $class = 'item ' . $this->fieldConfiguration['classItem'];
         }
 
         return $class;
@@ -777,7 +768,7 @@ class FieldConfigurationManager
         // Cuts the label if the type is a RelationManyToManyAsSubform or cutLabel is not equal to zero
         if ($this->fieldConfiguration['fieldType'] == 'RelationManyToManyAsSubform') {
             $cut = TRUE;
-        } elseif ($this->fieldConfiguration['cutlabel']) {
+        } elseif ($this->fieldConfiguration['cutLabel']) {
             $cut = TRUE;
         } else {
             $cut = FALSE;
@@ -869,7 +860,7 @@ class FieldConfigurationManager
      */
     protected function cutIfEmpty()
     {
-        if ($this->fieldConfiguration['cutifnull'] || $this->fieldConfiguration['cutifempty']) {
+        if ($this->fieldConfiguration['cutIfNull'] || $this->fieldConfiguration['cutIfEmpty']) {
             $value = $this->getValue();
             return empty($value);
         } else {
@@ -885,10 +876,10 @@ class FieldConfigurationManager
      */
     public function cutIf()
     {
-        if ($this->fieldConfiguration['cutif']) {
-            return $this->processFieldCondition($this->fieldConfiguration['cutif']);
-        } elseif ($this->fieldConfiguration['showif']) {
-            return ! $this->processFieldCondition($this->fieldConfiguration['showif']);
+        if ($this->fieldConfiguration['cutIf']) {
+            return $this->processFieldCondition($this->fieldConfiguration['cutIf']);
+        } elseif ($this->fieldConfiguration['showIf']) {
+            return ! $this->processFieldCondition($this->fieldConfiguration['showIf']);
         } else {
             return FALSE;
         }
