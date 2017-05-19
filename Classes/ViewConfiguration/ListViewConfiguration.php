@@ -55,7 +55,7 @@ class ListViewConfiguration extends AbstractViewConfiguration
 
         // Defines the last available page in the list
         $maxItems = (integer) AbstractController::getSetting('maxItems');
-        $lastPage = ($maxItems ? floor(($mainRepository->countAll() - 1) / $maxItems) : 0);
+        $lastPage = ($maxItems ? floor(($mainRepository->countAllForListView() - 1) / $maxItems) : 0);
 
         // Defines the pages
         $page = (int) $uncompressedParameters['page'];
@@ -64,6 +64,8 @@ class ListViewConfiguration extends AbstractViewConfiguration
         }
 
         // Sets the general configuration for the view
+        $this->addGeneralViewConfiguration('extensionKey', AbstractController::getControllerExtensionKey());
+        $this->addGeneralViewConfiguration('controllerName', AbstractController::getControllerName());
         $this->addGeneralViewConfiguration('special', $special);
         $this->addGeneralViewConfiguration('orderLink', $uncompressedParameters['orderLink']);
         $this->addGeneralViewConfiguration('currentMode', $uncompressedParameters['mode']);
@@ -77,7 +79,7 @@ class ListViewConfiguration extends AbstractViewConfiguration
             ->userIsAllowedToInputData() && ! AbstractController::getSetting('noNewButton'));
 
         // Gets the number of items to display
-        $count = $mainRepository->countAll();
+        $count = $mainRepository->countAllForListView();
 
         // Processes the case where the count is equal to zero
         if ($count == 0) {
@@ -110,15 +112,18 @@ class ListViewConfiguration extends AbstractViewConfiguration
         foreach ($objects as $this->object) {
             $this->fieldConfigurationManager->addDynamicFieldsConfiguration($this->object);
 
+            // Gets the item configuration
+            $itemConfiguration = $this->getItemConfiguration();
+
             // Parses the fluid template
             $template = $this->templateParser->parse($fluidItemTemplate, array(
                 'fields' => $this->fieldConfigurationManager->getFieldsConfiguration(),
-                'general' => $this->getItemConfiguration()
+                'general' => $itemConfiguration
             ));
 
             $itemsConfiguration[] = array(
                 'template' => $template,
-                'general' => $this->getItemConfiguration()
+                'general' => $itemConfiguration
             );
         }
 
@@ -148,16 +153,22 @@ class ListViewConfiguration extends AbstractViewConfiguration
      */
     protected function getItemConfiguration()
     {
-
         // Uncompresses the special parameter
         $special = $this->getGeneralViewConfiguration('special');
         $uncompressedParameters = AbstractController::uncompressParameters($special);
 
         // Sets additional configuration values
         $isInEditMode = $uncompressedParameters['mode'] == AbstractController::EDIT_MODE;
+        $userIsAllowedToInputData = $this->controller->getFrontendUserManager()->userIsAllowedToInputData();
+        $userIsAllowedToChangeData = $this->controller->getFrontendUserManager()->userIsAllowedToChangeData($this->object);
         $isInDraftWorkspace = $this->controller->getMainRepository()->isInDraftWorkspace($this->object->getUid());
-        $editButtonIsAllowed = $isInEditMode && $this->controller->getFrontendUserManager()->userIsAllowedToInputData() && ! AbstractController::getSetting('noEditButton') && ! $isInDraftWorkspace;
-        $deleteButtonIsAllowed = $isInEditMode && $this->controller->getFrontendUserManager()->userIsAllowedToInputData() && ! AbstractController::getSetting('noDeleteButton') && ! $isInDraftWorkspace;
+
+        // Sets the general condition
+        $generalCondition = $isInEditMode && $userIsAllowedToInputData && $userIsAllowedToChangeData && ! $isInDraftWorkspace;
+
+        // Sets the button conditions
+        $editButtonIsAllowed = $generalCondition && ! AbstractController::getSetting('noEditButton');
+        $deleteButtonIsAllowed = $generalCondition && ! AbstractController::getSetting('noDeleteButton');
 
         // Sets the special parameters for the item
         $uncompressedParameters['uid'] = $this->object->getUid();
@@ -180,7 +191,6 @@ class ListViewConfiguration extends AbstractViewConfiguration
      */
     public function generateFluidItemTemplate()
     {
-
         // Gets the item templates
         $viewType = $this->getViewType();
         $itemTemplate = $this->controller->getViewItemTemplate($viewType);
