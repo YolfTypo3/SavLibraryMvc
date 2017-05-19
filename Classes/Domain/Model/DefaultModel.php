@@ -34,6 +34,84 @@ class DefaultModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
 {
 
     /**
+     * The crdate variable
+     *
+     * @var int
+     */
+    protected $crdate;
+
+    /**
+     * The cruserId variable
+     *
+     * @var int
+     */
+    protected $cruserId;
+
+    /**
+     * The cruserIdFrontend variable
+     *
+     * @var int
+     */
+    protected $cruserIdFrontend;
+
+    /**
+     * Last modified time
+     *
+     * @var int
+     */
+    protected $tstamp;
+
+    /**
+     * Getter for crdate
+     *
+     * @return int
+     */
+    public function getCrdate()
+    {
+        return $this->crdate;
+    }
+
+    /**
+     * Getter for cruserId
+     *
+     * @return int
+     */
+    public function getCruserId()
+    {
+        return $this->cruserId;
+    }
+
+    /**
+     * Setter for setCruserIdFrontend
+     *
+     * @param int $cruserIdFrontend
+     */
+    public function setCruserIdFrontend($cruserIdFrontend)
+    {
+        $this->cruserIdFrontend = $cruserIdFrontend;
+    }
+
+    /**
+     * Getter for cruserIdFrontend
+     *
+     * @return int
+     */
+    public function getCruserIdFrontend()
+    {
+        return $this->cruserIdFrontend;
+    }
+
+    /**
+     * Getter for tstamp
+     *
+     * @return int
+     */
+    public function getTstamp()
+    {
+        return $this->tstamp;
+    }
+
+    /**
      * Setter for uid.
      *
      * @param integer $uid
@@ -56,25 +134,30 @@ class DefaultModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
         $existingFiles = $fileStorage->toArray();
         $files = array();
         foreach ($uploadedFileStorage->toArray() as $uploadedFileKey => $uploadedFile) {
-            if ($uploadedFile->_getProperty(originalResource) !== NULL) {
-                $files[$uploadedFileKey] = $uploadedFile;
-            } else {
-                if (count($uploadedFileStorage->toArray()) === 1) {
-                    $files = $existingFiles;
-                } elseif (isset($existingFiles[$uploadedFileKey])) {
-                    if ($existingFiles[$uploadedFileKey] !== NULL) {
-                        $files[$uploadedFileKey] = $existingFiles[$uploadedFileKey];
-                    }
-                } else {
+            if ($uploadedFile !== NULL) {
+                if ($uploadedFile->_getProperty(originalResource) !== NULL) {
                     $files[$uploadedFileKey] = $uploadedFile;
+                } else {
+                    if (count($uploadedFileStorage->toArray()) === 1) {
+                        $files = $existingFiles;
+                    } elseif (isset($existingFiles[$uploadedFileKey])) {
+                        if ($existingFiles[$uploadedFileKey] !== NULL) {
+                            $files[$uploadedFileKey] = $existingFiles[$uploadedFileKey];
+                        }
+                    } else {
+                        $files[$uploadedFileKey] = $uploadedFile;
+                    }
                 }
             }
         }
-        $storage = new ObjectStorage();
-        foreach ($files as $file) {
-            $storage->attach($file);
+        if (count($files) > 0) {
+            $storage = new ObjectStorage();
+            foreach ($files as $file) {
+                $storage->attach($file);
+            }
+        } else {
+            $storage = NULL;
         }
-
         return $storage;
     }
 
