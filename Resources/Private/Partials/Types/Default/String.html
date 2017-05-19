@@ -1,14 +1,16 @@
 {namespace sav=SAV\SavLibraryMvc\ViewHelpers}
-<f:alias map="{makeItemLink: 'makeItemLink'}">
-	<f:if condition="{field.func} == {makeItemLink}">
-		<f:then>
-			<f:link.action action="single" arguments="{special:general.special}">
-      {field.value}
-      </f:link.action>
-		</f:then>
-		<f:else>
+<f:if condition="{field.func}">
+    <f:then>
+        <f:if condition="{field.func} == 'makeItemLink'">
+            <f:link.action action="single" arguments="{special:general.special}">{field.value}</f:link.action>
+	    </f:if>
+        <f:if condition="{field.func} == 'makeEmailLink'">
+            <f:link.email email="{field.value}" /> 
+        </f:if>       
+	</f:then>
+	<f:else>
       {field.value}
     </f:else>
-	</f:if>
-</f:alias>
+</f:if>
+
 
