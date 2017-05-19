@@ -58,6 +58,8 @@ class SingleViewConfiguration extends AbstractViewConfiguration
         $this->object = $mainRepository->findByUid($uid);
 
         // Sets general configuration values
+        $this->addGeneralViewConfiguration('extensionKey', AbstractController::getControllerExtensionKey());
+        $this->addGeneralViewConfiguration('controllerName', AbstractController::getControllerName());
         $this->addGeneralViewConfiguration('special', $special);
         $this->addGeneralViewConfiguration('currentMode', $uncompressedParameters['mode']);
         $userIsAllowedToInputData = $this->controller->getFrontendUserManager()->userIsAllowedToInputData() && ! $mainRepository->isInDraftWorkspace($uid);
