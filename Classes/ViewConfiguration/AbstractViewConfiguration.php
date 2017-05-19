@@ -158,7 +158,7 @@ abstract class AbstractViewConfiguration
                 $viewWithConditionConfiguration = $viewWithCondition['config'];
 
                 // Processes the condition if it exists
-                if (!empty($viewWithConditionConfiguration['cutif']) || !empty($viewWithConditionConfiguration['showif'])) {
+                if (!empty($viewWithConditionConfiguration['cutIf']) || !empty($viewWithConditionConfiguration['showIf'])) {
                     // Builds a field configuration manager
                     $fieldConfigurationManager = GeneralUtility::makeInstance(FieldConfigurationManager::class);
                     $fieldConfigurationManager->setFieldConfiguration($viewWithConditionConfiguration);
