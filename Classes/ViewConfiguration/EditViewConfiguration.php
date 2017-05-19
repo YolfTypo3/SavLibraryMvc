@@ -62,6 +62,8 @@ class EditViewConfiguration extends AbstractViewConfiguration
         }
 
         // Sets general configuration values
+        $this->addGeneralViewConfiguration('extensionKey', AbstractController::getControllerExtensionKey());
+        $this->addGeneralViewConfiguration('controllerName', AbstractController::getControllerName());
         $this->addGeneralViewConfiguration('object', $this->object);
         $this->addGeneralViewConfiguration('special', $special);
         $this->addGeneralViewConfiguration('currentMode', $uncompressedParameters['mode']);
