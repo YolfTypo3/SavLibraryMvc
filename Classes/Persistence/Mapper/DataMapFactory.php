@@ -134,6 +134,21 @@ class DataMapFactory extends \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataM
     }
 
     /**
+     * Gets the controller name from an index.
+     *
+     * @param integer $index
+     *
+     * @return string
+     */
+    public function getControllerNameFromIndex($index)
+    {
+        $controllerNames = array_keys($this->savLibraryMvcControllers);
+        $controllerName = $controllerNames[$index-1];
+        return $controllerName;
+    }
+
+
+    /**
      * Gets the SAV Library Mvc Controller view identifiers.
      *
      * @param string $controllerName
@@ -197,6 +212,23 @@ class DataMapFactory extends \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataM
             return $this->savLibraryMvcControllers[$controllerName]['folders'][$viewType];
         } else {
             return array();
+        }
+    }
+
+    /**
+     * Gets the SAV Library Mvc Controller query identifier.
+     *
+     * @param string $controllerName
+     * @param string $viewType
+     *
+     * @return array
+     */
+    public function getSavLibraryMvcControllerQueryIdentifier($controllerName)
+    {
+        if (is_array($this->savLibraryMvcControllers[$controllerName]) && isset($this->savLibraryMvcControllers[$controllerName]['queryIdentifier'])) {
+            return $this->savLibraryMvcControllers[$controllerName]['queryIdentifier'];
+        } else {
+            return null;
         }
     }
 
