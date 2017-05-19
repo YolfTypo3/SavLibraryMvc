@@ -40,14 +40,12 @@ class DefaultController extends AbstractController
      */
     public function listAction($special = NULL)
     {
-        // Checks if the user is authenticated
-        $uncompressedParameters = self::uncompressParameters($special);
-        $mode = $uncompressedParameters['mode'];
-
         $arguments = array(
             'special' => $special
         );
         $viewConfiguration = $this->getViewConfiguration($arguments);
+
+        // Sets the view parameters
         $this->view->assign('general', $viewConfiguration['general']);
         $this->view->assign('items', $viewConfiguration['items']);
     }
@@ -64,6 +62,7 @@ class DefaultController extends AbstractController
             'special' => $special
         );
         $viewConfiguration = $this->getViewConfiguration($arguments);
+
         // Sets the view parameters
         $this->view->assign('general', $viewConfiguration['general']);
         $this->view->assign('fields', $viewConfiguration['fields']);
@@ -122,17 +121,18 @@ class DefaultController extends AbstractController
 
         // Gets the arguments
         $arguments = $this->request->getArguments();
-
-        // Adds the current page to the stack in the cache service if not in the storage pages
-        if (! in_array($GLOBALS['TSFE']->id, self::getStoragePages())) {
-            $this->cacheService->getPageIdStack()->push($GLOBALS['TSFE']->id);
-        }
-
         $isNewItemInSubform = isset($uncompressedParameters['subformUidForeign']) && $uncompressedParameters['subformUidForeign'] == - 1;
 
         // Updates the data
         if (is_null($data->getUid())) {
             // New record in the main form. Creates a new object in the main repository and gets its uid
+
+            // Sets the cruser_id_frontend field
+            // Currently Extbase sets cruser_id to 0 when data are input in front end.
+            // The field cruser_id_frontend is in the default model and is created for all generated extensions.
+            // It was introduced to recover the id of the frontend user who created the record.
+            $data->setCruserIdFrontend($GLOBALS['TSFE']->fe_user->user['uid']);
+
             $this->getMainRepository()->add($data);
             $this->getMainRepository()->persistAll();
             $object = $this->getMainRepository()->findByIdentifier($data);
