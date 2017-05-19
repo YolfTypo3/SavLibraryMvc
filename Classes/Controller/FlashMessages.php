@@ -26,6 +26,7 @@ namespace SAV\SavLibraryMvc\Controller;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
  * Flash messages.
@@ -88,7 +89,7 @@ class FlashMessages
      */
     public static function translate($key, $arguments = NULL)
     {
-        return \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($key, 'sav_library_mvc', $arguments);
+        return LocalizationUtility::translate($key, 'sav_library_mvc', $arguments);
     }
 
     /**
