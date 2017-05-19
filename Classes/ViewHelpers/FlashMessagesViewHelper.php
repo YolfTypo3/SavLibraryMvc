@@ -32,21 +32,18 @@ namespace SAV\SavLibraryMvc\ViewHelpers;
  */
 class FlashMessagesViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\FlashMessagesViewHelper
 {
-    const RENDER_MODE_UL = 'ul';
-
     /**
-     * Render the flashmessages.
+     * Initialize arguments
      *
-     * @param string $renderMode
-     *            one of the RENDER_MODE_* constants
-     * @param string $as
-     *            The name of the current flashMessage variable for rendering inside
-     * @return string rendered Flash Messages, if there are any.
+     * @return void
+     * @api
      */
-    public function render($renderMode = self::RENDER_MODE_UL, $as = null)
-    {
-        $this->arguments['queueIdentifier'] = 'core.template.flashMessages';
-        return parent::render($renderMode);
+    public function initializeArguments() {
+        parent::initializeArguments();
+        // Tries to register the queueIdentifier if it does not exist - compatiblity for TYPO3 6.2
+        try {
+            $this->registerArgument('queueIdentifier', 'string', 'Flash-message queue to use');
+        } catch (\TYPO3\CMS\Fluid\Core\ViewHelper\Exception $e) {}
     }
 }
 ?>
