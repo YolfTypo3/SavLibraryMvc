@@ -37,7 +37,7 @@ coding**, thanks to simple configuration parameters. It includes:
 
 The latest developments of the SAV Library Mvc extension are
 available on GitHub ( `SAV Library Mvc
-<https://github.com/YolfTypo3/SAV-Library-Kickstarter-Project>`_ ).
+<https://github.com/YolfTypo3/SavLibraryKickstarterProject>`_ ).
 
 
 .. important::
