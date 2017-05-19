@@ -26,6 +26,7 @@
 		</f:if>
 		<div class="items">
 			<f:for each="{fields}" as="field">
+			    <f:if condition="{field.display}">
 				<sav:typoscript.wrap configuration="{field.wrapItem}">
 					<f:if condition="{field.folder} == {general.activeFolder}">
 						<f:comment>
@@ -70,6 +71,7 @@
 		</f:if>
 		</f:if>
 		</sav:typoscript.wrap>
+		</f:if>
 		</f:for>
 	</div>
 	<div class="footer">
