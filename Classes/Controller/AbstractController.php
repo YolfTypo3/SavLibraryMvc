@@ -52,14 +52,21 @@ abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\Acti
     public static $iconRootPath = 'Resources/Public/Icons';
 
     /**
-     * Image root path
+     * Images root path
      *
      * @var string
      */
     public static $imageRootPath = 'Resources/Public/Images';
 
     /**
-     * Styles root path
+     * Css root path
+     *
+     * @var string
+     */
+    public static $cssRootPath = 'Resources/Public/Css';
+
+    /**
+     * Styles root path (for compatibility with previously generated extensions)
      *
      * @var string
      */

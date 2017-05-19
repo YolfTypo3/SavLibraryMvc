@@ -68,7 +68,7 @@ class AdditionalHeaderManager
         $extensionKey = AbstractController::LIBRARY_NAME;
         $typoScriptConfiguration = AbstractController::getTypoScriptConfiguration($extensionKey);
         if (empty($typoScriptConfiguration['stylesheet'])) {
-            $cascadingStyleSheet = ExtensionManagementUtility::siteRelPath($extensionKey) . AbstractController::$stylesRootPath . '/' . $extensionKey . '.css';
+            $cascadingStyleSheet = ExtensionManagementUtility::siteRelPath($extensionKey) . AbstractController::$cssRootPath . '/' . $extensionKey . '.css';
             self::addCascadingStyleSheet($cascadingStyleSheet);
         } else {
             $cascadingStyleSheetAbsoluteFileName = GeneralUtility::getFileAbsFileName($typoScriptConfiguration['stylesheet']);
@@ -104,6 +104,9 @@ class AdditionalHeaderManager
                     htmlspecialchars($cascadingStyleSheetAbsoluteFileName)
                 )));
             }
+        } elseif (is_file(ExtensionManagementUtility::extPath($extensionKey) . AbstractController::$cssRootPath . '/' . $extensionKey . '.css')) {
+            $cascadingStyleSheet = ExtensionManagementUtility::siteRelPath($extensionKey) . AbstractController::$cssRootPath . '/' . $extensionKey . '.css';
+            self::addCascadingStyleSheet($cascadingStyleSheet);
         } elseif (is_file(ExtensionManagementUtility::extPath($extensionKey) . AbstractController::$stylesRootPath . '/' . $extensionKey . '.css')) {
             $cascadingStyleSheet = ExtensionManagementUtility::siteRelPath($extensionKey) . AbstractController::$stylesRootPath . '/' . $extensionKey . '.css';
             self::addCascadingStyleSheet($cascadingStyleSheet);
