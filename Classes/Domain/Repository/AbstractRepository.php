@@ -32,7 +32,6 @@ use SAV\SavLibraryMvc\Persistence\Mapper\DataMapFactory;
  */
 abstract class AbstractRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
 {
-
     /**
      *
      * @var \SAV\SavLibraryMvc\Controller\DefaultController
@@ -127,5 +126,123 @@ abstract class AbstractRepository extends \TYPO3\CMS\Extbase\Persistence\Reposit
         // TODO Add an error message
         return $object;
     }
+
+    /**
+     * Gets the filter constraints if any.
+     *
+     * @param \TYPO3\CMS\Extbase\Persistence\QueryInterface $query
+     * return \TYPO3\CMS\Extbase\Persistence\QueryInterface
+     */
+    protected function getFilterConstraints($query) {
+        // Gets the session variables
+        $sessionFilters = $GLOBALS['TSFE']->fe_user->getKey('ses', 'filters');
+        $sessionSelectedFilter = $GLOBALS['TSFE']->fe_user->getKey('ses', 'selectedFilter');
+        if (!empty($sessionFilters) && !empty($sessionSelectedFilter) && !empty($sessionFilters[$sessionSelectedFilter]) && $sessionFilters[$sessionSelectedFilter]['pageId'] == $this->getPageId()) {
+            return $sessionSelectedFilter::getFilterWhereClause($query);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Gets the filter constraints if any.
+     *
+     * return boolean
+     */
+    protected function keepWhereClause() {
+        // Gets the session variables
+        $sessionFilters = $GLOBALS['TSFE']->fe_user->getKey('ses', 'filters');
+        $sessionSelectedFilter = $GLOBALS['TSFE']->fe_user->getKey('ses', 'selectedFilter');
+        if (!empty($sessionFilters) && !empty($sessionSelectedFilter) && !empty($sessionFilters[$sessionSelectedFilter]) && $sessionFilters[$sessionSelectedFilter]['pageId'] == $this->getPageId()) {
+            return $sessionSelectedFilter::keepWhereClause();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Adds constraints to the query
+     *
+     * @param \TYPO3\CMS\Extbase\Persistence\QueryInterface $query
+     * @return \TYPO3\CMS\Extbase\Persistence\QueryInterface
+     */
+    protected function addConstraints($query)
+    {
+        // Gets filter constraints if any
+        $filterConstraints = $this->getFilterConstraints($query);
+
+        // Gets the where clause constraints
+        $whereClauseConstraints = $this->whereClause($query);
+
+        $finalConstraints = array();
+        if ($filterConstraints === null) {
+            // Applies the where clause
+            if($whereClauseConstraints !== null) {
+                $finalConstraints[] = $whereClauseConstraints;
+            }
+        } else {
+            // Applies the filter constraints
+            $finalConstraints[] = $filterConstraints;
+            // Applies the where clause constraints if required
+            if ($this->keepWhereClause() && $whereClauseConstraints !== null) {
+                $finalConstraints[] = $whereClauseConstraints;
+            }
+        }
+
+        if (!empty($finalConstraints)) {
+            $query = $query->matching($query->logicalAnd($finalConstraints));
+        }
+
+        return $query;
+    }
+
+    /**
+     * Defines the order by clause
+     *
+     * @param \TYPO3\CMS\Extbase\Persistence\QueryInterface $query
+     * @return void
+     */
+    protected function orderByClause($query)
+    {
+        $controllerName = $this->getController()->getControllerName();
+        $queryIdentifier = $this->dataMapFactory->getSavLibraryMvcControllerQueryIdentifier($controllerName);
+        if ($queryIdentifier !== null) {
+            $orderByClauseMethod = 'orderByClause' . $queryIdentifier;
+            if(method_exists($this, $orderByClauseMethod)) {
+                return $this->$orderByClauseMethod($query);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Defines the where clause
+     *
+     * @param \TYPO3\CMS\Extbase\Persistence\QueryInterface $query
+     * @return void
+     */
+    protected function whereClause($query)
+    {
+        $controllerName = $this->getController()->getControllerName();
+        $queryIdentifier = $this->dataMapFactory->getSavLibraryMvcControllerQueryIdentifier($controllerName);
+        if ($queryIdentifier !== NULL) {
+            $whereClauseMethod = 'whereClause' . $queryIdentifier;
+            if(method_exists($this, $whereClauseMethod)) {
+                return $this->$whereClauseMethod($query);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Gets the page id
+     *
+     * @return integer
+     */
+    protected function getPageId() {
+        return $GLOBALS['TSFE']->id;
+    }
+
 }
 ?>
