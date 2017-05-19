@@ -73,6 +73,8 @@ class DatePickerViewHelper extends \SAV\SavLibraryMvc\ViewHelpers\Form\AbstractF
      */
     public function render($arguments, $default = array())
     {
+        // Gets the name
+        $name = $this->getName();
 
         // Sets the date format
         if (! isset($default['format'])) {
