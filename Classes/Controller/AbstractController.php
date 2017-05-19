@@ -82,15 +82,16 @@ abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\Acti
     // Variable to encode/decode the special parameters
     protected static $specialParameters = array(
         'page', // 0
-        'mode', // 1
-        'folder', // 2
-        'orderLink', // 3
-        'uid', // 4
-        'subformKey', // 5
-        'subformUidForeign', // 6
-        'subformUidLocal', // 7
-        'subformPage', // 8
-        'subformActivePages', // 9
+        'formKey', // 1
+        'mode', // 2
+        'folder', // 3
+        'orderLink', // 4
+        'uid', // 5
+        'subformKey', // 6
+        'subformUidForeign', // 7
+        'subformUidLocal', // 8
+        'subformPage', // 9
+        'subformActivePages', // 10
     );
 
     // Variable to encode/decode the special parameters
@@ -315,18 +316,22 @@ abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\Acti
         // Class aliases for the compatibility with TYPO3 6.2
         CompatibilityUtility::setClassAliases();
 
+        // Gets the extension settings
+        self::$extensionSettings = $this->settings;
+
         // Keeps the controller information
         self::$controllerObjectName = $this->request->getControllerObjectName();
         self::$controllerExtensionKey = $this->request->getControllerExtensionKey();
-        self::$controllerName = $this->request->getControllerName();
-
         self::$originalArguments = $this->request->getArguments();
+
+        // Sets the controller index from the settings
+        $controllerIndex = self::getSetting('formId');
+        $dataMapFactory = $this->mainRepository->getDataMapFactory();
+        self::$controllerName = $dataMapFactory->getControllerNameFromIndex($controllerIndex);
+        $this->request->setControllerName(self::$controllerName);
 
         // Gets the extension framework configuration
          self::$extbaseFrameworkConfiguration = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
-
-         // Gets the extension settings
-         self::$extensionSettings = $this->settings;
 
         // Sets the controller where required
         $this->frontendUserManager->setController($this);
@@ -585,31 +590,6 @@ abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\Acti
     }
 
     /**
-     * Checks if the preview mode is active
-     *
-     * @return boolean True if the preview mode is active
-     */
-    public static function isInPreviewMode()
-    {
-        return ($GLOBALS['TSFE']->sys_page->versioningPreview ? TRUE : FALSE);
-    }
-
-    /**
-     * Gets the storage pages.
-     *
-     * return array The storage pages
-     */
-    public static function getStoragePages()
-    {
-        $storagePage = self::$extbaseFrameworkConfiguration['persistence']['storagePid'];
-
-        if (self::isInPreviewMode()) {
-            $storage = '-1,' . $storage;
-        }
-        return explode(',', $storagePage);
-    }
-
-    /**
      * Uncompresses a parameter string into an array
      *
      * @param string $compressedParameters
@@ -652,6 +632,7 @@ abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\Acti
     public static function compressParameters($parameters)
     {
         $compressedParameters = '';
+
         foreach ($parameters as $parameterKey => $parameter) {
             $parameterIndex = array_search($parameterKey, self::$specialParameters);
             if ($parameterIndex === false) {
