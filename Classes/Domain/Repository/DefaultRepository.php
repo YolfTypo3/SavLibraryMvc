@@ -32,37 +32,19 @@ class DefaultRepository extends AbstractRepository
 {
 
     /**
-     * Returns the count of all objects of this repository
+     * Returns the number objects of this repository
      *
-     * @return integer The count of objects
+     * @return int The object count
      */
-    public function countAll()
+    public function countAllForListView()
     {
         // Creates the query
         $query = $this->createQuery();
-        // Adds the settings
-        $query->getQuerySettings()->setStoragePageIds(AbstractController::getStoragePages());
-        // Gets the result
-        $result = $query->count();
 
-        return $result;
-    }
+        // Adds the cosntraints
+        $query = $this->addConstraints($query);
 
-    /**
-     * Returns all objects of this repository
-     *
-     * @return array An array of objects, empty if no objects found
-     */
-    public function findAll()
-    {
-        // Creates the query
-        $query = $this->createQuery();
-        // Adds the settings
-        $query->getQuerySettings()->setStoragePageIds(AbstractController::getStoragePages());
-        // Gets the result
-        $result = $query->execute();
-
-        return $result;
+        return $query->execute()->count();
     }
 
     /**
@@ -74,14 +56,14 @@ class DefaultRepository extends AbstractRepository
     {
         // Sets the limit
         $maxItems = (integer) AbstractController::getSetting('maxItems');
-        $limit = ($maxItems ? $maxItems : $this->countAll());
+        $limit = ($maxItems ? $maxItems : $this->countAllForListView());
         $offset = (int) $this->controller->getViewerConfiguration()->getGeneralViewConfiguration('page') * $limit;
 
         // Creates the query
         $query = $this->createQuery();
 
-        // Adds the settings
-        $query->getQuerySettings()->setStoragePageIds(AbstractController::getStoragePages());
+        // Adds the cosntraints
+        $query = $this->addConstraints($query);
 
         // Applies the order by clause
         $arguments = AbstractController::getOriginalArguments();
@@ -94,7 +76,7 @@ class DefaultRepository extends AbstractRepository
                 $this->$orderByMethod($query);
             } else {
                 // Applies the default ordering
-                $this->orderByClause($query);
+                $query = $this->orderByClause($query);
             }
         } else {
             // Applies the default ordering
@@ -108,6 +90,8 @@ class DefaultRepository extends AbstractRepository
 
         return $result;
     }
+
+
 
     /**
      * Returns all objects of this repository
