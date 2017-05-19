@@ -23,6 +23,7 @@ namespace SAV\SavLibraryMvc\Managers;
  *
  * This copyright notice MUST APPEAR in all copies of the script!
  */
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use SAV\SavLibraryMvc\Controller\AbstractController;
 use SAV\SavLibraryMvc\Controller\DefaultController;
 
@@ -109,28 +110,36 @@ class FrontendUserManager
     /**
      * Checks if the user is allowed to change data in the form
      *
+     * @param  \TYPO3\CMS\Extbase\Persistence\ObjectStorage $object
      * @param string $additionalString
      *            (default '') String which will be added to the field value
      *
      * @return boolean
      */
-    public function userIsAllowedToChangeData($additionalString = '')
+    public function userIsAllowedToChangeData($object, $additionalString = '')
     {
         if ($this->userIsSuperAdmin()) {
             return TRUE;
         }
 
+        // Gets the admin configuration fronm the user TS Config
         $inputAdminConfiguration = $GLOBALS['TSFE']->fe_user->getUserTSconf();
 
         // Condition on the Input Admin Field
         $conditionOnInputAdminField = TRUE;
-        $inputAdminField = AbstractController::getSettings('inputAdminField');
+        $inputAdminField = AbstractController::getSetting('inputAdminField');
+
         if (! empty($inputAdminField)) {
-            // TODO Get the value from the repository
-            $fieldValue = $this->getQuerier()->getFieldValueFromCurrentRow($this->getQuerier()
-                ->buildFullFieldName($inputAdminField));
+            // Gets the value
+            $getterName = 'get' . GeneralUtility::underscoredToUpperCamelCase($inputAdminField);
+            $fieldValue = $object->$getterName();
             $fieldValue = html_entity_decode($fieldValue . $additionalString, ENT_QUOTES);
+
             switch ($inputAdminField) {
+                // Currently Extbase sets cruser_id to 0 when data are input in front end.
+                // The field cruser_id_frontend is in the default model and is created for all generated extensions.
+                // It was introduced to recover the id of the frontend user who created the record.
+                case 'cruser_id_frontend':
                 case 'cruser_id':
                     // Checks if the user created the record
                     if ($fieldValue != $GLOBALS['TSFE']->fe_user->user['uid']) {
@@ -138,7 +147,7 @@ class FrontendUserManager
                     }
                     break;
                 default:
-                    $extensionKey = DefaultController::getExtensionKey();
+                    $extensionKey = DefaultController::getControllerExtensionKey();
                     $conditionOnInputAdminField = (strpos($inputAdminConfiguration[$extensionKey . '_Admin'], $fieldValue) === FALSE ? FALSE : TRUE);
                     break;
             }
@@ -154,7 +163,7 @@ class FrontendUserManager
     public function userIsSuperAdmin()
     {
         // Gets the extension key
-        $extensionKey = DefaultController::getExtensionKey();
+        $extensionKey = DefaultController::getControllerExtensionKey();
 
         // Gets the user TypoScript configuration
         $userTypoScriptConfiguration = $GLOBALS['TSFE']->fe_user->getUserTSconf();
