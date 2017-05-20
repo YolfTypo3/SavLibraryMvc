@@ -94,7 +94,7 @@ class RenderRelationOneToManySelectorboxViewHelper extends \TYPO3\CMS\Fluid\Core
                 }
                 return $options;
             case 'value':
-                return is_object($field['value']) ? $field['value']->$labelFieldGetter() : $field['items'][0][0];
+                return is_object($field['value']) ? $field['value']->$labelFieldGetter() : LocalizationUtility::translate($field['items'][0][0], $extensionKey);
         }
     }
 }
