@@ -1,0 +1,543 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" target-language="fr" datatype="plaintext" original="messages" date="2015-06-25T15:25:46Z" product-name="sav_library_mvc">
+		<header/>
+		<body>
+			<trans-unit id="extensionFlexform.sheetTitle.sDEF" xml:space="preserve">
+				<source>General</source>
+				<target>Général</target>
+			</trans-unit>
+			<trans-unit id="extensionFlexform.formId" xml:space="preserve">
+				<source>Select form</source>
+                <target>Choisir un formulaire</target>				
+			</trans-unit>
+			<trans-unit id="extensionFlexform.allowedGroups" xml:space="preserve">
+				<source>Allowed groups</source>
+                <target>Groupes autorisés</target> 				
+			</trans-unit>
+			<trans-unit id="extensionFlexform.inputAdminField" xml:space="preserve">
+				<source>Input Admin Field</source>
+				<target>Champ Admin</target>
+			</trans-unit>
+			<trans-unit id="extensionFlexform.noFilterShowAll" xml:space="preserve">
+				<source>Show all if no filter</source>
+				<target>Tout montrer si pas de filtre</target>
+			</trans-unit>
+			<trans-unit id="extensionFlexform.inputIsAllowed" xml:space="preserve">
+				<source>Allow authenticated FE users to input data</source>
+				<target>Autoriser les utilisateurs authentifiés à entrer des données</target>
+			</trans-unit>
+			<trans-unit id="extensionFlexform.inputStartDate" xml:space="preserve">
+				<source>Input start date</source>
+                <target>Date de début de saisie</target>  				
+			</trans-unit>
+			<trans-unit id="extensionFlexform.inputEndDate" xml:space="preserve">
+				<source>Input end date</source>
+                <target>Date de fin de saisie</target>  				
+			</trans-unit>
+			<trans-unit id="extensionFlexform.inputApplyLimit" xml:space="preserve">
+				<source>Apply date limit to</source>
+                <target>Appliquer la limite de date à</target>  				
+			</trans-unit>
+			<trans-unit id="extensionFlexform.inputApplyLimit.I.0" xml:space="preserve">
+				<source>Nobody</source>
+                <target>Personne</target> 				
+			</trans-unit>
+			<trans-unit id="extensionFlexform.inputApplyLimit.I.1" xml:space="preserve">
+				<source>All</source>
+                <target>Tous</target> 				
+			</trans-unit>
+			<trans-unit id="extensionFlexform.inputApplyLimit.I.2" xml:space="preserve">
+				<source>&quot;Admin plus&quot; users</source>
+				<target>Utilisateurs &quot;Admin plus&quot;</target>
+			</trans-unit>
+			<trans-unit id="extensionFlexform.inputApplyLimit.I.3" xml:space="preserve">
+				<source>All excluding &quot;Super Admin&quot;</source>
+				<target>Tous sauf les utilisateurs &quot;Super Admin&quot;</target>
+			</trans-unit>
+			<trans-unit id="extensionFlexform.showNoAvailableInformation" xml:space="preserve">
+				<source>If no information available</source>
+                <target>Si aucune information disponible</target>				
+			</trans-unit>
+			<trans-unit id="extensionFlexform.showNoAvailableInformation.I.0" xml:space="preserve">
+				<source>Show a message</source>
+                <target>Afficher un message</target>				
+			</trans-unit>
+			<trans-unit id="extensionFlexform.showNoAvailableInformation.I.1" xml:space="preserve">
+				<source>Do not show a message</source>
+                <target>Ne pas afficher de message</target>				
+			</trans-unit>
+			<trans-unit id="extensionFlexform.showNoAvailableInformation.I.2" xml:space="preserve">
+				<source>Hide the extension</source>
+                <target>Ne pas afficher l'extension</target>				
+			</trans-unit>
+			<trans-unit id="extensionFlexform.maxItems" xml:space="preserve">
+				<source>Max number of items</source>
+                <target>Nombre maximal d'éléments affichés</target>				
+			</trans-unit>
+			<trans-unit id="extensionFlexform.sheetTitle.sInput" xml:space="preserve">
+				<source>Input controls</source>
+                <target>Options de saisie</target>				
+			</trans-unit>
+			<trans-unit id="extensionFlexform.noNewButton" xml:space="preserve">
+				<source>No &quot;new&quot; button</source>
+                <target>Pas de bouton &quot;Nouveau&quot;</target>				
+			</trans-unit>
+			<trans-unit id="extensionFlexform.noEditButton" xml:space="preserve">
+				<source>No &quot;edit&quot; button</source>
+				<target>Pas de bouton &quot;Editer&quot;</target>
+			</trans-unit>
+			<trans-unit id="extensionFlexform.noDeleteButton" xml:space="preserve">
+				<source>No &quot;delete&quot; button</source>
+				<target>Pas de bouton &quot;Supprimer&quot;</target>
+			</trans-unit>
+			<trans-unit id="extensionFlexform.deleteButtonOnlyForCruser" xml:space="preserve">
+				<source>Add a &quot;delete&quot; button only for records created by the user</source>
+				<target>Ajouter un bouton &quot;Supprimer&quot; pour les enregistrements créés par l'utilisateur</target>
+			</trans-unit>
+			<trans-unit id="extensionFlexform.sheetTitle.sAdvanced" xml:space="preserve">
+				<source>Advanced</source>
+				<target>Avancées</target>
+			</trans-unit>
+			<trans-unit id="extensionFlexform.permanentFilter" xml:space="preserve">
+				<source>Permanent filter</source>
+				<target>Filtre permanent</target>
+			</trans-unit>
+			<trans-unit id="extensionFlexform.addFragment" xml:space="preserve">
+				<source>Add a fragment(#content id) to links</source>
+				<target>Ajouter un fragment (#content id) aux liens</target>
+			</trans-unit>
+			<trans-unit id="extensionFlexform.allowQueryProperty" xml:space="preserve">
+				<source>Allow the use of the &quot;query&quot; property</source>
+				<target>Autoriser l'utilisation de la propriété &quot;query&quot;</target>
+			</trans-unit>
+			<trans-unit id="extensionFlexform.help" xml:space="preserve">
+				<source>Help</source>
+				<target>Aide</target>
+			</trans-unit>
+			<trans-unit id="message.noAvailableInformation" xml:space="preserve">
+				<source>No available information</source>
+				<target>Aucune information disponible</target>
+			</trans-unit>
+			<trans-unit id="error.maxFileSizeExceededInUpload" xml:space="preserve">
+				<source>The file size is bigger than the maximum allowed size.</source>
+				<target></target>
+			</trans-unit>
+			<trans-unit id="error.cannotCreateDirectoryInUpload" xml:space="preserve">
+				<source>Error in creating the upload directory.</source>
+				<target></target>
+			</trans-unit>
+			<trans-unit id="error.forbiddenFileTypeInUpload" xml:space="preserve">
+				<source>This type of file cannot be uploaded.</source>
+				<target></target>
+			</trans-unit>   			
+			<trans-unit id="error.unknownGetMethod" xml:space="preserve">
+				<source>Error in the configuration. The getter associated with the following field is unknown: %s.</source>
+				<target></target>
+			</trans-unit>
+			<trans-unit id="error.unknownParameterInSpecial" xml:space="preserve">
+				<source>Unknown parameter in &quot;special&quot; argument.</source>
+				<target></target>
+			</trans-unit>
+			<trans-unit id="error.uploadAborted" xml:space="preserve">
+				<source>The upload was aborted.</source>
+				<target></target>
+			</trans-unit>
+			<trans-unit id="error.incorectDateFormat" xml:space="preserve">
+				<source>The format "%%%s" cannot be converted.</source>
+				<target></target>
+			</trans-unit>
+			<trans-unit id="message.clikToUpdate" xml:space="preserve">
+				<source>Clik on the right button at the top or the bottom of the form to validate data.</source>
+				<target></target>
+			</trans-unit>
+			<trans-unit id="message.dataSaved" xml:space="preserve">
+				<source>Your data were saved.</source>
+				<target></target>
+			</trans-unit>
+			<trans-unit id="message.forTests" xml:space="preserve">
+				<source>Message for tests: %s.</source>				
+			</trans-unit>
+			<trans-unit id="message.sameFieldName" xml:space="preserve">
+				<source>Several fields have the same name in a view (the first one was kept). Please check: %s.</source>
+			</trans-unit>
+			<trans-unit id="warning.delete" xml:space="preserve">
+				<source>Are you sure you want to delete this record?</source>
+				<target>Etes-vous sûr de vouloir supprimer cet enregistrement ?</target>
+			</trans-unit>
+			<trans-unit id="warning.save" xml:space="preserve">
+				<source>Save this record?</source>
+				<target>Sauvegarder cet enregistrement ? </target>
+			</trans-unit>
+			<trans-unit id="warning.noRecord" xml:space="preserve">
+				<source>No record returned.</source>
+				<target>Aucun enregistrement retourné. </target>
+			</trans-unit>
+			<trans-unit id="error.extensionNotAllowed" xml:space="preserve">
+				<source>Error: invalid file type.</source>				
+			</trans-unit>
+			<trans-unit id="error.fieldRequired" xml:space="preserve">
+				<source>Error: missing required values(s).</source>				
+			</trans-unit>
+			<trans-unit id="error.fieldVoid" xml:space="preserve">
+				<source>Error: the field must not be empty.</source>				
+			</trans-unit>
+			<trans-unit id="error.fieldIncorrectValue" xml:space="preserve">
+				<source>Error: incorrect value for this field.</source>
+			</trans-unit>
+			<trans-unit id="error.fileDoesNotExist" xml:space="preserve">
+				<source>File does not exist: %s.</source>
+				<target>Fichier inexistant : %s.</target>
+			</trans-unit>
+			<trans-unit id="error.fileOpenError" xml:space="preserve">
+				<source>File open error: %s.</source>
+				<target>Erreur d'ouverture du fichier : %s.</target>
+			</trans-unit>
+			<trans-unit id="error.fileReadError" xml:space="preserve">
+				<source>File read error: %s.</source>
+				<target>Erreur de lecture du fichier : %s.</target>
+			</trans-unit>
+			<trans-unit id="error.fileWriteError" xml:space="preserve">
+				<source>File write error: %s.</source>
+				<target>Erreur d'écriture du fichier : %s.</target>
+			</trans-unit>
+			<trans-unit id="error.incorrectAlias" xml:space="preserve">
+				<source>Error: incorrect alias: %s.</source>
+			</trans-unit>
+			<trans-unit id="error.incorrectDateFormat" xml:space="preserve">
+				<source>Error: incorrect date format.</source>
+			</trans-unit>
+			<trans-unit id="error.incorrectDateOption" xml:space="preserve">
+				<source>Error: incorrect date option.</source>
+			</trans-unit>
+			<trans-unit id="error.incorrectCompressedString" xml:space="preserve">
+				<source>Error: incorrect parameter.</source>
+			</trans-unit>
+			<trans-unit id="error.incorrectSession" xml:space="preserve">
+				<source>Error: incorrect session. Close your brower and try again.</source>
+			</trans-unit>
+			<trans-unit id="error.incorrectPluginConfiguration_2" xml:space="preserve">
+				<source>Edit and save the plugin configuration to take the flexform parameters into consideration.</source>
+			</trans-unit>
+			<trans-unit id="error.incorrectRTFSaveFileName" xml:space="preserve">
+				<source>Save file name is missing ( saveFileRTF=filename; is missing in the field configuration).</source>
+			</trans-unit>
+			<trans-unit id="error.incorrectRTFTemplateFileConfig" xml:space="preserve">
+				<source>Incorrect RTF template configuration (templateRTF=filename; is missing in the field configration).</source>
+			</trans-unit>
+			<trans-unit id="error.incorrectRTFTemplateFileExtension" xml:space="preserve">
+				<source>Incorrect RTF template file extension.</source>
+			</trans-unit>
+			<trans-unit id="error.incorrectRTFTemplateFileName" xml:space="preserve">
+				<source>Unknown RTF template file. Check the path.</source>
+			</trans-unit>
+			<trans-unit id="error.incorrectQuery" xml:space="preserve">
+				<source>Error in the query associated with the view: %s.</source>
+			</trans-unit>
+			<trans-unit id="error.incorrectQueryInsertNew" xml:space="preserve">
+				<source>Error in creating the new record. It may occur if you try to insert a field which does not exist in the table (e.g. field with the type &quot;Shown only in SAV Form&quot;).</source>
+			</trans-unit>
+			<trans-unit id="error.incorrectQueryInReqValue" xml:space="preserve">
+				<source>Error in the query associated with the property &quot;reqValue&quot; in the field: %s.</source>
+			</trans-unit>
+			<trans-unit id="error.incorrectQueryInQueryProperty" xml:space="preserve">
+				<source>Error in the query associated with the property &quot;query&quot;.</source>
+			</trans-unit>
+			<trans-unit id="error.incorrectQueryInContent" xml:space="preserve">
+				<source>Error in the query associated with the property &quot;content&quot; in the field: %s.</source>
+			</trans-unit>
+			<trans-unit id="error.incorrectQueryForeignTable" xml:space="preserve">
+				<source>The &quot;foreign table&quot; field in the query must start either by inner join, left join, right join or by a comma.</source>
+			</trans-unit>
+			<trans-unit id="error.incorrectVersion" xml:space="preserve">
+				<source>Please contact the Webmaster. Extension and library have not the same version. Open the extension with the kickstater and save it.</source>
+			</trans-unit>
+			<trans-unit id="error.incorrectXmlFile" xml:space="preserve">
+				<source>The XML file contains syntax errors: %s.</source>
+			</trans-unit>
+			<trans-unit id="error.incorrectXmlProducedFile" xml:space="preserve">
+				<source>The XML file produced during the export contains syntax errors. It may come from your template xml file.</source>
+			</trans-unit>
+			<trans-unit id="error.incorrectXsltFile" xml:space="preserve">
+				<source>The XSL tranformation file contains syntax errors: %s.</source>
+			</trans-unit>
+			<trans-unit id="error.incorrectXsltProcess" xml:space="preserve">
+				<source>The XSL tranformation failed.</source>
+			</trans-unit>
+			<trans-unit id="error.isValidLength" xml:space="preserve">
+				<source>The input has a length greater than the allowed length.</source>				
+			</trans-unit>
+			<trans-unit id="error.isValidInterval" xml:space="preserve">
+				<source>The input is not in the given interval.</source>
+			</trans-unit>
+			<trans-unit id="error.isValidPattern" xml:space="preserve">
+				<source>The input does not verify the expected pattern.</source>
+			</trans-unit>
+			<trans-unit id="error.isValidQuery" xml:space="preserve">
+				<source>The input does not verify the query verifier.</source>
+			</trans-unit>
+			<trans-unit id="error.missingDot" xml:space="preserve">
+				<source>Separate the field name from the table name by a dot &quot;.&quot; in: %s.</source>
+			</trans-unit>
+			<trans-unit id="error.missingEqualSign" xml:space="preserve">
+				<source>The sign = is missing in parameter: %s.</source>
+			</trans-unit>
+			<trans-unit id="error.missingLabel" xml:space="preserve">
+				<source>Please contact the webMaster. Missing label: %s.</source>
+			</trans-unit>
+			<trans-unit id="error.mkdirIncorrect" xml:space="preserve">
+				<source>Error: mkdir aborted.</source>
+			</trans-unit>
+			<trans-unit id="error.noFieldSelectedInForm" xml:space="preserve">
+				<source>Please contact the Webmaster. No field was selected in the form. Select at least a field with the kickstarter.</source>
+			</trans-unit>
+			<trans-unit id="error.noFieldSelectedInSubForm" xml:space="preserve">
+				<source>Please contact the Webmaster. No field was selected in the subform. Select at least a field with the kickstarter.</source>
+			</trans-unit>
+			<trans-unit id="error.noFormSelectedInFlexform" xml:space="preserve">
+				<source>Error: no form selected in the flexform of the extension: %s.</source>
+			</trans-unit>
+			<trans-unit id="error.notSavedElapsedTime" xml:space="preserve">
+				<source>Your latest changes could not been saved because the allocated time for inputs was over.</source>
+			</trans-unit>
+			<trans-unit id="error.onlySelectQueryAllowed" xml:space="preserve">
+				<source>Error: only SELECT query is allowed in the field: %s.</source>
+			</trans-unit>
+			<trans-unit id="error.queryPropertyNotAllowed" xml:space="preserve">
+				<source>Error: the use of the &quot;query&quot; property is not allowed in this extension.</source>
+			</trans-unit>
+			<trans-unit id="error.templateNeeded" xml:space="preserve">
+				<source>A template file is needed and the defaut template was not found. Please contact the WebMaster.</source>
+			</trans-unit>
+			<trans-unit id="error.underMaintenance" xml:space="preserve">
+				<source>This service is temporarily unavailable due to maintenance - please come back later.</source>
+			</trans-unit>
+			<trans-unit id="error.unknownFunctionInWhere" xml:space="preserve">
+				<source>The following function, used in a WHERE clause(###func:whereClause###), is not defined: %s.</source>
+			</trans-unit>
+			<trans-unit id="error.unknownMarker" xml:space="preserve">
+				<source>The following marker is unknown: %s.</source>
+			</trans-unit>
+			<trans-unit id="error.unknownType" xml:space="preserve">
+				<source>Please contact the Webmaster. The following type is unknown: %s.</source>
+			</trans-unit>
+			<trans-unit id="error.uploadedIncorrect" xml:space="preserve">
+				<source>Error: Upload aborted.</source>
+			</trans-unit>
+			<trans-unit id="error.verifierUnknown" xml:space="preserve">
+				<source>Extension configuration error: unknown verifier.</source>
+			</trans-unit>
+			<trans-unit id="error.verifierInvalidIntervalParameter" xml:space="preserve">
+				<source>Extension configuration error: invalid interval.</source>
+			</trans-unit>
+			<trans-unit id="error.xmlIdMissing" xml:space="preserve">
+				<source>An xml &quot;sav_id&quot; attribute must be used with the following &quot;sav_type&quot; attribute: %s.</source>
+			</trans-unit>
+			<trans-unit id="fatal.incorrectTCA" xml:space="preserve">
+				<source>Fatal error. The local table has an incorrect TCA. You may not have not used the correct name in the &quot;Local table&quot; field of the query associated with your form.</source>
+			</trans-unit>
+			<trans-unit id="fatal.notAuthenticated" xml:space="preserve">
+				<source>You must be authenticated to save, edit, delete data.</source>
+                <target>Vous devez être authentifié poure enregistrer, éditer ou supprimer vos données.</target>				
+			</trans-unit>
+			<trans-unit id="button.edit" xml:space="preserve">
+				<source>Edit</source>
+				<target>Editer</target>
+			</trans-unit>
+			<trans-unit id="button.save" xml:space="preserve">
+				<source>Save</source>
+				<target>Enregistrer</target>
+			</trans-unit>
+			<trans-unit id="button.saveandclose" xml:space="preserve">
+				<source>Save and close</source>
+				<target>Enregistrer et sortir</target>
+			</trans-unit>
+			<trans-unit id="button.saveandnew" xml:space="preserve">
+				<source>Enregistrer et nouveau</source>
+			</trans-unit>
+			<trans-unit id="button.saveandshow" xml:space="preserve">
+				<source>Save and show</source>
+				<target>Enregistrer et voir</target>
+			</trans-unit>
+			<trans-unit id="button.close" xml:space="preserve">
+				<source>Close</source>
+				<target>Sortir</target>
+			</trans-unit>
+			<trans-unit id="button.export" xml:space="preserve">
+				<source>Export in csv</source>
+			</trans-unit>
+			<trans-unit id="button.new" xml:space="preserve">
+				<source>New</source>
+				<target>Nouveau</target>
+			</trans-unit>
+			<trans-unit id="button.delete" xml:space="preserve">
+				<source>Delete</source>
+				<target>Supprimer</target>
+			</trans-unit>
+			<trans-unit id="button.enterEditMode" xml:space="preserve">
+				<source>Enter in the edit mode</source>
+				<target>Entrer en mode édition</target>
+			</trans-unit>
+			<trans-unit id="button.leaveEditMode" xml:space="preserve">
+				<source>Leave the edit mode</source>
+				<target>Quitter le mode édition</target>
+			</trans-unit>
+			<trans-unit id="button.generateRTF" xml:space="preserve">
+				<source>Generate RTF</source>
+			</trans-unit>
+			<trans-unit id="button.search" xml:space="preserve">
+				<source>Search</source>
+			</trans-unit>
+			<trans-unit id="button.show" xml:space="preserve">
+				<source>Show</source>
+				<target>Voir</target>
+			</trans-unit>
+			<trans-unit id="button.backwardPage" xml:space="preserve">
+				<source>Previous</source>
+				<target>Précédent</target>
+			</trans-unit>
+			<trans-unit id="button.forwardPage" xml:space="preserve">
+				<source>Next</source>
+				<target>Suivant</target>
+			</trans-unit>
+			<trans-unit id="button.backwardFirstPage" xml:space="preserve">
+				<source>First</source>
+				<target>Premier</target>
+			</trans-unit>
+			<trans-unit id="button.forwardLastPage" xml:space="preserve">
+				<source>Last</source>
+				<target>Dernier</target>
+			</trans-unit>
+			<trans-unit id="button.up" xml:space="preserve">
+				<source>Up</source>
+				<target>Monter</target>
+			</trans-unit>
+			<trans-unit id="button.down" xml:space="preserve">
+				<source>Down</source>
+				<target>Descendre</target>
+			</trans-unit>
+			<trans-unit id="button.deleteItem" xml:space="preserve">
+				<source>Delete Item</source>
+				<target>Supprimer l'item</target>
+			</trans-unit>
+			<trans-unit id="button.print" xml:space="preserve">
+				<source>Print</source>
+				<target>Imprimer</target>
+			</trans-unit>
+			<trans-unit id="button.help" xml:space="preserve">
+				<source>Help</source>
+				<target>Aide</target>
+			</trans-unit>
+			<trans-unit id="button.mail" xml:space="preserve">
+				<source>Send the email</source>
+			</trans-unit>
+			<trans-unit id="button.submit" xml:space="preserve">
+				<source>Submit the form</source>
+			</trans-unit>
+			<trans-unit id="button.orderAsc" xml:space="preserve">
+				<source>Sort by ascending order</source>
+			</trans-unit>
+			<trans-unit id="button.orderDesc" xml:space="preserve">
+				<source>Sort by descending order</source>
+			</trans-unit>
+			<trans-unit id="button.saveExportConfiguration" xml:space="preserve">
+				<source>Save export configuration</source>
+			</trans-unit>
+			<trans-unit id="button.loadExportConfiguration" xml:space="preserve">
+				<source>Load export configuration</source>
+			</trans-unit>
+			<trans-unit id="button.deleteExportConfiguration" xml:space="preserve">
+				<source>Delete export configuration</source>
+			</trans-unit>
+			<trans-unit id="button.toggleExportDisplay_1" xml:space="preserve">
+				<source>Display all fields</source>
+			</trans-unit>
+			<trans-unit id="button.toggleExportDisplay_0" xml:space="preserve">
+				<source>Display only selected fields</source>
+			</trans-unit>
+			<trans-unit id="icon.required" xml:space="preserve">
+				<source>Required field</source>
+			</trans-unit>
+			<trans-unit id="icon.new" xml:space="preserve">
+				<source>New</source>
+			</trans-unit>
+			<trans-unit id="itemviewer.checkboxSelected" xml:space="preserve">
+				<source>Selected</source>
+			</trans-unit>
+			<trans-unit id="itemviewer.checkboxNotSelected" xml:space="preserve">
+				<source>Not selected</source>
+			</trans-unit>
+			<trans-unit id="itemviewer.radioButtonSelected" xml:space="preserve">
+				<source>Selected</source>
+			</trans-unit>
+			<trans-unit id="itemviewer.radioButtonNotSelected" xml:space="preserve">
+				<source>Not selected</source>
+			</trans-unit>
+			<trans-unit id="itemviewer.yes" xml:space="preserve">
+				<source>Yes</source>
+			</trans-unit>
+			<trans-unit id="itemviewer.no" xml:space="preserve">
+				<source>No</source>
+			</trans-unit>
+			<trans-unit id="itemviewer.yesMult" xml:space="preserve">
+				<source>X</source>
+			</trans-unit>
+			<trans-unit id="itemviewer.noMult" xml:space="preserve">
+				<source>-</source>
+			</trans-unit>
+			<trans-unit id="itemviewer.configuration" xml:space="preserve">
+				<source>Configuration</source>
+			</trans-unit>
+			<trans-unit id="itemviewer.configurationGroup" xml:space="preserve">
+				<source>Group</source>
+			</trans-unit>
+			<trans-unit id="itemviewer.xmlFile" xml:space="preserve">
+				<source>XML file</source>
+			</trans-unit>
+			<trans-unit id="itemviewer.xsltFile" xml:space="preserve">
+				<source>XSLT file</source>
+			</trans-unit>
+			<trans-unit id="itemviewer.whereClause" xml:space="preserve">
+				<source>Where clause</source>
+			</trans-unit>
+			<trans-unit id="itemviewer.orderClause" xml:space="preserve">
+				<source>Order clause</source>
+			</trans-unit>
+			<trans-unit id="itemviewer.error" xml:space="preserve">
+				<source>Error</source>
+			</trans-unit>
+			<trans-unit id="itemviewer.warning" xml:space="preserve">
+				<source>Warning</source>
+			</trans-unit>
+			<trans-unit id="itemviewer.additionalTables" xml:space="preserve">
+				<source>Additional tables</source>
+			</trans-unit>
+			<trans-unit id="itemviewer.additionalFields" xml:space="preserve">
+				<source>Additional fields</source>
+			</trans-unit>
+			<trans-unit id="itemviewer.exportMM" xml:space="preserve">
+				<source>Export MM records</source>
+			</trans-unit>
+			<trans-unit id="itemviewer.groupBy" xml:space="preserve">
+				<source>Group By Clause</source>
+			</trans-unit>
+			<trans-unit id="itemviewer.includeAllFields" xml:space="preserve">
+				<source>Include all fields</source>
+			</trans-unit>
+			<trans-unit id="itemviewer.exportFieldNames" xml:space="preserve">
+				<source>Export field names</source>
+			</trans-unit>
+			<trans-unit id="itemviewer.orderedFieldList" xml:space="preserve">
+				<source>Order of the fields</source>
+			</trans-unit>
+			<trans-unit id="general.clickHere" xml:space="preserve">
+				<source>Click here</source>
+				<target>Cliquer ici</target> 
+			</trans-unit>
+			<trans-unit id="general.new" xml:space="preserve">
+				<source>New</source>
+				<target>Nouveau</target> 
+			</trans-unit>
+		</body>
+	</file>
+</xliff>
