@@ -1,5 +1,5 @@
 <?php
-namespace SAV\SavLibraryMvc\Managers;
+namespace YolfTypo3\SavLibraryMvc\Managers;
 
 /**
  * Copyright notice
@@ -24,7 +24,7 @@ namespace SAV\SavLibraryMvc\Managers;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use SAV\SavLibraryMvc\Controller\AbstractController;
+use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 
 /**
  * Session Manager.
@@ -153,8 +153,8 @@ class SessionManager
     public static function saveSession()
     {
         // Saves the library information
-        // $compressed = GeneralUtility::_GET(\SAV\SavLibraryPlus\Controller\AbstractController::LIBRARY_NAME);
-        // self::setFieldFromSession('compressedParameters', \SAV\SavLibraryPlus\Managers\UriManager::getCompressedParameters());
+        // $compressed = GeneralUtility::_GET(\YolfTypo3\SavLibraryPlus\Controller\AbstractController::LIBRARY_NAME);
+        // self::setFieldFromSession('compressedParameters', \YolfTypo3\SavLibraryPlus\Managers\UriManager::getCompressedParameters());
         // \TYPO3\CMS\Core\Utility\DebugUtility::debug(AbstractController::getControllerObjectName(), 'AbstractController::getControllerObjectName()');
         $GLOBALS['TSFE']->fe_user->setKey('ses', AbstractController::getControllerObjectName(), self::$libraryData);
         // \TYPO3\CMS\Core\Utility\DebugUtility::debug(self::$libraryData, 'save self::$libraryData');

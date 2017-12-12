@@ -1,5 +1,5 @@
 <?php
-namespace SAV\SavLibraryMvc\ViewConfiguration;
+namespace YolfTypo3\SavLibraryMvc\ViewConfiguration;
 
 /**
  * Copyright notice
@@ -25,9 +25,9 @@ namespace SAV\SavLibraryMvc\ViewConfiguration;
  */
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
-use SAV\SavLibraryMvc\Controller\AbstractController;
-use SAV\SavLibraryMvc\Controller\FlashMessages;
-use SAV\SavLibraryMvc\Managers\FieldConfigurationManager;
+use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
+use YolfTypo3\SavLibraryMvc\Controller\FlashMessages;
+use YolfTypo3\SavLibraryMvc\Managers\FieldConfigurationManager;
 
 /**
  * Abstract view configuration for the SAV Library MVC
@@ -51,13 +51,13 @@ abstract class AbstractViewConfiguration
 
     /**
      *
-     * @var \SAV\SavLibraryMvc\Controller\DefaultController
+     * @var \YolfTypo3\SavLibraryMvc\Controller\DefaultController
      */
     protected $controller = NULL;
 
     /**
      *
-     * @var \SAV\SavLibraryMvc\Parser\TemplateParser
+     * @var \YolfTypo3\SavLibraryMvc\Parser\TemplateParser
      */
     protected $templateParser = NULL;
 
@@ -75,7 +75,7 @@ abstract class AbstractViewConfiguration
 
     /**
      *
-     * @var \SAV\SavLibraryMvc\Managers\FieldConfigurationManager
+     * @var \YolfTypo3\SavLibraryMvc\Managers\FieldConfigurationManager
      */
     protected $fieldConfigurationManager;
 
@@ -88,7 +88,7 @@ abstract class AbstractViewConfiguration
     /**
      * Constructor
      *
-     * @param \SAV\SavLibraryMvc\Controller\DefaultController $controller
+     * @param \YolfTypo3\SavLibraryMvc\Controller\DefaultController $controller
      * @return void
      */
     public function __construct($controller)
@@ -99,10 +99,10 @@ abstract class AbstractViewConfiguration
     /**
      * Injects the template parser
      *
-     * @param \SAV\SavLibraryMvc\Parser\TemplateParser $templateParser
+     * @param \YolfTypo3\SavLibraryMvc\Parser\TemplateParser $templateParser
      * @return void
      */
-    public function injectTemplateParser(\SAV\SavLibraryMvc\Parser\TemplateParser $templateParser)
+    public function injectTemplateParser(\YolfTypo3\SavLibraryMvc\Parser\TemplateParser $templateParser)
     {
         $this->templateParser = $templateParser;
         $this->templateParser->setController($this->controller);
@@ -112,7 +112,7 @@ abstract class AbstractViewConfiguration
      * Injects the field configuration manager
      *
      * @param
-     *            \SAV\SavLibraryMvc\Managers\FieldConfigurationManager
+     *            \YolfTypo3\SavLibraryMvc\Managers\FieldConfigurationManager
      * @return void
      */
     public function injectFieldConfigurationManager(FieldConfigurationManager $fieldConfigurationManager)

@@ -1,5 +1,5 @@
 <?php
-namespace SAV\SavLibraryMvc\ViewConfiguration;
+namespace YolfTypo3\SavLibraryMvc\ViewConfiguration;
 
 /**
  * Copyright notice
@@ -25,7 +25,7 @@ namespace SAV\SavLibraryMvc\ViewConfiguration;
  */
 
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
-use SAV\SavLibraryMvc\Controller\AbstractController;
+use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 
 /**
  * List view configuration for the SAV Library MVC

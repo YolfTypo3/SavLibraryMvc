@@ -1,5 +1,5 @@
 <?php
-namespace SAV\SavLibraryMvc\Property\TypeConverter;
+namespace YolfTypo3\SavLibraryMvc\Property\TypeConverter;
 
 /**
  * Copyright notice
@@ -185,15 +185,15 @@ class UploadedFileReferenceConverter extends AbstractTypeConverter
         if (! GeneralUtility::verifyFilenameAgainstDenyPattern($uploadInfo['name'])) {
             throw new TypeConverterException('Uploading files with PHP file extensions is not allowed!', 1399312430);
         }
-        $allowedFileExtensions = $configuration->getConfigurationValue('SAV\\SavLibraryMvc\\Property\\TypeConverter\\UploadedFileReferenceConverter', self::CONFIGURATION_ALLOWED_FILE_EXTENSIONS);
+        $allowedFileExtensions = $configuration->getConfigurationValue(\YolfTypo3\SavLibraryMvc\Property\TypeConverter\UploadedFileReferenceConverter::class, self::CONFIGURATION_ALLOWED_FILE_EXTENSIONS);
         if ($allowedFileExtensions !== NULL) {
             $filePathInfo = PathUtility::pathinfo($uploadInfo['name']);
             if (! GeneralUtility::inList($allowedFileExtensions, strtolower($filePathInfo['extension']))) {
                 throw new TypeConverterException('File extension is not allowed!', 1399312430);
             }
         }
-        $uploadFolderId = $configuration->getConfigurationValue('SAV\\SavLibraryMvc\\Property\\TypeConverter\\UploadedFileReferenceConverter', self::CONFIGURATION_UPLOAD_FOLDER) ?  : $this->defaultUploadFolder;
-        $conflictMode = $configuration->getConfigurationValue('SAV\\SavLibraryMvc\\Property\\TypeConverter\\UploadedFileReferenceConverter', self::CONFIGURATION_UPLOAD_CONFLICT_MODE) ?  : $this->defaultConflictMode;
+        $uploadFolderId = $configuration->getConfigurationValue(\YolfTypo3\SavLibraryMvc\Property\TypeConverter\UploadedFileReferenceConverter::class, self::CONFIGURATION_UPLOAD_FOLDER) ?  : $this->defaultUploadFolder;
+        $conflictMode = $configuration->getConfigurationValue(\YolfTypo3\SavLibraryMvc\Property\TypeConverter\UploadedFileReferenceConverter::class, self::CONFIGURATION_UPLOAD_CONFLICT_MODE) ?  : $this->defaultConflictMode;
         $uploadFolder = $this->resourceFactory->retrieveFileOrFolderObject($uploadFolderId);
         $uploadedFile = $uploadFolder->addUploadedFile($uploadInfo, $conflictMode);
         $resourcePointer = isset($uploadInfo['submittedFile']['resourcePointer']) && strpos($uploadInfo['submittedFile']['resourcePointer'], 'file:') === FALSE ? $this->hashService->validateAndStripHmac($uploadInfo['submittedFile']['resourcePointer']) : NULL;
@@ -205,7 +205,7 @@ class UploadedFileReferenceConverter extends AbstractTypeConverter
      *
      * @param FalFile $file
      * @param int $resourcePointer
-     * @return \SAV\SavLibraryMvc\Domain\Model\DefaultModel
+     * @return \YolfTypo3\SavLibraryMvc\Domain\Model\DefaultModel
      */
     protected function createFileReferenceFromFalFileObject(FalFile $file, $resourcePointer = NULL)
     {
@@ -222,18 +222,18 @@ class UploadedFileReferenceConverter extends AbstractTypeConverter
      *
      * @param FalFileReference $falFileReference
      * @param int $resourcePointer
-     * @return \SAV\SavLibraryMvc\Domain\Model\DefaultModel
+     * @return \YolfTypo3\SavLibraryMvc\Domain\Model\DefaultModel
      */
     protected function createFileReferenceFromFalFileReferenceObject(FalFileReference $falFileReference, $resourcePointer = NULL)
     {
         if ($resourcePointer === NULL) {
             /**
              *
-             * @var $fileReference \SAV\SavLibraryMvc\Domain\Model\DefaultModel
+             * @var $fileReference \YolfTypo3\SavLibraryMvc\Domain\Model\DefaultModel
              */
-            $fileReference = $this->objectManager->get('TYPO3\\CMS\\Extbase\\Domain\\Model\\FileReference');
+            $fileReference = $this->objectManager->get(\TYPO3\CMS\Extbase\Domain\Model\FileReference::class);
         } else {
-            $fileReference = $this->persistenceManager->getObjectByIdentifier($resourcePointer, 'TYPO3\\CMS\\Extbase\\Domain\\Model\\FileReference', FALSE);
+            $fileReference = $this->persistenceManager->getObjectByIdentifier($resourcePointer, \TYPO3\CMS\Extbase\Domain\Model\FileReference::class, FALSE);
         }
         $fileReference->setOriginalResource($falFileReference);
         return $fileReference;

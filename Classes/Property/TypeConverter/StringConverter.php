@@ -1,5 +1,5 @@
 <?php
-namespace SAV\SavLibraryMvc\Property\TypeConverter;
+namespace YolfTypo3\SavLibraryMvc\Property\TypeConverter;
 
 /**
  * Copyright notice
@@ -69,7 +69,7 @@ class StringConverter extends \TYPO3\CMS\Extbase\Property\TypeConverter\Abstract
                 $source
             ));
         } else {
-            return \SAV\SavLibraryMvc\Utility\Conversion::stringArrayToCommaSeparatedString($source);
+            return \YolfTypo3\SavLibraryMvc\Utility\Conversion::stringArrayToCommaSeparatedString($source);
         }
     }
 }

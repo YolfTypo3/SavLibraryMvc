@@ -1194,8 +1194,26 @@
 }
 
 /** 
-	 * Keeps htmlarea properties 
-	 */
+* Keeps rte_ckeditor properties 
+*/
+.savLibraryMvc .cke_reset_all {
+    float: none;
+}
+.savLibraryMvc .cke_reset {
+    float: none;
+}
+.savLibraryMvc .cke_bottom {
+    padding-bottom: 2px;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 6px;
+    clear: left;
+}
+
+
+/** 
+* Keeps htmlarea properties 
+*/
 .savLibraryMvc div.htmlarea table {
 	background: inherit !important;
 	width: auto !important;
@@ -1223,4 +1241,8 @@
 .savLibraryMvc div.htmlarea select {
 	display: inline-block;
 	float: none;
+}
+
+.savLibraryMvc div.htmlarea .btn-toolbar .btn-group {
+    margin: 1px 1px;
 }

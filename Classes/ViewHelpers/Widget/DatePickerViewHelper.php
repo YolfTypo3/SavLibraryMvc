@@ -1,5 +1,5 @@
 <?php
-namespace SAV\SavLibraryMvc\ViewHelpers\Widget;
+namespace YolfTypo3\SavLibraryMvc\ViewHelpers\Widget;
 
 /**
  * Copyright notice
@@ -24,9 +24,9 @@ namespace SAV\SavLibraryMvc\ViewHelpers\Widget;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use SAV\SavLibraryMvc\Controller\AbstractController;
-use SAV\SavLibraryMvc\DatePicker\DatePicker;
-use SAV\SavLibraryMvc\Controller\FlashMessages;
+use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
+use YolfTypo3\SavLibraryMvc\DatePicker\DatePicker;
+use YolfTypo3\SavLibraryMvc\Controller\FlashMessages;
 
 /**
  * A date picker view helper.
@@ -40,7 +40,7 @@ use SAV\SavLibraryMvc\Controller\FlashMessages;
  * Output:
  * the date
  */
-class DatePickerViewHelper extends \SAV\SavLibraryMvc\ViewHelpers\Form\AbstractFormFieldViewHelper
+class DatePickerViewHelper extends \YolfTypo3\SavLibraryMvc\ViewHelpers\Form\AbstractFormFieldViewHelper
 {
 
     /**

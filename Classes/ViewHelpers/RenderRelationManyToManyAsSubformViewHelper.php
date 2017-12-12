@@ -1,5 +1,5 @@
 <?php
-namespace SAV\SavLibraryMvc\ViewHelpers;
+namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
 
 /**
  * Copyright notice
@@ -24,9 +24,9 @@ namespace SAV\SavLibraryMvc\ViewHelpers;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use SAV\SavLibraryMvc\Controller\AbstractController;
-use SAV\SavLibraryMvc\Domain\Repository\AbstractRepository;
-use SAV\SavLibraryMvc\Managers\FieldConfigurationManager;
+use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
+use YolfTypo3\SavLibraryMvc\Domain\Repository\AbstractRepository;
+use YolfTypo3\SavLibraryMvc\Managers\FieldConfigurationManager;
 
 /**
  * A view helper for building the options for the field selector.

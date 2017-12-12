@@ -1,10 +1,10 @@
 <?php
-namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
+namespace YolfTypo3\SavLibraryMvc\Compatibility\RichTextEditor;
 
 /**
  * Copyright notice
  *
- * (c) 2015 Laurent Foulloy <yolf.typo3@orange.fr>
+ * (c) 2016 Laurent Foulloy (yolf.typo3@orange.fr)
  * All rights reserved
  *
  * This script is part of the TYPO3 project. The TYPO3 project is
@@ -24,31 +24,24 @@ namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /**
- * Returns an array of numbers
+ * Compatibility for the rich text editor
  *
- * @package SavLibraryMvc
- * @version $Id:
+ * @package SavLibraryPlus
  */
-class RangeViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
+class RichTextEditorCompatibility
 {
 
-    /**
-     * Range viewhelper.
-     *
-     * @param integer $low
-     *            The low value
-     * @param integer $high
-     *            The high value
-     * @param integer $step
-     *            The step value
-     * @return array The range array
-     * @author Laurent Foulloy <yolf.typo3@oranage.fr>
-     *         @api
-     */
-    public function render($low, $high, $step = 1)
+    public static function getRichTextEditorRenderer()
     {
-        return range($low, $high, $step);
+        if (version_compare(TYPO3_version, '8.0', '<')) {
+            $richTextEditorRenderer = GeneralUtility::makeInstance(RichTextEditorRendererForTypo3VersionLowerThan8::class);
+        }  elseif (version_compare(TYPO3_version, '9.0', '<')) {
+            $richTextEditorRenderer = GeneralUtility::makeInstance(RichTextEditorRendererForTypo3VersionLowerThan9::class);
+        }
+
+        return $richTextEditorRenderer;
     }
 }
-?>

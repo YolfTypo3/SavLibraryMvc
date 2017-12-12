@@ -1,5 +1,5 @@
 <?php
-namespace SAV\SavLibraryMvc\DatePicker;
+namespace YolfTypo3\SavLibraryMvc\DatePicker;
 
 /**
  * Copyright notice
@@ -25,10 +25,10 @@ namespace SAV\SavLibraryMvc\DatePicker;
  */
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
-use SAV\SavLibraryMvc\Controller\AbstractController;
-use SAV\SavLibraryMvc\Managers\AdditionalHeaderManager;
-use SAV\SavLibraryMvc\Controller\FlashMessages;
-use SAV\SavLibraryMvc\Exception;
+use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
+use YolfTypo3\SavLibraryMvc\Managers\AdditionalHeaderManager;
+use YolfTypo3\SavLibraryMvc\Controller\FlashMessages;
+use YolfTypo3\SavLibraryMvc\Exception;
 
 /**
  * Date picker.

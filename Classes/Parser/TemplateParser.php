@@ -1,5 +1,5 @@
 <?php
-namespace SAV\SavLibraryMvc\Parser;
+namespace YolfTypo3\SavLibraryMvc\Parser;
 
 /**
  * Copyright notice
@@ -26,7 +26,7 @@ namespace SAV\SavLibraryMvc\Parser;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\View\StandaloneView;
-use SAV\SavLibraryMvc\Controller\AbstractController;
+use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 
 /**
  * Template Parser
@@ -36,14 +36,14 @@ class TemplateParser
 
     /**
      *
-     * @var \SAV\SavLibraryMvc\Controller\DefaultController
+     * @var \YolfTypo3\SavLibraryMvc\Controller\DefaultController
      */
     protected $controller = NULL;
 
     /**
      * Sets the controller
      *
-     * @param \SAV\SavLibraryMvc\Controller\DefaultController $controller
+     * @param \YolfTypo3\SavLibraryMvc\Controller\DefaultController $controller
      * @return void
      */
     public function setController($controller)
@@ -62,7 +62,7 @@ class TemplateParser
      *            The name space.
      * @return string The parsed content
      */
-    public function parse($content, $arguments = array(), $nameSpace = '{namespace sav=SAV\\SavLibraryMvc\\ViewHelpers}')
+    public function parse($content, $arguments = array(), $nameSpace = '{namespace sav=YolfTypo3\\SavLibraryMvc\\ViewHelpers}')
     {
         // Gets a standalone view
         $standaloneView = $this->controller->getObjectManager()->get(StandaloneView::class);

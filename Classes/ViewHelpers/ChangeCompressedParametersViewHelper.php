@@ -1,5 +1,5 @@
 <?php
-namespace SAV\SavLibraryMvc\ViewHelpers;
+namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
 
 /*
  * This script is part of the TYPO3 project - inspiring people to share! *
@@ -13,7 +13,7 @@ namespace SAV\SavLibraryMvc\ViewHelpers;
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General *
  * Public License for more details. *
  */
-use SAV\SavLibraryMvc\Controller\AbstractController;
+use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 
 /**
  * Changes a compressed parameter a string

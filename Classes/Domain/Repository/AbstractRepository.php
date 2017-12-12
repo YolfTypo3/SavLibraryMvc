@@ -1,5 +1,5 @@
 <?php
-namespace SAV\SavLibraryMvc\Domain\Repository;
+namespace YolfTypo3\SavLibraryMvc\Domain\Repository;
 
 /**
  * Copyright notice
@@ -24,8 +24,8 @@ namespace SAV\SavLibraryMvc\Domain\Repository;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use SAV\SavLibraryMvc\Controller\AbstractController;
-use SAV\SavLibraryMvc\Persistence\Mapper\DataMapFactory;
+use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
+use YolfTypo3\SavLibraryMvc\Persistence\Mapper\DataMapFactory;
 
 /**
  * Abstract Repository for the SAV Library MVC
@@ -34,20 +34,20 @@ abstract class AbstractRepository extends \TYPO3\CMS\Extbase\Persistence\Reposit
 {
     /**
      *
-     * @var \SAV\SavLibraryMvc\Controller\DefaultController
+     * @var \YolfTypo3\SavLibraryMvc\Controller\DefaultController
      */
     protected $controller = NULL;
 
     /**
      *
-     * @var \SAV\SavLibraryMvc\Persistence\Mapper\DataMapFactory
+     * @var \YolfTypo3\SavLibraryMvc\Persistence\Mapper\DataMapFactory
      */
     protected $dataMapFactory = NULL;
 
     /**
      * Sets the controller
      *
-     * @param \SAV\SavLibraryMvc\Controller\DefaultController $controller
+     * @param \YolfTypo3\SavLibraryMvc\Controller\DefaultController $controller
      * @return void
      */
     public function setController($controller)
@@ -58,7 +58,7 @@ abstract class AbstractRepository extends \TYPO3\CMS\Extbase\Persistence\Reposit
     /**
      * Gets the controller
      *
-     * @return \SAV\SavLibraryMvc\Controller\DefaultController $controller
+     * @return \YolfTypo3\SavLibraryMvc\Controller\DefaultController $controller
      */
     public function getController()
     {
@@ -102,7 +102,7 @@ abstract class AbstractRepository extends \TYPO3\CMS\Extbase\Persistence\Reposit
     /**
      * Gets the Data map factory.
      *
-     * return \SAV\SavLibraryMvc\Persistence\Mapper\DataMapFactory
+     * return \YolfTypo3\SavLibraryMvc\Persistence\Mapper\DataMapFactory
      */
     public function getDataMapFactory()
     {

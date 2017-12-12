@@ -1,5 +1,5 @@
 <?php
-namespace SAV\SavLibraryMvc\Persistence\Mapper;
+namespace YolfTypo3\SavLibraryMvc\Persistence\Mapper;
 
 /**
  * Copyright notice

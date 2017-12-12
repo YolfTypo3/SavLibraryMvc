@@ -1,5 +1,5 @@
 <?php
-namespace SAV\SavLibraryMvc\ViewHelpers;
+namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
 
 /**
  * Copyright notice
@@ -43,7 +43,7 @@ class GetIconSrcViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractView
     {
 
         // Checks if the file Name exists in the SAV Library Mvc
-        $filePath = \SAV\SavLibraryMvc\Controller\AbstractController::getIconPath($fileName);
+        $filePath = \YolfTypo3\SavLibraryMvc\Controller\AbstractController::getIconPath($fileName);
 
         if (file_exists($filePath)) {
             return $filePath;

@@ -1,5 +1,5 @@
 <?php
-namespace SAV\SavLibraryMvc\Controller;
+namespace YolfTypo3\SavLibraryMvc\Controller;
 
 /**
  * Copyright notice
@@ -27,8 +27,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
-use SAV\SavLibraryMvc\Managers\AdditionalHeaderManager;
-use SAV\SavLibraryMvc\Compatibility\CompatibilityUtility;
+use YolfTypo3\SavLibraryMvc\Managers\AdditionalHeaderManager;
+use YolfTypo3\SavLibraryMvc\Compatibility\CompatibilityUtility;
 
 /**
  * Abstract controller for the SAV Library MVC
@@ -152,24 +152,24 @@ abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\Acti
     /**
      * Front end user manager
      *
-     * @var \SAV\SavLibraryMvc\Managers\FrontendUserManager
+     * @var \YolfTypo3\SavLibraryMvc\Managers\FrontendUserManager
      */
     protected $frontendUserManager;
 
     /**
      * Viewer configuration
      *
-     * @var \SAV\SavLibraryMvc\ViewConfiguration\AbstractViewConfiguration
+     * @var \YolfTypo3\SavLibraryMvc\ViewConfiguration\AbstractViewConfiguration
      */
     protected $viewerConfiguration = NULL;
 
     /**
      * Injects the frontend user manager
      *
-     * @param \SAV\SavLibraryMvc\Controller\DefaultController $controller
+     * @param \YolfTypo3\SavLibraryMvc\Controller\DefaultController $controller
      * @return void
      */
-    public function injectFrontendUserManager(\SAV\SavLibraryMvc\Managers\FrontendUserManager $frontendUserManager)
+    public function injectFrontendUserManager(\YolfTypo3\SavLibraryMvc\Managers\FrontendUserManager $frontendUserManager)
     {
         $this->frontendUserManager = $frontendUserManager;
     }
@@ -217,7 +217,7 @@ abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\Acti
     /**
      * Gets the viewer configuration
      *
-     * @return \SAV\SavLibraryMvc\ViewConfiguration\AbstractViewConfiguration
+     * @return \YolfTypo3\SavLibraryMvc\ViewConfiguration\AbstractViewConfiguration
      */
     public function getViewerConfiguration($actionMethodName = NULL)
     {
@@ -228,7 +228,7 @@ abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\Acti
         if ($this->viewerConfiguration === NULL) {
 
             $action = str_replace('Action', '', ucfirst($actionMethodName));
-            $viewerConfigurationClass = 'SAV\\SavLibraryMvc\\ViewConfiguration\\' . $action . 'ViewConfiguration';
+            $viewerConfigurationClass = 'YolfTypo3\\SavLibraryMvc\\ViewConfiguration\\' . $action . 'ViewConfiguration';
             if (! $this->objectManager->isRegistered($viewerConfigurationClass)) {
                 // TODO Adds an error message
                 return NULL;
@@ -242,7 +242,7 @@ abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\Acti
     /**
      * Gets the main repository
      *
-     * @return \SAV\SavLibraryMvc\Repository\DefaultRepository
+     * @return \YolfTypo3\SavLibraryMvc\Repository\DefaultRepository
      */
     public function getMainRepository()
     {
@@ -320,8 +320,6 @@ abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\Acti
      */
     protected function initializeAction()
     {
-        // Class aliases for the compatibility with TYPO3 6.2
-        CompatibilityUtility::setClassAliases();
 
         // Gets the extension settings
         self::$extensionSettings = $this->settings;

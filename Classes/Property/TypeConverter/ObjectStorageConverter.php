@@ -1,5 +1,5 @@
 <?php
-namespace SAV\SavLibraryMvc\Property\TypeConverter;
+namespace YolfTypo3\SavLibraryMvc\Property\TypeConverter;
 
 /***************************************************************
  *  Copyright notice

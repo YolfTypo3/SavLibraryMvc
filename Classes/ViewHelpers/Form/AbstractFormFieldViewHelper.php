@@ -1,5 +1,5 @@
 <?php
-namespace SAV\SavLibraryMvc\ViewHelpers\Form;
+namespace YolfTypo3\SavLibraryMvc\ViewHelpers\Form;
 
 /*                                                                        *
  * This script is backported from the TYPO3 Flow package "TYPO3.Fluid".   *

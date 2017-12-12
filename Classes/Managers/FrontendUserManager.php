@@ -1,5 +1,5 @@
 <?php
-namespace SAV\SavLibraryMvc\Managers;
+namespace YolfTypo3\SavLibraryMvc\Managers;
 
 /**
  * Copyright notice
@@ -24,8 +24,8 @@ namespace SAV\SavLibraryMvc\Managers;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use SAV\SavLibraryMvc\Controller\AbstractController;
-use SAV\SavLibraryMvc\Controller\DefaultController;
+use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
+use YolfTypo3\SavLibraryMvc\Controller\DefaultController;
 
 /**
  * Frontend user manager.
@@ -44,17 +44,17 @@ class FrontendUserManager
 
     /**
      *
-     * @var \SAV\SavLibraryMvc\Controller\DefaultController
+     * @var \YolfTypo3\SavLibraryMvc\Controller\DefaultController
      */
     protected $controller = NULL;
 
     /**
      * Sets the controller
      *
-     * @param \SAV\SavLibraryMvc\Controller\DefaultController $controller
+     * @param \YolfTypo3\SavLibraryMvc\Controller\DefaultController $controller
      * @return void
      */
-    public function setController(\SAV\SavLibraryMvc\Controller\DefaultController $controller)
+    public function setController(\YolfTypo3\SavLibraryMvc\Controller\DefaultController $controller)
     {
         $this->controller = $controller;
     }

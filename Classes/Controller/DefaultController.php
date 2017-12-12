@@ -1,5 +1,5 @@
 <?php
-namespace SAV\SavLibraryMvc\Controller;
+namespace YolfTypo3\SavLibraryMvc\Controller;
 
 /**
  * Copyright notice
@@ -23,8 +23,11 @@ namespace SAV\SavLibraryMvc\Controller;
  *
  * This copyright notice MUST APPEAR in all copies of the script!
  */
-use SAV\SavLibraryMvc\Controller\FlashMessages;
-use SAV\SavLibraryMvc\Persistence\ObjectStorage;
+use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Resource\ResourceFactory;
+use YolfTypo3\SavLibraryMvc\Controller\FlashMessages;
+use YolfTypo3\SavLibraryMvc\Persistence\ObjectStorage;
 
 /**
  * Default controller for the SAV Library MVC
@@ -225,7 +228,7 @@ class DefaultController extends AbstractController
     {
         // Checks if the user is authenticated
         if ($this->getFrontendUserManager()->userIsAuthenticated() === FALSE) {
-            \SAV\SavLibraryMvc\Controller\FlashMessages::addError('fatal.notAuthenticated');
+            FlashMessages::addError('fatal.notAuthenticated');
             return $this->redirect('single', NULL, NULL, array(
                 'special' => $special
             ));
@@ -259,7 +262,7 @@ class DefaultController extends AbstractController
     {
         // Checks if the user is authenticated
         if ($this->getFrontendUserManager()->userIsAuthenticated() === FALSE) {
-            \SAV\SavLibraryMvc\Controller\FlashMessages::addError('fatal.notAuthenticated');
+            FlashMessages::addError('fatal.notAuthenticated');
             return $this->redirect('single', NULL, NULL, array(
                 'special' => $special
             ));
@@ -389,6 +392,49 @@ class DefaultController extends AbstractController
             'special' => $special
         ));
     }
+
+    /**
+     * Delete file action
+     *
+     * @param array $field
+     * @param integer $key
+     * @param string $special
+     * @return void
+     */
+    public function deleteFileAction($field, $key, $special = NULL)
+    {
+        // Gets the file reference object
+        $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
+        $uid = intval($field['value'][$key]);
+        $fileReferenceObject = $resourceFactory->getFileReferenceObject($uid);
+
+        // Deletes the file
+        $fileReferenceObject->getOriginalFile()->delete();
+
+        // Marks the file reference as deleted
+        if (version_compare(TYPO3_version, '8.0', '<')) {
+            $GLOBALS['TYPO3_DB']
+            ->exec_UPDATEquery(
+                'sys_file_reference',
+                'uid = '. $uid,
+                [ 'deleted' => 1 ]
+            );
+        } else {
+            GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable('sys_file_reference')
+            ->update(
+                'sys_file_reference',
+                [ 'deleted' => 1 ],  // set
+                [ 'uid' => $uid ] // where
+                );
+        }
+
+        // Redirects to the list in edit mode action
+        $this->redirect('edit', NULL, NULL, array(
+            'special' => $special
+        ));
+
+    }
+
 }
 
 ?>

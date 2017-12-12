@@ -1,5 +1,5 @@
 <?php
-namespace SAV\SavLibraryMvc\Property\TypeConverter;
+namespace YolfTypo3\SavLibraryMvc\Property\TypeConverter;
 
 /**
  * Copyright notice
@@ -66,7 +66,7 @@ class IntegerConverter extends \TYPO3\CMS\Extbase\Property\TypeConverter\Abstrac
                 $source
             ));
         } else {
-            return \SAV\SavLibraryMvc\Utility\Conversion::booleanArrayToInteger($source);
+            return \YolfTypo3\SavLibraryMvc\Utility\Conversion::booleanArrayToInteger($source);
         }
     }
 }

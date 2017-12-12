@@ -15,19 +15,12 @@ if (! function_exists('user_savlibraryMvcHelp')) {
         }
         $cshTag = $PA['fieldConf']['config']['userFuncParameters']['cshTag'];
 
-        if (version_compare(TYPO3_version, '7.0', '<')) {
-            $cshTag = lcfirst($cshTag);
-            $languageService = $GLOBALS['LANG'];
-            $message = $languageService->sL('LLL:EXT:' . $extensionKey . '/Resources/Private/Language/locallang.xlf:extensionFlexform.help');
-            $moduleToken = \TYPO3\CMS\Core\FormProtection\FormProtectionFactory::get()->generateToken('moduleCall', 'help_cshmanual');
-            $helpUrl = 'mod.php?M=help_cshmanual&moduleToken=' . $moduleToken . '&';
-        } else {
-            $cshTag = lcfirst($cshTag);
-            $languageService = $GLOBALS['LANG'];
-            $message = $languageService->sL('LLL:EXT:' . $extensionKey . '/Resources/Private/Language/locallang.xlf:extensionFlexform.help');
-            $moduleToken = \TYPO3\CMS\Core\FormProtection\FormProtectionFactory::get()->generateToken('moduleCall', 'help_CshmanualCshmanual');
-            $helpUrl = 'index.php?M=help_CshmanualCshmanual&moduleToken=' . $moduleToken . '&tx_cshmanual_help_cshmanualcshmanual[controller]=Help&tx_cshmanual_help_cshmanualcshmanual[action]=detail&';
-        }
+
+        $cshTag = lcfirst($cshTag);
+        $languageService = $GLOBALS['LANG'];
+        $message = $languageService->sL('LLL:EXT:' . $extensionKey . '/Resources/Private/Language/locallang.xlf:extensionFlexform.help');
+        $moduleToken = \TYPO3\CMS\Core\FormProtection\FormProtectionFactory::get()->generateToken('moduleCall', 'help_CshmanualCshmanual');
+        $helpUrl = 'index.php?M=help_CshmanualCshmanual&moduleToken=' . $moduleToken . '&tx_cshmanual_help_cshmanualcshmanual[controller]=Help&tx_cshmanual_help_cshmanualcshmanual[action]=detail&';
 
         $iconSrcAttribute = 'src="../typo3conf/ext/' . $extensionKey . '/Resources/Public/Icons/helpbubble.gif"';
         $icon = '<img ' . $iconSrcAttribute . ' class="typo3-csh-icon" alt="' . $cshTag . '" />';

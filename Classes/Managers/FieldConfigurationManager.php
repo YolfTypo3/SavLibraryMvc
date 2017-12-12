@@ -1,5 +1,5 @@
 <?php
-namespace SAV\SavLibraryMvc\Managers;
+namespace YolfTypo3\SavLibraryMvc\Managers;
 
 /**
  * Copyright notice
@@ -25,12 +25,13 @@ namespace SAV\SavLibraryMvc\Managers;
  */
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Resource\AbstractFile;
+use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
-use SAV\SavLibraryMvc\Controller\AbstractController;
-use SAV\SavLibraryMvc\Controller\FlashMessages;
+use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
+use YolfTypo3\SavLibraryMvc\Controller\FlashMessages;
 
 /**
  * Field configurataion manager.
@@ -92,7 +93,7 @@ class FieldConfigurationManager
     protected $object = NULL;
 
     /**
-     * @var \SAV\SavLibraryMvc\Domain\Repository\DefaultRepository $repository
+     * @var \YolfTypo3\SavLibraryMvc\Domain\Repository\DefaultRepository $repository
      */
     protected $repository;
 
@@ -147,7 +148,7 @@ class FieldConfigurationManager
      * Sets the static configuration for all the fields selected in a view.
      *
      * @param integer $viewIdentifier
-     * @param \SAV\SavLibraryMvc\Domain\Repository\DefaultRepository $repository
+     * @param \YolfTypo3\SavLibraryMvc\Domain\Repository\DefaultRepository $repository
      * @return void
      */
     public function setStaticFieldsConfiguration($viewIdentifier, $repository)
@@ -253,13 +254,13 @@ class FieldConfigurationManager
      */
     protected function addFieldConfigurationForFiles($fieldName)
     {
-        $addedFieldConfiguration = array();
+        $addedFieldConfiguration = array();;
 
         if ($this->fieldConfiguration['value'] instanceof ObjectStorage) {
             $files = array();
+
             foreach ($this->fieldConfiguration['value'] as $object) {
                 $fileConfiguration = array();
-
                 $originalResource = $object->getOriginalResource();
                 $fileConfiguration['fileName'] = $originalResource->getPublicUrl();
                 $fileConfiguration['shortFileName'] = $originalResource->getName();
@@ -285,7 +286,6 @@ class FieldConfigurationManager
 
                         // Gets the value
                         $fileConfiguration['value'] = $originalResource->getPublicUrl();
-                        ;
 
                         // Gets the message attribute
                         $fieldMessage = $this->fieldConfiguration['fieldMessage'];
@@ -638,7 +638,7 @@ class FieldConfigurationManager
         }
 
         // Creates an item viewer for the processing of the func attribute
-        // $itemViewer = GeneralUtility::makeInstance('SAV\\SavLibraryPlus\\ItemViewers\\General\\StringItemViewer');
+        // $itemViewer = GeneralUtility::makeInstance('YolfTypo3\\SavLibraryPlus\\ItemViewers\\General\\StringItemViewer');
         // $itemViewer->injectController($this->getController());
         // $itemViewer->injectItemConfiguration($this->kickstarterFieldConfiguration);
 
@@ -751,7 +751,7 @@ class FieldConfigurationManager
         } elseif ($querier->errorDuringUpdate() === TRUE) {
             $fieldName = $this->getFullFieldName();
             $errorCode = $querier->getFieldErrorCodeFromProcessedPostVariables($fieldName);
-            return $errorCode != \SAV\SavLibraryPlus\Queriers\UpdateQuerier::ERROR_NONE;
+            return $errorCode != \YolfTypo3\SavLibraryPlus\Queriers\UpdateQuerier::ERROR_NONE;
         } else {
             return FALSE;
         }

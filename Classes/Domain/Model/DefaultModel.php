@@ -1,5 +1,5 @@
 <?php
-namespace SAV\SavLibraryMvc\Domain\Model;
+namespace YolfTypo3\SavLibraryMvc\Domain\Model;
 
 /**
  * Copyright notice
@@ -25,7 +25,7 @@ namespace SAV\SavLibraryMvc\Domain\Model;
  */
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
-use SAV\SavLibraryMvc\Controller\FlashMessages;
+use YolfTypo3\SavLibraryMvc\Controller\FlashMessages;
 
 /**
  * Standard Model for the SAV Library MVC
@@ -131,13 +131,13 @@ class DefaultModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      */
     protected function updateFileStorage($fileStorage, $uploadedFileStorage)
     {
-        $existingFiles = $fileStorage->toArray();
         $files = array();
         foreach ($uploadedFileStorage->toArray() as $uploadedFileKey => $uploadedFile) {
             if ($uploadedFile !== NULL) {
                 if ($uploadedFile->_getProperty(originalResource) !== NULL) {
                     $files[$uploadedFileKey] = $uploadedFile;
                 } else {
+                    $existingFiles = $fileStorage->toArray();
                     if (count($uploadedFileStorage->toArray()) === 1) {
                         $files = $existingFiles;
                     } elseif (isset($existingFiles[$uploadedFileKey])) {
@@ -150,8 +150,16 @@ class DefaultModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
                 }
             }
         }
+
         if (count($files) > 0) {
             $storage = new ObjectStorage();
+            // Duplicates existing files
+            if ($fileStorage !== NULL) {
+                foreach ($fileStorage as $file) {
+                    $storage->attach($file);
+                }
+            }
+            // Adds the uploaded files
             foreach ($files as $file) {
                 $storage->attach($file);
             }

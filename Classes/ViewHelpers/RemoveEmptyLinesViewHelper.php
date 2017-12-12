@@ -1,5 +1,5 @@
 <?php
-namespace SAV\SavLibraryMvc\ViewHelpers;
+namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
 
 /**
  * Copyright notice

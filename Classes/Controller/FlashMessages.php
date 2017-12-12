@@ -1,5 +1,5 @@
 <?php
-namespace SAV\SavLibraryMvc\Controller;
+namespace YolfTypo3\SavLibraryMvc\Controller;
 
 /**
  * Copyright notice

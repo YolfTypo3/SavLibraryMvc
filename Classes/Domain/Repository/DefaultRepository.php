@@ -1,5 +1,5 @@
 <?php
-namespace SAV\SavLibraryMvc\Domain\Repository;
+namespace YolfTypo3\SavLibraryMvc\Domain\Repository;
 
 /**
  * Copyright notice
@@ -23,7 +23,7 @@ namespace SAV\SavLibraryMvc\Domain\Repository;
  *
  * This copyright notice MUST APPEAR in all copies of the script!
  */
-use SAV\SavLibraryMvc\Controller\AbstractController;
+use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 
 /**
  * Default Repository for the SAV Library MVC

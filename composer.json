@@ -1,0 +1,39 @@
+{
+    "name": "yolftypo3/sav-library-mvc",
+    "description": "Library based on fluid and extbase for extensions generated with the SAV Library Kickstarter.",
+    "keywords": [
+        "TYPO3 CMS",
+        "Kickstarter",        
+        "SAV Library",
+        "Extension generator"
+    ],
+    "homepage": "https://github.com/YolfTypo3/SavLibraryKickstarterProject",      
+    "type": "typo3-cms-extension",
+    "license": "GPL-2.0+",
+    "authors": [
+        {
+        "name": "Laurent Foulloy",
+        "email": "yolf.typo3@orange.fr",
+        "role": "Developer"
+        }
+    ],
+    "replace": {
+        "sav_library_mvc": "self.version",
+        "typo3-ter/sav-library-mvc": "self.version"
+    },
+    "require": {
+        "typo3/cms-core": ">=7.6,<9.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "YolfTypo3\\SavLibraryMvc\\": "Classes/"
+        }
+    },
+    "extra": {
+        "typo3/class-alias-loader": {
+            "class-alias-maps": [
+                "Migrations/Code/ClassAliasMap.php"
+            ]
+        }
+    } 
+}

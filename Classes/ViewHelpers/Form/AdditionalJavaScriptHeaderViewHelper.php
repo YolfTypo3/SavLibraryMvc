@@ -1,5 +1,5 @@
 <?php
-namespace SAV\SavLibraryMvc\ViewHelpers\Form;
+namespace YolfTypo3\SavLibraryMvc\ViewHelpers\Form;
 
 /*
  * This script is part of the TYPO3 project - inspiring people to share! *
@@ -42,7 +42,7 @@ class AdditionalJavaScriptHeaderViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHel
      */
     public function render()
     {
-        \SAV\SavLibraryMvc\Managers\AdditionalHeaderManager::addAdditionalJavaScriptHeader();
+        \YolfTypo3\SavLibraryMvc\Managers\AdditionalHeaderManager::addAdditionalJavaScriptHeader();
     }
 }
 ?>

@@ -1,8 +1,17 @@
-{namespace sav=SAV\SavLibraryMvc\ViewHelpers}
+{namespace sav=YolfTypo3\SavLibraryMvc\ViewHelpers}
+
 <f:for each="{sav:range(low:1, high:field.maxitems)}" as="range"
 	key="key">
 	<f:alias map="{file:'{field.files->sav:getItem(key:key)}'}">
 		<div class="file item{key}">
+		    <f:if condition="{file.shortFileName}">
+                <f:link.action action="deleteFile"
+                    arguments="{field:field,key:key,special:general.special}">
+                    <f:image src="{sav:getIconSrc(fileName:'delete.gif')}"
+                        alt="{f:translate(key:'button.delete', extensionName:'SavLibraryMvc')}"
+                        title="{f:translate(key:'button.delete', extensionName:'SavLibraryMvc')}" />
+                </f:link.action>
+		    </f:if>
 			<f:form.textfield class="fileText"
 				name="temp[files][name][{field.fieldName}][{key}]"
 				value="{file.shortFileName}" />

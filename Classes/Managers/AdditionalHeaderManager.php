@@ -1,5 +1,5 @@
 <?php
-namespace SAV\SavLibraryMvc\Managers;
+namespace YolfTypo3\SavLibraryMvc\Managers;
 
 /**
  * Copyright notice
@@ -26,8 +26,8 @@ namespace SAV\SavLibraryMvc\Managers;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Page\PageRenderer;
-use SAV\SavLibraryMvc\Controller\AbstractController;
-use SAV\SavLibraryMvc\Controller\FlashMessages;
+use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
+use YolfTypo3\SavLibraryMvc\Controller\FlashMessages;
 
 /**
  * Additional header manager.
@@ -76,7 +76,7 @@ class AdditionalHeaderManager
                 $cascadingStyleSheet = substr($cascadingStyleSheetAbsoluteFileName, strlen(PATH_site));
                 self::addCascadingStyleSheet($cascadingStyleSheet);
             } else {
-                throw new \SAV\SavLibraryMvc\Exception(FlashMessages::translate('error.fileDoesNotExist', array(
+                throw new \YolfTypo3\SavLibraryMvc\Exception(FlashMessages::translate('error.fileDoesNotExist', array(
                     htmlspecialchars($cascadingStyleSheetAbsoluteFileName)
                 )));
             }
@@ -100,7 +100,7 @@ class AdditionalHeaderManager
                 $cascadingStyleSheet = substr($cascadingStyleSheetAbsoluteFileName, strlen(PATH_site));
                 self::addCascadingStyleSheet($cascadingStyleSheet);
             } else {
-                throw new \SAV\SavLibraryMvc\Exception(FlashMessages::translate('error.fileDoesNotExist', array(
+                throw new \YolfTypo3\SavLibraryMvc\Exception(FlashMessages::translate('error.fileDoesNotExist', array(
                     htmlspecialchars($cascadingStyleSheetAbsoluteFileName)
                 )));
             }
@@ -150,7 +150,11 @@ class AdditionalHeaderManager
     public static function loadRequireJsModule($mainModuleName)
     {
         $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
-        $pageRenderer->loadRequireJsModule($mainModuleName);
+        if(is_array($mainModuleName)) {
+            $pageRenderer->loadRequireJsModule(key($mainModuleName), current($mainModuleName));
+        } else {
+            $pageRenderer->loadRequireJsModule($mainModuleName);
+        }
     }
 
     /**
