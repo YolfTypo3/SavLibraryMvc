@@ -1,28 +1,19 @@
 <?php
 namespace YolfTypo3\SavLibraryMvc\Controller;
 
-/**
- * Copyright notice
+/*
+ * This file is part of the TYPO3 CMS project.
  *
- * (c) 2015 Laurent Foulloy <yolf.typo3@orange.fr>
- * All rights reserved
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
  *
- * This script is part of the TYPO3 project. The TYPO3 project is
- * free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with TYPO3 source code.
  *
- * The GNU General Public License can be found at
- * http://www.gnu.org/copyleft/gpl.html.
- *
- * This script is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * This copyright notice MUST APPEAR in all copies of the script!
+ * The TYPO3 project - inspiring people to share!
  */
+
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
@@ -34,18 +25,17 @@ use YolfTypo3\SavLibraryMvc\Persistence\ObjectStorage;
  */
 class DefaultController extends AbstractController
 {
-
     /**
      * List action
      *
      * @param string $special
      * @return void
      */
-    public function listAction($special = NULL)
+    public function listAction($special = null)
     {
-        $arguments = array(
+        $arguments = [
             'special' => $special
-        );
+        ];
         $viewConfiguration = $this->getViewConfiguration($arguments);
 
         // Sets the view parameters
@@ -59,11 +49,11 @@ class DefaultController extends AbstractController
      * @param string $special
      * @return void
      */
-    public function singleAction($special = NULL)
+    public function singleAction($special = null)
     {
-        $arguments = array(
+        $arguments = [
             'special' => $special
-        );
+        ];
         $viewConfiguration = $this->getViewConfiguration($arguments);
 
         // Sets the view parameters
@@ -78,19 +68,20 @@ class DefaultController extends AbstractController
      * @param string $special
      * @return void
      */
-    public function editAction($special = NULL)
+    public function editAction($special = null)
     {
         // Checks if the user is authenticated
-        if ($this->getFrontendUserManager()->userIsAuthenticated() === FALSE) {
+        if ($this->getFrontendUserManager()->userIsAuthenticated() === false) {
             FlashMessages::addError('fatal.notAuthenticated');
-            return $this->redirect('single', NULL, NULL, array(
-                'special' => $special
-            ));
+            return $this->redirect('single', null, null, [
+                    'special' => $special
+                ]
+            );
         }
 
-        $arguments = array(
+        $arguments = [
             'special' => $special
-        );
+        ];
         $viewConfiguration = $this->getViewConfiguration($arguments);
 
         // Sets the view parameters
@@ -115,11 +106,12 @@ class DefaultController extends AbstractController
         $uncompressedParameters = self::uncompressParameters($special);
 
         // Checks if the user is authenticated
-        if ($this->getFrontendUserManager()->userIsAuthenticated() === FALSE) {
+        if ($this->getFrontendUserManager()->userIsAuthenticated() === false) {
             FlashMessages::addError('fatal.notAuthenticated');
-            return $this->redirect('single', NULL, NULL, array(
-                'special' => $special
-            ));
+            return $this->redirect('single', null, null, [
+                    'special' => $special
+                ]
+            );
         }
 
         // Gets the arguments
@@ -212,10 +204,15 @@ class DefaultController extends AbstractController
 
         $special = self::compressParameters($uncompressedParameters);
 
+        // Clears the cache
+        $pageUid = $GLOBALS['TSFE']->id;
+        $this->cacheService->clearPageCache($pageUid);
+
         // Redirects to the action
-        $this->redirect($action, NULL, NULL, array(
-            'special' => $special
-        ));
+        $this->redirect($action, null, null, [
+                'special' => $special
+            ]
+        );
     }
 
     /**
@@ -224,14 +221,15 @@ class DefaultController extends AbstractController
      * @param string $special
      * @return void
      */
-    public function deleteAction($special = NULL)
+    public function deleteAction($special = null)
     {
         // Checks if the user is authenticated
-        if ($this->getFrontendUserManager()->userIsAuthenticated() === FALSE) {
+        if ($this->getFrontendUserManager()->userIsAuthenticated() === false) {
             FlashMessages::addError('fatal.notAuthenticated');
-            return $this->redirect('single', NULL, NULL, array(
-                'special' => $special
-            ));
+            return $this->redirect('single', null, null, [
+                    'special' => $special
+                ]
+            );
         }
 
         // Uncompresses the special parameter
@@ -247,9 +245,10 @@ class DefaultController extends AbstractController
         $this->getMainRepository()->remove($object);
 
         // Redirects to the list in edit mode action
-        $this->redirect('list', NULL, NULL, array(
-            'special' => $special
-        ));
+        $this->redirect('list', null, null, [
+                'special' => $special
+            ]
+        );
     }
 
     /**
@@ -258,14 +257,15 @@ class DefaultController extends AbstractController
      * @param string $special
      * @return void
      */
-    public function deleteInSubformAction($special = NULL)
+    public function deleteInSubformAction($special = null)
     {
         // Checks if the user is authenticated
-        if ($this->getFrontendUserManager()->userIsAuthenticated() === FALSE) {
+        if ($this->getFrontendUserManager()->userIsAuthenticated() === false) {
             FlashMessages::addError('fatal.notAuthenticated');
-            return $this->redirect('single', NULL, NULL, array(
-                'special' => $special
-            ));
+            return $this->redirect('single', null, null, [
+                    'special' => $special
+                ]
+            );
         }
 
         // Uncompresses the special parameter
@@ -294,9 +294,10 @@ class DefaultController extends AbstractController
         $special = self::compressParameters($uncompressedParameters);
 
         // Redirects to the list in edit mode action
-        $this->redirect('edit', NULL, NULL, array(
-            'special' => $special
-        ));
+        $this->redirect('edit', null, null, [
+                'special' => $special
+            ]
+        );
     }
 
     /**
@@ -305,14 +306,15 @@ class DefaultController extends AbstractController
      * @param string $special
      * @return void
      */
-    public function downInSubformAction($special = NULL)
+    public function downInSubformAction($special = null)
     {
         // Checks if the user is authenticated
-        if ($this->getFrontendUserManager()->userIsAuthenticated() === FALSE) {
+        if ($this->getFrontendUserManager()->userIsAuthenticated() === false) {
             FlashMessages::addError('fatal.notAuthenticated');
-            return $this->redirect('single', NULL, NULL, array(
-                'special' => $special
-            ));
+            return $this->redirect('single', null, null, [
+                    'special' => $special
+                ]
+            );
         }
 
         // Uncompresses the special parameter
@@ -341,9 +343,10 @@ class DefaultController extends AbstractController
         $special = self::compressParameters($uncompressedParameters);
 
         // Redirects to the list in edit mode action
-        $this->redirect('edit', NULL, NULL, array(
-            'special' => $special
-        ));
+        $this->redirect('edit', null, null, [
+                'special' => $special
+            ]
+        );
     }
 
     /**
@@ -352,14 +355,15 @@ class DefaultController extends AbstractController
      * @param string $special
      * @return void
      */
-    public function upInSubformAction($special = NULL)
+    public function upInSubformAction($special = null)
     {
         // Checks if the user is authenticated
-        if ($this->getFrontendUserManager()->userIsAuthenticated() === FALSE) {
+        if ($this->getFrontendUserManager()->userIsAuthenticated() === false) {
             FlashMessages::addError('fatal.notAuthenticated');
-            return $this->redirect('single', NULL, NULL, array(
-                'special' => $special
-            ));
+            return $this->redirect('single', null, null, [
+                    'special' => $special
+                ]
+            );
         }
 
         // Uncompresses the special parameter
@@ -388,35 +392,48 @@ class DefaultController extends AbstractController
         $special = self::compressParameters($uncompressedParameters);
 
         // Redirects to the list in edit mode action
-        $this->redirect('edit', NULL, NULL, array(
-            'special' => $special
-        ));
+        $this->redirect('edit', null, null, [
+                'special' => $special
+            ]
+        );
     }
 
     /**
      * Delete file action
      *
-     * @param array $field
-     * @param integer $key
      * @param string $special
      * @return void
      */
-    public function deleteFileAction($field, $key, $special = NULL)
+    public function deleteFileAction($special = null)
     {
+        // Checks if the user is authenticated
+        if ($this->getFrontendUserManager()->userIsAuthenticated() === false) {
+            FlashMessages::addError('fatal.notAuthenticated');
+            return $this->redirect('single', null, null, [
+                    'special' => $special
+                ]
+           );
+        }
+
+        // Uncompresses the special parameter
+        $uncompressedParameters = self::uncompressParameters($special);
+
         // Gets the file reference object
         $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
-        $uid = intval($field['value'][$key]);
-        $fileReferenceObject = $resourceFactory->getFileReferenceObject($uid);
+        $fileReferenceUid = intval($uncompressedParameters['fileUid']);
+        $fileReferenceObject = $resourceFactory->getFileReferenceObject($fileReferenceUid);
 
         // Deletes the file
         $fileReferenceObject->getOriginalFile()->delete();
 
         // Marks the file reference as deleted
+        // @todo Test will be removed in TYPO3 v10
         if (version_compare(TYPO3_version, '8.0', '<')) {
+            // @extensionScannerIgnoreLine
             $GLOBALS['TYPO3_DB']
             ->exec_UPDATEquery(
                 'sys_file_reference',
-                'uid = '. $uid,
+                'uid = '. $fileReferenceUid,
                 [ 'deleted' => 1 ]
             );
         } else {
@@ -424,17 +441,15 @@ class DefaultController extends AbstractController
             ->update(
                 'sys_file_reference',
                 [ 'deleted' => 1 ],  // set
-                [ 'uid' => $uid ] // where
-                );
+                [ 'uid' => $fileReferenceUid ] // where
+            );
         }
 
         // Redirects to the list in edit mode action
-        $this->redirect('edit', NULL, NULL, array(
-            'special' => $special
-        ));
-
+        $this->redirect('edit', null, null, [
+                'special' => $special
+            ]
+        );
     }
-
 }
-
 ?>

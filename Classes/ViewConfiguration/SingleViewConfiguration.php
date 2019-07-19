@@ -1,27 +1,17 @@
 <?php
 namespace YolfTypo3\SavLibraryMvc\ViewConfiguration;
 
-/**
- * Copyright notice
+/*
+ * This file is part of the TYPO3 CMS project.
  *
- * (c) 2015 Laurent Foulloy <yolf.typo3@orange.fr>
- * All rights reserved
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
  *
- * This script is part of the TYPO3 project. The TYPO3 project is
- * free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with TYPO3 source code.
  *
- * The GNU General Public License can be found at
- * http://www.gnu.org/copyleft/gpl.html.
- *
- * This script is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * This copyright notice MUST APPEAR in all copies of the script!
+ * The TYPO3 project - inspiring people to share!
  */
 
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
@@ -31,7 +21,6 @@ use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
  */
 class SingleViewConfiguration extends AbstractViewConfiguration
 {
-
     /**
      * Gets the view configuration
      *
@@ -41,7 +30,6 @@ class SingleViewConfiguration extends AbstractViewConfiguration
      */
     public function getConfiguration($arguments)
     {
-
         // Gets the special parameters from arguments, uncompresses it and modifies it if needed
         $special = $arguments['special'];
         $uncompressedParameters = AbstractController::uncompressParameters($special);
@@ -61,6 +49,7 @@ class SingleViewConfiguration extends AbstractViewConfiguration
         $this->addGeneralViewConfiguration('extensionKey', AbstractController::getControllerExtensionKey());
         $this->addGeneralViewConfiguration('controllerName', AbstractController::getControllerName());
         $this->addGeneralViewConfiguration('special', $special);
+        $this->addGeneralViewConfiguration('contentUid', $this->controller->getContentObjectRenderer()->data['uid']);
         $this->addGeneralViewConfiguration('currentMode', $uncompressedParameters['mode']);
         $userIsAllowedToInputData = $this->controller->getFrontendUserManager()->userIsAllowedToInputData() && ! $mainRepository->isInDraftWorkspace($uid);
         $this->addGeneralViewConfiguration('userIsAllowedToInputData', $userIsAllowedToInputData);
@@ -76,21 +65,24 @@ class SingleViewConfiguration extends AbstractViewConfiguration
         $viewIdentifier = $this->getViewIdentifier();
 
         // Adds the title
-        $title = $this->parseTitle($viewIdentifier, array(
-            'general' => $this->getGeneralViewConfiguration(),
-            'fields' => $this->fieldConfigurationManager->getFieldsConfiguration()
-        ));
+        $title = $this->parseTitle(
+            $viewIdentifier,
+            [
+                'general' => $this->getGeneralViewConfiguration(),
+                'fields' => $this->fieldConfigurationManager::getFieldsConfiguration()
+            ]
+        );
         $this->addGeneralViewConfiguration('title', $title);
 
         // Gets the folders
         $viewFolders = $this->getViewFolders($viewIdentifier);
 
         // Sets the view configuration
-        $viewConfiguration = array(
+        $viewConfiguration = [
             'general' => $this->getGeneralViewConfiguration(),
-            'fields' => $this->fieldConfigurationManager->getFieldsConfiguration(),
+            'fields' => $this->fieldConfigurationManager::getFieldsConfiguration(),
             'folders' => $viewFolders
-        );
+        ];
 
         return $viewConfiguration;
     }

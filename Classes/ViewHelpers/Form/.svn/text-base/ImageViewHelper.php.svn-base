@@ -60,8 +60,8 @@ class Tx_SavLibraryMvc_ViewHelpers_Form_ImageViewHelper extends Tx_Fluid_ViewHel
 	 */
 	public function initializeArguments() {
 		parent::initializeArguments();
-		$this->registerTagAttribute('alt', 'string', 'Specifies an alternate text for an image', TRUE);
-		$this->registerArgument('errorClass', 'string', 'CSS class to set if there are errors for this view helper', FALSE, 'f3-form-error');
+		$this->registerTagAttribute('alt', 'string', 'Specifies an alternate text for an image', true);
+		$this->registerArgument('errorClass', 'string', 'CSS class to set if there are errors for this view helper', false, 'f3-form-error');
 		$this->registerTagAttribute('disabled', 'string', 'Specifies that the input element should be disabled when the page loads');
 		$this->registerUniversalTagAttributes();
 	}

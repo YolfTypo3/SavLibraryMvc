@@ -1,32 +1,24 @@
 <?php
 namespace YolfTypo3\SavLibraryMvc\ViewHelpers\Widget;
 
-/**
- * Copyright notice
+/*
+ * This file is part of the TYPO3 CMS project.
  *
- * (c) 2015 Laurent Foulloy <yolf.typo3@orange.fr>
- * All rights reserved
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
  *
- * This script is part of the TYPO3 project. The TYPO3 project is
- * free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with TYPO3 source code.
  *
- * The GNU General Public License can be found at
- * http://www.gnu.org/copyleft/gpl.html.
- *
- * This script is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * This copyright notice MUST APPEAR in all copies of the script!
+ * The TYPO3 project - inspiring people to share!
  */
+
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Fluid\ViewHelpers\Form\AbstractFormFieldViewHelper;
+use YolfTypo3\SavLibraryMvc\Controller\FlashMessages;
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 use YolfTypo3\SavLibraryMvc\DatePicker\DatePicker;
-use YolfTypo3\SavLibraryMvc\Controller\FlashMessages;
 
 /**
  * A date picker view helper.
@@ -34,15 +26,14 @@ use YolfTypo3\SavLibraryMvc\Controller\FlashMessages;
  * = Examples =
  *
  * <code title="DatePicker">
- * <sav:wiget.datePicker aarguments="" />
+ * <sav:wiget.datePicker arguments="" />
  * </code>
  *
  * Output:
  * the date
  */
-class DatePickerViewHelper extends \YolfTypo3\SavLibraryMvc\ViewHelpers\Form\AbstractFormFieldViewHelper
+class DatePickerViewHelper extends AbstractFormFieldViewHelper
 {
-
     /**
      *
      * @var string
@@ -58,21 +49,21 @@ class DatePickerViewHelper extends \YolfTypo3\SavLibraryMvc\ViewHelpers\Form\Abs
     {
         parent::initializeArguments();
         $this->registerUniversalTagAttributes();
+        $this->registerArgument('arguments', 'array', 'Arguments', true);
+        $this->registerArgument('default', 'array', 'Default configuration', false, []);
     }
 
     /**
-     *
-     * @param array $arguments
-     *            The arguments
-     * @param array $default
-     *            The default configurataion values
-     * @param string $action
-     *            The action to execute
+     * Renders the widget
      *
      * @return string the options array
      */
-    public function render($arguments, $default = array())
+    public function render()
     {
+        // Gets the arguments
+        $arguments = $this->arguments['arguments'];
+        $default = $this->arguments['default'];
+
         // Gets the name
         $name = $this->getName();
 
@@ -104,7 +95,7 @@ class DatePickerViewHelper extends \YolfTypo3\SavLibraryMvc\ViewHelpers\Form\Abs
         $datePickerConfiguration['iconPath'] = AbstractController::getIconPath('calendar.gif');
 
         // Sets the value
-        if ($this->getValueAttribute() === NULL || empty($this->getValueAttribute())) {
+        if ($this->getValueAttribute() === null || empty($this->getValueAttribute())) {
             $value = $fieldConfiguration['noDefault'] ? '' : date();
         } elseif ($fieldConfiguration['noDefault'] && $configuration['newRecord']) {
             $value = '';
@@ -117,7 +108,7 @@ class DatePickerViewHelper extends \YolfTypo3\SavLibraryMvc\ViewHelpers\Form\Abs
         $this->setErrorClassAttribute();
 
         $dateTimeFormat = $this->convertToDateTimeFormat($datePickerConfiguration['format']);
-        $content = '<input type="hidden" name="' . str_replace('[date]', '[dateFormat]', $name) . '" value="' . $dateTimeFormat . '" />';
+        $content = '<input type="hidden" name="' . preg_replace('/\[date\]$/', '[dateFormat]', $name) . '" value="' . $dateTimeFormat . '" />';
         $content .= $this->tag->render() . $datePicker->render($datePickerConfiguration);
 
         return $content;
@@ -132,7 +123,7 @@ class DatePickerViewHelper extends \YolfTypo3\SavLibraryMvc\ViewHelpers\Form\Abs
      */
     public function convertToDateTimeFormat($format)
     {
-        $conversionArray = array(
+        $conversionArray = [
             // Day
             'a' => 'D', // Sun through Sat
             'A' => 'l', // Sunday through Saturday
@@ -160,23 +151,29 @@ class DatePickerViewHelper extends \YolfTypo3\SavLibraryMvc\ViewHelpers\Form\Abs
             'R' => 'H:i', // Same as "%H:%M"
             'T' => 'H:i:s', // Same as "%H:%M:%S"
             '%' => '%'
-        ); // %
+        ]; // %
 
         if (preg_match_all('/\%([a-zA-Z\%])/', $format, $matches) > 0) {
             foreach ($matches[1] as $matchKey => $match) {
                 if (array_key_exists($match, $conversionArray)) {
                     $format = str_replace('%' . $match, $conversionArray[$match], $format);
                 } else {
-                    FlashMessages::addError('error.incorectDateFormat', array(
-                        $match
-                    ));
+                    FlashMessages::addError(
+                        'error.incorectDateFormat',
+                        [
+                            $match
+                        ]
+                    );
                 }
             }
             return $format;
         }
-        FlashMessages::addError('error.incorectDateFormat', array(
-            $format
-        ));
+        FlashMessages::addError(
+            'error.incorectDateFormat',
+            [
+                $format
+            ]
+        );
         return $format;
     }
 }

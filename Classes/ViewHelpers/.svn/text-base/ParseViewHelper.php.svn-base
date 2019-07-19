@@ -35,9 +35,9 @@ class Tx_SavLibraryMvc_ViewHelpers_ParseViewHelper extends Tx_Fluid_Core_ViewHel
 	 * @return string Rendered string
 	 * @author Laurent Foulloy <yolf.typo3@orange.fr>
 	 */
-	public function render($string = NULL) {
+	public function render($string = null) {
 	
-    if ($string === NULL) {
+    if ($string === null) {
       $string = $this->renderChildren();
     }
     

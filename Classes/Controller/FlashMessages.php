@@ -1,28 +1,19 @@
 <?php
 namespace YolfTypo3\SavLibraryMvc\Controller;
 
-/**
- * Copyright notice
+/*
+ * This file is part of the TYPO3 CMS project.
  *
- * (c) 2015 Laurent Foulloy <yolf.typo3@orange.fr>
- * All rights reserved
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
  *
- * This script is part of the TYPO3 project. The TYPO3 project is
- * free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with TYPO3 source code.
  *
- * The GNU General Public License can be found at
- * http://www.gnu.org/copyleft/gpl.html.
- *
- * This script is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * This copyright notice MUST APPEAR in all copies of the script!
+ * The TYPO3 project - inspiring people to share!
  */
+
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
@@ -33,18 +24,17 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
  */
 class FlashMessages
 {
+    /**
+     *
+     * @var array
+     */
+    protected static $errorRegisteredKeys = [];
 
     /**
      *
      * @var array
      */
-    protected static $errorRegisteredKeys = array();
-
-    /**
-     *
-     * @var array
-     */
-    protected static $messageRegisteredKeys = array();
+    protected static $messageRegisteredKeys = [];
 
     /**
      * Adds a message either to the BE_USER session (if the $message has the storeInSession flag set)
@@ -74,7 +64,7 @@ class FlashMessages
      */
     protected static function createFlashMessage($key, $arguments, $severity)
     {
-        return GeneralUtility::makeInstance(FlashMessage::class, self::translate($key, $arguments), '', $severity, TRUE);
+        return GeneralUtility::makeInstance(FlashMessage::class, self::translate($key, $arguments), '', $severity, true);
     }
 
     /**
@@ -87,7 +77,7 @@ class FlashMessages
      *
      * @return void
      */
-    public static function translate($key, $arguments = NULL)
+    public static function translate($key, $arguments = null)
     {
         return LocalizationUtility::translate($key, 'sav_library_mvc', $arguments);
     }
@@ -102,7 +92,7 @@ class FlashMessages
      *
      * @return void
      */
-    public static function addMessage($key, $arguments = NULL)
+    public static function addMessage($key, $arguments = null)
     {
         self::$messageRegisteredKeys[] = $key;
         $flashMessage = self::createFlashMessage($key, $arguments, FlashMessage::OK);
@@ -119,7 +109,7 @@ class FlashMessages
      *
      * @return (none)
      */
-    public static function addMessageOnce($key, $arguments = NULL)
+    public static function addMessageOnce($key, $arguments = null)
     {
         // If the message already exists, just return
         foreach (self::$messageRegisteredKeys as $messageRegisteredKey) {
@@ -139,14 +129,14 @@ class FlashMessages
      * @param array $arguments
      *            The argument array
      *
-     * @return boolean Returns always FALSE so that it can be used in return statements
+     * @return boolean Returns always false so that it can be used in return statements
      */
-    public static function addError($key, $arguments = NULL)
+    public static function addError($key, $arguments = null)
     {
         self::$errorRegisteredKeys[] = $key;
         $flashMessage = self::createFlashMessage($key, $arguments, FlashMessage::ERROR);
         self::addMessageToQueue($flashMessage);
-        return FALSE;
+        return false;
     }
 
     /**
@@ -157,9 +147,9 @@ class FlashMessages
      * @param array $arguments
      *            The argument array
      *
-     * @return boolean Returns always FALSE so that it can be used in return statements
+     * @return boolean Returns always false so that it can be used in return statements
      */
-    public static function addErrorOnce($key, $arguments = NULL)
+    public static function addErrorOnce($key, $arguments = null)
     {
         // If the message already exists, just return
         foreach (self::$errorRegisteredKeys as $errorRegisteredKey) {
@@ -169,7 +159,7 @@ class FlashMessages
         }
         // If we are here, the key was not found
         self::addError($key, $arguments);
-        return FALSE;
+        return false;
     }
 }
 ?>

@@ -1,1196 +1,1170 @@
-/***************************************************************
- * Copyright notice
+/*
+ * This file is part of the TYPO3 CMS project.
  *
- * (c) 2015 Laurent Foulloy <yolf.typo3@orange.fr>
- * All rights reserved
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
  *
- * This script is part of the TYPO3 project. The TYPO3 project is 
-  * free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with TYPO3 source code.
  *
- * The GNU General Public License can be found at
- * http://www.gnu.org/copyleft/gpl.html.
+ * The TYPO3 project - inspiring people to share!
  *
- * This script is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
-
-/**
  * Default CSS - Extension 'SAV Library Mvc'
  *  
- * @author	Laurent Foulloy (yolf.typo3@orange.fr)
- * @version	1.0 
+ * @author    Laurent Foulloy (yolf.typo3@orange.fr)
  */
 
 /**
-	 * General definitions 
-	 */
+ * General definitions 
+ */
 .savLibraryMvc {
-	position: relative;
-	float: left;
-	clear: left;
-	width: 100%;
-	background-color: inherit;
-	color: #004898;
+    position: relative;
+    float: left;
+    clear: left;
+    width: 100%;
+    background-color: inherit;
+    color: #004898;
+    line-height: initial;
 }
 
 .savLibraryMvc a {
-	float: left;
-	text-decoration: none;
-	background-color: inherit;
-	font-weight: bold;
-	color: #4176FF;
+    float: left;
+    text-decoration: none;
+    background-color: inherit;
+    font-weight: bold;
+    color: #4176FF;
 }
 
 .savLibraryMvc a:hover {
-	color: #EA6900;
+    color: #EA6900;
 }
 
 .savLibraryMvc a:active {
-	color: #4176FF;
+    color: #4176FF;
 }
 
 .savLibraryMvc div {
-	float: left;
-	background-color: inherit;
-	color: inherit;
-	margin: 0;
-	padding: 0;
+    float: left;
+    background-color: inherit;
+    color: inherit;
+    margin: 0;
+    padding: 0;
 }
 
 .savLibraryMvc input {
-	float: left;
-	margin: 0;
-	padding: 0;
+    float: left;
+    margin: 0;
+    padding: 0;
 }
 
 .savLibraryMvc li {
-	float: left;
-	margin: 0;
-	padding: 0;
+    float: left;
+    margin: 0;
+    padding: 0;
 }
 
 .savLibraryMvc select {
-	float: left;
-	margin: 0;
-	padding: 0;
+    float: left;
+    margin: 0;
+    padding: 0;
 }
 
 .savLibraryMvc span {
-	float: left;
-	background-color: inherit;
-	margin: 0;
-	padding: 0;
+    float: left;
+    background-color: inherit;
+    margin: 0;
+    padding: 0;
 }
 
 .savLibraryMvc textarea {
-	float: left;
-	margin: 0;
-	padding: 0;
+    float: left;
+    margin: 0;
+    padding: 0;
 }
 
 .savLibraryMvc td {
-	float: left;
-	margin: 0;
-	padding: 0;
+    float: left;
+    margin: 0;
+    padding: 0;
 }
 
 .savLibraryMvc tr {
-	float: left;
-	margin: 0;
-	padding: 0;
+    float: left;
+    margin: 0;
+    padding: 0;
 }
 
 .savLibraryMvc ul {
-	float: left;
-	margin: 0;
-	padding: 0;
-	list-style: none;
+    float: left;
+    margin: 0;
+    padding: 0;
+    list-style: none;
 }
 
 /**
  * Errors or messages
  */
 .savLibraryMvc div.message {
-	margin-bottom: 10px;
+    margin-bottom: 10px;
 }
 
 .savLibraryMvc div.message li.alert-danger {
-	background-color: inherit;
-	clear: left;
-	color: red;
+    background-color: inherit;
+    clear: left;
+    color: red;
 }
 
 .savLibraryMvc div.message li.message {
-	background-color: inherit;
-	font-weight: bold;
+    background-color: inherit;
+    font-weight: bold;
 }
 
 /**
-	 * Icons
-	 */
+ * Icons
+ */
 .savLibraryMvc img {
-	float: left;
-	padding: 0px 1px 0px 1px;
-	margin: 0px;
-	border-width: 0px;
+    float: left;
+    padding: 0px 1px 0px 1px;
+    margin: 0px;
+    border-width: 0px;
 }
 
 .savLibraryMvc img.toggleModeButton {
-	width: 18px;
-	height: 16px;
+    width: 18px;
+    height: 16px;
 }
 
 .savLibraryMvc img.edit {
-	margin: 2px 0px 0px 0px;
+    margin: 2px 0px 0px 0px;
 }
 
 .savLibraryMvc img.print {
-	width: 18px;
-	height: 16px;
+    width: 18px;
+    height: 16px;
 }
 
 .savLibraryMvc input.generateRTFButton {
-	width: 20px;
-	height: 20px;
+    width: 20px;
+    height: 20px;
 }
 
 .savLibraryMvc img.exportButton {
-	padding-right: 5px;
+    padding-right: 5px;
 }
 
 .savLibraryMvc img.new {
-	width: 22px;
-	height: 16px;
+    width: 22px;
+    height: 16px;
 }
 
 .savLibraryMvc img.orderAsc {
-	padding: 3px 5px 0px 5px;
+    padding: 3px 5px 0px 5px;
 }
 
 .savLibraryMvc img.orderDesc {
-	padding: 3px 5px 0px 5px;
+    padding: 3px 5px 0px 5px;
 }
 
 .savLibraryMvc img.orderAscAbove {
-	padding: 3px 5px 0px 5px;
+    padding: 3px 5px 0px 5px;
 }
 
 .savLibraryMvc img.orderDescBelow {
-	clear: left;
-	padding: 3px 5px 0px 5px;
+    clear: left;
+    padding: 3px 5px 0px 5px;
 }
 
 .savLibraryMvc img.checkboxNotSelected {
-	padding: 0px;
+    padding: 0px;
 }
 
 .savLibraryMvc img.printButton {
-	width: 18px;
-	height: 16px;
+    width: 18px;
+    height: 16px;
 }
 
 .savLibraryMvc input.save {
-	background-image: url(../Icons/save.gif);
-	background-position: 0px 0px;
-	background-repeat: no-repeat;
-	width: 21px;
-	height: 16px;
-	border: 0;
-	cursor: pointer;
+    background-image: url(../Icons/save.gif);
+    background-position: 0px 0px;
+    background-repeat: no-repeat;
+    width: 21px;
+    height: 16px;
+    border: 0;
+    cursor: pointer;
 }
 
 .savLibraryMvc input.saveAndClose {
-	background-image: url(../Icons/saveAndClose.gif);
-	background-position: 0px 0px;
-	background-repeat: no-repeat;
-	width: 21px;
-	height: 16px;
-	border: 0;
-	cursor: pointer;
+    background-image: url(../Icons/saveAndClose.gif);
+    background-position: 0px 0px;
+    background-repeat: no-repeat;
+    width: 21px;
+    height: 16px;
+    border: 0;
+    cursor: pointer;
 }
 
 .savLibraryMvc input.saveAndShow {
-	background-image: url(../Icons/saveAndShow.gif);
-	background-position: 0px 0px;
-	background-repeat: no-repeat;
-	width: 21px;
-	height: 16px;
-	border: 0;
-	cursor: pointer;
+    background-image: url(../Icons/saveAndShow.gif);
+    background-position: 0px 0px;
+    background-repeat: no-repeat;
+    width: 21px;
+    height: 16px;
+    border: 0;
+    cursor: pointer;
 }
 
 .savLibraryMvc input.saveAndNew {
-	background-image: url(../Icons/saveAndNew.gif);
-	background-position: 0px 0px;
-	background-repeat: no-repeat;
-	width: 21px;
-	height: 16px;
-	border: 0;
-	cursor: pointer;
+    background-image: url(../Icons/saveAndNew.gif);
+    background-position: 0px 0px;
+    background-repeat: no-repeat;
+    width: 21px;
+    height: 16px;
+    border: 0;
+    cursor: pointer;
 }
 
 .savLibraryMvc input.exportokButton {
-	float: left;
-	padding-right: 5px;
+    float: left;
+    padding-right: 5px;
 }
 
 .savLibraryMvc input.exportQueryMode {
-	float: left;
-	padding-left: 3px;
+    float: left;
+    padding-left: 3px;
 }
 
 .savLibraryMvc input.exportToggleMode {
-	float: left;
-	padding-left: 3px;
+    float: left;
+    padding-left: 3px;
 }
 
 .savLibraryMvc input.submitButton {
-	font-size: 9px;
-	margin-top: 1px;
+    font-size: 9px;
+    margin-top: 1px;
 }
 
 .savLibraryMvc img.rightArrowButtonSubForm {
-	float: none;
-	padding-left: 2px;
-	margin: 0px;
+    float: none;
+    padding-left: 2px;
+    margin: 0px;
 }
 
 .savLibraryMvc img.leftArrowButtonSubForm {
-	float: none;
-	padding-left: 2px;
-	margin: 0px;
+    float: none;
+    padding-left: 2px;
+    margin: 0px;
 }
 
 .savLibraryMvc div.itemIconLeft img.deleteItemButton {
-	float: left;
-	padding: 1px 0px 1px 0px;
-	margin: 0px;
+    float: left;
+    padding: 1px 0px 1px 0px;
+    margin: 0px;
 }
 
 .savLibraryMvc div.itemIconLeft img.upButton {
-	float: left;
-	padding: 1px 0px 1px 1px;
-	margin: 0px;
+    float: left;
+    padding: 1px 0px 1px 1px;
+    margin: 0px;
 }
 
 .savLibraryMvc div.itemIconLeft img.downButton {
-	float: left;
-	padding: 1px 1px 1px 0px;
-	margin: 0px;
+    float: left;
+    padding: 1px 1px 1px 0px;
+    margin: 0px;
 }
 
 /**
-	 * Special tags 
-	 */
+ * Special tags 
+ */
 .savLibraryMvc div.right {
-	float: right;
-	height: 1px;
+    float: right;
+    height: 1px;
 }
 
 .savLibraryMvc span.left {
-	float: left;
-	padding: 0px 3px 0px 3px;
+    float: left;
+    padding: 0px 3px 0px 3px;
 }
 
 .savLibraryMvc div.left {
-	float: left;
+    float: left;
 }
 
 .savLibraryMvc div.clearLeft {
-	clear: left;
+    clear: left;
 }
 
 .savLibraryMvc div.hide {
-	visibility: hidden;
+    visibility: hidden;
 }
 
 /**
-	 * Title bar 
-	 */
+ * Title bar 
+ */
 .savLibraryMvc div.titleBar {
-	width: 100%;
-	background-color: #9999cc;
-	min-height: 20px;
+    width: 100%;
+    background-color: #9999cc;
+    min-height: 20px;
 }
 
 .savLibraryMvc .subform div.titleBar {
-	width: 100%;
-	background-color: #9999cc;
-	min-height: 20px;
+    width: 100%;
+    background-color: #9999cc;
+    min-height: 20px;
 }
 
 .savLibraryMvc div.draftWorkspace {
-	background-color: #a9699C;
+    background-color: #a9699C;
 }
 
 .savLibraryMvc .titleBar div.titleIconLeft {
-	padding: 2px 4px 2px 0px;
+    padding: 2px 4px 2px 0px;
 }
 
 .savLibraryMvc .titleBar .titleIconLeft input {
-	float: left;
+    float: left;
 }
 
 .savLibraryMvc .titleBar .titleIconLeft a {
-	float: left;
+    float: left;
 }
 
 .savLibraryMvc .titleBar div.titleLabel {
-	color: #ffffff;
-	font-size: 115%;
-	font-weight: bold;
-	vertical-align: middle;
-	padding: 0px 4px 0px 4px;
+    color: #ffffff;
+    font-size: 115%;
+    font-weight: bold;
+    vertical-align: middle;
+    padding: 0px 4px 0px 4px;
 }
 
 .savLibraryMvc .titleBar .titleLabel span {
-	
+    
 }
 
 .savLibraryMvc .titleBar .titleLabel li {
-	width: 150px;
-	background-color: inherit;
-	color: #ffffff;
-	font-size: 115%;
-	font-weight: bold;
-	text-align: left;
-	background-image: none;
+    width: 150px;
+    background-color: inherit;
+    color: #ffffff;
+    font-size: 115%;
+    font-weight: bold;
+    text-align: left;
+    background-image: none;
 }
 
 .savLibraryMvc .titleBar .titleLabel li a {
-	color: #ffffff;
+    color: #ffffff;
 }
 
 .savLibraryMvc .titleBar .titleLabel li a:hover {
-	color: #EA6900;
+    color: #EA6900;
 }
 
 .savLibraryMvc .titleBar .titleLabel li .orderAscDesc {
-	width: 10px;
+    width: 10px;
 }
 
 .savLibraryMvc .titleBar div.titleIconRight {
-	float: right;
-	padding: 2px;
+    float: right;
+    padding: 2px;
 }
 
 .savLibraryMvc .subform .titleBar div.titleIconRight {
-	float: right;
-	padding: 2px;
+    float: right;
+    padding: 2px;
 }
 
 /**
-	 * Folder Tabs 
-	 */
+ * Folder Tabs 
+ */
 .savLibraryMvc div.folderTabs {
-	width: 100%;
-	background: #ffffff url(Images/folderTabBorder.gif) repeat-x bottom;
-	color: inherit;
-	margin-top: 1px;
+    width: 100%;
+    background: #ffffff url(Images/folderTabBorder.gif) repeat-x bottom;
+    color: inherit;
+    margin-top: 1px;
 }
 
 .savLibraryMvc .folderTabs li {
-	display: inline !important;
+    display: inline !important;
 }
 
 .savLibraryMvc .folderTabs li a {
-	background: url(Images/folderTabRight.gif) no-repeat right top;
-	border-bottom: 1px solid #84B0C7;
-	font-weight: bold;
-	text-decoration: none;
+    background: url(Images/folderTabRight.gif) no-repeat right top;
+    border-bottom: 1px solid #84B0C7;
+    font-weight: bold;
+    text-decoration: none;
 }
 
 .savLibraryMvc .folderTabs li a span {
-	display: block !important;
-	background: url(Images/folderTabLeft.gif) no-repeat left top;
-	padding: 4px 9px !important;
-	white-space: nowrap;
+    display: block !important;
+    background: url(Images/folderTabLeft.gif) no-repeat left top;
+    padding: 4px 9px !important;
+    white-space: nowrap;
 }
 
 .savLibraryMvc .folderTabs li.currentTab a {
-	background-position: 100% -150px;
-	border-width: 0px;
+    background-position: 100% -150px;
+    border-width: 0px;
 }
 
 .savLibraryMvc .folderTabs li a:hover {
-	background-position: 100% -150px;
+    background-position: 100% -150px;
 }
 
 .savLibraryMvc .folderTabs li a:hover span {
-	background-position: 0% -150px;
+    background-position: 0% -150px;
 }
 
 .savLibraryMvc .folderTabs li.currentTab a span {
-	background-position: 0% -150px;
-	padding-bottom: 5px !important;
+    background-position: 0% -150px;
+    padding-bottom: 5px !important;
 }
 
 /**
-	 * Footer 
-	 */
-.savLibraryMvc div.footer {
-	width: 100%;
-	margin: 1px 0 0 0;
-	text-align: center;
+ * Extension footer 
+ */
+.savLibraryMvc div.extensionFooter {
+    width: 100%;
+    margin: 1px 0 0 0;
+    text-align: center;
 }
 
-.savLibraryMvc .footer div.footerIconRight {
-	float: right;
-	padding: 2px;
+.savLibraryMvc .extensionFooter div.extensionFooterIconRight {
+    float: right;
+    padding: 2px;
 }
 
-.savLibraryMvc .footer a {
-	float: none;
+.savLibraryMvc .extensionFooter a {
+    float: none;
 }
 
-.savLibraryMvc .footer a.selected {
-	vertical-align: 4px;
-	color: #EA6900;
+.savLibraryMvc .extensionFooter a.selected {
+    vertical-align: 4px;
+    color: #EA6900;
 }
 
-.savLibraryMvc .footer a.notSelected {
-	vertical-align: 4px;
+.savLibraryMvc .extensionFooter a.notSelected {
+    vertical-align: 4px;
 }
 
-.savLibraryMvc .footer img {
-	float: none;
-	margin: 0;
+.savLibraryMvc .extensionFooter img {
+    float: none;
+    margin: 0;
 }
 
-.savLibraryMvc .footer img.previousPage {
-	padding-right: 2px;
+.savLibraryMvc .extensionFooter img.previousPage {
+    padding-right: 2px;
 }
 
-.savLibraryMvc .footer img.nextPage {
-	padding-left: 2px;
+.savLibraryMvc .extensionFooter img.nextPage {
+    padding-left: 2px;
 }
 
-.savLibraryMvc .footer img.backwardFirstPage {
-	padding-right: 2px;
+.savLibraryMvc .extensionFooter img.backwardFirstPage {
+    padding-right: 2px;
 }
 
-.savLibraryMvc .footer img.backwardPage {
-	padding-right: 2px;
+.savLibraryMvc .extensionFooter img.backwardPage {
+    padding-right: 2px;
 }
 
-.savLibraryMvc .footer img.forwardPage {
-	padding-left: 2px;
+.savLibraryMvc .extensionFooter img.forwardPage {
+    padding-left: 2px;
 }
 
-.savLibraryMvc .footer img.forwardLastPage {
-	padding-left: 2px;
+.savLibraryMvc .extensionFooter img.forwardLastPage {
+    padding-left: 2px;
 }
 
 /**
-	 * Views
-	 */
+ * Views
+ */
 .savLibraryMvc div.view {
-	margin: 0 0 15px 0;
-	overflow: hidden;
-	padding: 1px;
+    margin: 0 0 15px 0;
+    overflow: hidden;
+    padding: 1px;
 }
 
 /**
-	 * List view, Form view, Form Admin view, Print view
-	 */
+     * List view, Form view, Form Admin view, Print view
+     */
 .savLibraryMvc div.listHidden {
-	display: none;
+    display: none;
 }
 
 .savLibraryMvc div.listView, .savLibraryMvc div.formView, .savLibraryMvc div.formAdminView,
-	.savLibraryMvc div.printView {
-	width: 100%;
-	width: calc(100% - 2px);
-	border: 1px #000099 solid;
-	background-color: #f1fbfd;
+    .savLibraryMvc div.printView {
+    width: 100%;
+    width: calc(100% - 2px);
+    border: 1px #000099 solid;
+    background-color: #f1fbfd;
 }
 
 .savLibraryMvc .listView div.items, .savLibraryMvc .formView div.items,
-	.savLibraryMvc .formAdminView div.items, .savLibraryMvc .printView div.items
-	{
-	width: 100%;
-	background-color: #ffffff;
+    .savLibraryMvc .formAdminView div.items, .savLibraryMvc .printView div.items {
+    width: 100%;
+    background-color: #ffffff;
 }
 
 .savLibraryMvc .listView .items div.item, .savLibraryMvc .formView .items div.item,
-	.savLibraryMvc .formAdminView .items div.item, .savLibraryMvc .printView .items div.item
-	{
-	width: 100%;
-	border-top: 1px #ddeeee solid;
-	border-bottom: 1px #ddeeee solid;
-	background-color: #f1fbfd;
-	margin-bottom: 1px;
+    .savLibraryMvc .formAdminView .items div.item, .savLibraryMvc .printView .items div.item {
+    width: 100%;
+    border-top: 1px #ddeeee solid;
+    border-bottom: 1px #ddeeee solid;
+    background-color: #f1fbfd;
+    margin-bottom: 1px;
 }
 
 /**
-	 * List view, Form view, Form Admin view, Print view Item 
-	 */
+ * List view, Form view, Form Admin view, Print view Item 
+ */
 .savLibraryMvc .listView .items .item div.itemIconLeft, .savLibraryMvc .formView .items .item div.itemIconLeft,
-	.savLibraryMvc .formAdminView .items .item div.itemIconLeft,
-	.savLibraryMvc .printView .items .item div.itemIconLeft {
-	padding: 2px 5px 2px 2px;
-	width: 18px;
+    .savLibraryMvc .formAdminView .items .item div.itemIconLeft,
+    .savLibraryMvc .printView .items .item div.itemIconLeft {
+    padding: 2px 5px 2px 2px;
+    width: 18px;
 }
 
 .savLibraryMvc .listView .items .item div.value, .savLibraryMvc .formView .items .item div.value,
-	.savLibraryMvc .formAdminView .items .item div.value, .savLibraryMvc .printView .items .item div.value
-	{
-	
+    .savLibraryMvc .formAdminView .items .item div.value, .savLibraryMvc .printView .items .item div.value {
+    
 }
 
 .savLibraryMvc .listView ul, .savLibraryMvc .formView ul, .savLibraryMvc .formAdminView ul,
-	.savLibraryMvc .printView ul {
-	
+    .savLibraryMvc .printView ul {
+    padding : inherit;
+    margin: inherit;
+    
 }
 
 .savLibraryMvc .listView li, .savLibraryMvc .formView li, .savLibraryMvc .formAdminView li,
-	.savLibraryMvc .printView li {
-	width: 150px;
-	padding: 4px;
-	text-align: left;
+    .savLibraryMvc .printView li {
+    width: 150px;
+    padding: 4px;
+    text-align: left;
+    background: inherit;
+    font: inherit;
 }
 
 .savLibraryMvc .listView div.block, .savLibraryMvc .formView div.block,
-	.savLibraryMvc .formAdminView div.block, .savLibraryMvc .printView div.block
-	{
-	width: 99%;
-	width: calc(100% - 14px);
-	border: solid 1px #004898;
-	padding: 4px;
-	margin: 2px;
+    .savLibraryMvc .formAdminView div.block, .savLibraryMvc .printView div.block {
+    width: 99%;
+    width: calc(100% - 14px);
+    border: solid 1px #004898;
+    padding: 4px;
+    margin: 2px;
 }
 
 .savLibraryMvc .listView div.blockFields, .savLibraryMvc .formView div.blockFields,
-	.savLibraryMvc .formAdminView div.blockFields, .savLibraryMvc .printView div.blockFields
-	{
-	clear: left;
-	width: 100%;
+    .savLibraryMvc .formAdminView div.blockFields, .savLibraryMvc .printView div.blockFields {
+    clear: left;
+    width: 100%;
 }
 
 .savLibraryMvc .listView div.blockHide, .savLibraryMvc .formView div.blockHide,
-	.savLibraryMvc .formAdminView div.blockHide, .savLibraryMvc .printView div.blockHide
-	{
-	visibility: hidden;
-	height: 0px;
+    .savLibraryMvc .formAdminView div.blockHide, .savLibraryMvc .printView div.blockHide {
+    visibility: hidden;
+    height: 0px;
 }
 
 .savLibraryMvc .listView div.blockTitle, .savLibraryMvc .formView div.blockTitle,
-	.savLibraryMvc .formAdminView div.blockTitle, .savLibraryMvc .printView div.blockTitle
-	{
-	font-weight: bold;
-	border-bottom: solid 1px #004898;
-	width: 30%;
-	min-width: 210px;
-	padding-bottom: 4px;
-	margin-bottom: 4px;
+    .savLibraryMvc .formAdminView div.blockTitle, .savLibraryMvc .printView div.blockTitle {
+    font-weight: bold;
+    border-bottom: solid 1px #004898;
+    width: 30%;
+    min-width: 210px;
+    padding-bottom: 4px;
+    margin-bottom: 4px;
 }
 
 /**
-	 * List view specific configuration 
-	 */
+ * List view specific configuration 
+ */
 .savLibraryMvc .listView .items div.draftWorkspace {
-	background-color: #f1dbdd;
+    background-color: #f1dbdd;
 }
 
 /**
-	 * Form view specific configuration 
-	 */
-.savLibraryMvc .formView div.footer, .savLibraryMvc .formAdminView div.footer
-	{
-	background-color: #9999cc;
+     * Form view specific configuration 
+     */
+.savLibraryMvc .formView div.extensionFooter, .savLibraryMvc .formAdminView div.extensionFooter {
+    background-color: #9999cc;
 }
 
-.savLibraryMvc .formView div.label, .savLibraryMvc .formAdminView div.label
-	{
-	font-weight: bold;
-	padding: 0 5px 0 5px;
+.savLibraryMvc .formView div.label, .savLibraryMvc .formAdminView div.label {
+    font-weight: bold;
+    padding: 0 5px 0 5px;
 }
 
-.savLibraryMvc .formView div.field, .savLibraryMvc .formAdminView div.field
-	{
-	padding: 2px 5px 2px 5px;
+.savLibraryMvc .formView div.field, .savLibraryMvc .formAdminView div.field {
+    padding: 2px 5px 2px 5px;
 }
 
-.savLibraryMvc .formView span.required, .savLibraryMvc .formAdminView span.required
-	{
-	color: red;
-	font-weight: bold;
-	padding: 0 5px 0 5px;
+.savLibraryMvc .formView span.required, .savLibraryMvc .formAdminView span.required {
+    color: red;
+    font-weight: bold;
+    padding: 0 5px 0 5px;
 }
 
-.savLibraryMvc .formView div.column1, .savLibraryMvc .formAdminView div.column1
-	{
-	clear: both;
-	min-width: 20%;
-	font-weight: bold;
-	min-height: 25px;
+.savLibraryMvc .formView div.column1, .savLibraryMvc .formAdminView div.column1 {
+    clear: both;
+    min-width: 20%;
+    font-weight: bold;
+    min-height: 25px;
 }
 
-.savLibraryMvc .formView div.column2, .savLibraryMvc .formAdminView div.column2
-	{
-	min-width: 30%;
-	min-height: 25px;
-	padding: 0 10px 0 10px;
+.savLibraryMvc .formView div.column2, .savLibraryMvc .formAdminView div.column2 {
+    min-width: 30%;
+    min-height: 25px;
+    padding: 0 10px 0 10px;
 }
 
-.savLibraryMvc .formView .column2 span.checkbox, .savLibraryMvc .formAdminView .column2 span.checkbox
-	{
-	text-align: left;
+.savLibraryMvc .formView .column2 span.checkbox, .savLibraryMvc .formAdminView .column2 span.checkbox {
+    text-align: left;
 }
 
-.savLibraryMvc .formView div.column3, .savLibraryMvc .formAdminView div.column3
-	{
-	min-width: 40%;
-	min-height: 25px;
+.savLibraryMvc .formView div.column3, .savLibraryMvc .formAdminView div.column3 {
+    min-width: 40%;
+    min-height: 25px;
 }
 
-.savLibraryMvc .formView .column3 input, .savLibraryMvc .formAdminView .column3 input
-	{
-	font-size: 12px;
+.savLibraryMvc .formView .column3 input, .savLibraryMvc .formAdminView .column3 input {
+    font-size: 12px;
 }
 
-.savLibraryMvc .formView .column3 select, .savLibraryMvc .formAdminView .column3 select
-	{
-	font-size: 12px;
+.savLibraryMvc .formView .column3 select, .savLibraryMvc .formAdminView .column3 select {
+    font-size: 12px;
 }
 
-.savLibraryMvc div.formView .column3 textarea, .savLibraryMvc .formAdminView .column3 textarea
-	{
-	font-size: 12px;
+.savLibraryMvc div.formView .column3 textarea, .savLibraryMvc .formAdminView .column3 textarea {
+    font-size: 12px;
 }
 
-.savLibraryMvc div.formView .column3 span, .savLibraryMvc .formAdminView .column3 span
-	{
-	font-size: 12px;
-	margin: -3px 2px 2px 3px;
+.savLibraryMvc div.formView .column3 span, .savLibraryMvc .formAdminView .column3 span {
+    font-size: 12px;
+    margin: -3px 2px 2px 3px;
 }
 
-.savLibraryMvc .formView div.column4, .savLibraryMvc .formAdminView div.column4Different
-	{
-	float: right;
-	width: 20px;
-	background-color: red;
-	margin-right: 10px;
+.savLibraryMvc .formView div.column4, .savLibraryMvc .formAdminView div.column4Different {
+    float: right;
+    width: 20px;
+    background-color: red;
+    margin-right: 10px;
 }
 
-.savLibraryMvc .formView div.column4Manual, .savLibraryMvc .formAdminView div.column4Same
-	{
-	float: right;
-	width: 20px;
-	background-color: green;
-	margin-right: 10px;
+.savLibraryMvc .formView div.column4Manual, .savLibraryMvc .formAdminView div.column4Same {
+    float: right;
+    width: 20px;
+    background-color: green;
+    margin-right: 10px;
 }
 
 /**
-	 * Print view specific configuration 
-	 */
+ * Print view specific configuration 
+ */
 .savLibraryMvc .printView div.label {
-	clear: left;
-	width: 20%;
-	font-weight: bold;
-	min-height: 25px;
+    clear: left;
+    width: 20%;
+    font-weight: bold;
+    min-height: 25px;
 }
 
 .savLibraryMvc .printView div.field {
-	width: 78%;
-	min-height: 25px;
-	padding: 0 1% 0 1%;
+    width: 78%;
+    min-height: 25px;
+    padding: 0 1% 0 1%;
 }
 
 .savLibraryMvc .printView div.printCol1 {
-	clear: left;
-	width: 20%;
-	font-weight: bold;
-	min-height: 25px;
+    clear: left;
+    width: 20%;
+    font-weight: bold;
+    min-height: 25px;
 }
 
 .savLibraryMvc .printView div.printCol2 {
-	width: 78%;
-	min-height: 25px;
-	padding: 0 1% 0 1%;
+    width: 78%;
+    min-height: 25px;
+    padding: 0 1% 0 1%;
 }
 
 /**
-	 * single view
-	 */
+ * single view
+ */
 .savLibraryMvc div.singleView {
-	width: 100%;
-	width: calc(100% - 2px);
-	border: 1px #000099 solid;
-	background-color: #f1fbfd;
+    width: 100%;
+    width: calc(100% - 2px);
+    border: 1px #000099 solid;
+    background-color: #f1fbfd;
 }
 
 .savLibraryMvc .singleView div.items {
-	width: 100%;
-	background-color: #ffffff;
-	margin: 2px 0px 0px 0px;
+    width: 100%;
+    background-color: #ffffff;
+    margin: 2px 0px 0px 0px;
 }
 
 .savLibraryMvc .singleView .items div.item {
-	width: 100%;
-	border-top: 1px #ddeeee solid;
-	border-bottom: 1px #ddeeee solid;
-	background-color: #ffffff;
-	margin-bottom: 1px;
+    width: 100%;
+    border-top: 1px #ddeeee solid;
+    border-bottom: 1px #ddeeee solid;
+    background-color: #ffffff;
+    margin-bottom: 1px;
 }
 
 
 /**
-	 * single view field
-	 */
+ * single view field
+ */
 .savLibraryMvc .singleView .field div.label {
-	width: 100px;
-	background-color: #d7e8e8;
-	color: #000099;
-	font-weight: bold;
-	text-align: left;
-	padding: 4px;
-	font-size: inherit;
+    width: 100px;
+    background-color: #d7e8e8;
+    color: #000099;
+    font-weight: bold;
+    text-align: left;
+    padding: 4px;
+    font-size: inherit;
+    white-space: inherit;
 }
 
 .savLibraryMvc .singleView .field div.value {
-	min-width: 150px;
-	background-color: #ffffff;
-	padding: 4px;
+    min-width: 150px;
+    background-color: #ffffff;
+    padding: 4px;
 }
 
 .savLibraryMvc .singleView .field div.doubleSelectorbox {
-	padding-right: 5px;
+    padding-right: 5px;
 }
 
 .savLibraryMvc .singleView .field div.file {
-	clear: left;
+    clear: left;
 }
 
 .savLibraryMvc .singleView .field div.radioButton {
-	
+    
 }
 
 .savLibraryMvc .singleView .field .radioButton span.radioButtonMessage {
-	margin: 0 5px 0 5px;
+    margin: 0 5px 0 5px;
 }
 
 .savLibraryMvc .singleView .field div.checkbox {
-	
+    
 }
 
 .savLibraryMvc .singleView .field .richText {
-	width: 100%;
+    width: 100%;
 }
 
 .savLibraryMvc .singleView .field .richText ul {
-	list-style: disc inside;
+    list-style: disc inside;
 }
 
 .savLibraryMvc .singleView .field .richText li {
-	clear: left;
+    clear: left;
 }
 
 .savLibraryMvc .singleView .field .richText p {
-	clear: left;
-	float: left;
-	margin: 0 0 10px 0;
+    clear: left;
+    float: left;
+    margin: 0 0 10px 0;
 }
 
 .savLibraryMvc .singleView .field .richText span {
-	float: none;
+    float: none;
 }
 
 .savLibraryMvc .singleView .field .checkbox span.checkboxSelected {
-	width: 14px;
+    width: 14px;
 }
 
 .savLibraryMvc .singleView .field .checkbox span.checkboxNotSelected {
-	width: 14px;
+    width: 14px;
 }
 
 .savLibraryMvc .singleView .field .checkbox span.checkboxMessage {
-	
+    
 }
 
 .savLibraryMvc .singleView div.block {
-	width: calc(100% - 10px);
-	min-width: 97.5%;
-	margin: 2px;
-	padding: 2px;
-	border: 1px #004898 solid;
+    width: calc(100% - 10px);
+    min-width: 97.5%;
+    margin: 2px;
+    padding: 2px;
+    border: 1px #004898 solid;
 }
 
 .savLibraryMvc .singleView div.blockTitle {
-	font-weight: normal;
-	color: #000099;
-	font-weight: bold;
-	font-size: 90%;
-	border-bottom: solid 1px #004898;
-	width: 300px;
-	padding-left: 2px;
-	margin-bottom: 4px;
+    font-weight: normal;
+    color: #000099;
+    font-weight: bold;
+    font-size: 90%;
+    border-bottom: solid 1px #004898;
+    width: 300px;
+    padding-left: 2px;
+    margin-bottom: 4px;
 }
 
 /**
-	 * Single view subform 
-	 */
+ * Single view subform 
+ */
 .savLibraryMvc .singleView div.subform {
-	width: 100%;
-	background-color: #ffffff;
-	width: calc(100% - 8px);
-	margin: 0 3px 0 3px;
-	border: 1px #000099 solid;
+    width: 100%;
+    background-color: #ffffff;
+    width: calc(100% - 8px);
+    margin: 0 3px 0 3px;
+    border: 1px #000099 solid;
 }
 
 .savLibraryMvc .singleView .subform div.subform {
-	width: 100%;
-	width: calc(100% - 8px);
-	margin: 0 3px 0 3px;
+    width: 100%;
+    width: calc(100% - 8px);
+    margin: 0 3px 0 3px;
 }
 
 .savLibraryMvc .singleView .subform div.subformItem {
-	margin-top: 5px;
-	width: 100%;
+    margin-top: 5px;
+    width: 100%;
 }
 
 .savLibraryMvc .singleView .subform .items div.item {
-	margin-bottom: 1px;
+    margin-bottom: 1px;
 }
 
 .savLibraryMvc .singleView .subform div.field {
-	margin-bottom: 1px;
+    margin-bottom: 1px;
 }
 
 /**
-	 * edit view
-	 */
+     * edit view
+     */
 .savLibraryMvc div.editView {
-	width: 100%;
-	width: calc(100% - 2px);
-	border: 1px #000099 solid;
-	background-color: #f1fbfd;
+    width: 100%;
+    width: calc(100% - 2px);
+    border: 1px #000099 solid;
+    background-color: #f1fbfd;
 }
 
 .savLibraryMvc .editView div.items {
-	width: 100%;
-	background-color: #ffffff;
-	margin: 2px 0 0 0;
+    width: 100%;
+    background-color: #ffffff;
+    margin: 2px 0 0 0;
 }
 
 .savLibraryMvc .editView .items div.item {
-	width: 100%;
-	border-top: 1px #ddeeee solid;
-	border-bottom: 1px #ddeeee solid;
-	background-color: #ffffff;
-	margin: 1px 0 0 0;
+    width: 100%;
+    border-top: 1px #ddeeee solid;
+    border-bottom: 1px #ddeeee solid;
+    background-color: #ffffff;
+    margin: 1px 0 0 0;
 }
 
 .savLibraryMvc .editView .items .item div.field {
-	
+    
 }
 
 /**
-	 * edit view field
-	 */
+     * edit view field
+     */
 .savLibraryMvc .editView .field div.label {
-	width: 100px;
-	border: 0px #ddeeee solid;
-	background-color: #d7e8e8;
-	color: #000099;
-	font-weight: bold;
-	text-align: left;
-	padding: 3px;
+    width: 100px;
+    border: 0px #ddeeee solid;
+    background-color: #d7e8e8;
+    color: #000099;
+    font-weight: bold;
+    text-align: left;
+    padding: 3px;
+    font-size: inherit;    
+    white-space: inherit;
 }
 
 .savLibraryMvc .editView .field div.error {
-	width: 96px;
-	border: 2px solid red;
+    width: 96px;
+    border: 2px solid red;
 }
 
 .savLibraryMvc .editView .field .label img.required {
-	float: right;
+    float: right;
 }
 
 .savLibraryMvc .editView .field div.value {
-	min-width: 150px;
-	background-color: #ffffff;
-	color: inherit;
-	padding: 3px 0 0 3px;
+    min-width: 150px;
+    background-color: #ffffff;
+    color: inherit;
+    padding: 3px 0 0 3px;
 }
 
 .savLibraryMvc .editView .field .value input {
-	width: inherit;
+    width: inherit;
 }
 
 .savLibraryMvc .editView .field .value div.file {
-	clear: left;
-	width: inherit;
+    clear: left;
+    width: inherit;
 }
 
 .savLibraryMvc .editView .field .value div.file input.fileText {
-	margin-right: 3px;
+    margin-right: 3px;
 }
 
 .savLibraryMvc .editView .field .value div.file input.fileInput {
-	
+    
 }
 
 .savLibraryMvc .editView .field .value div.file span.fileLink {
-	padding: 5px;
+    padding: 5px;
 }
 
 .savLibraryMvc .editView .field .value select {
-	width: inherit;
+    width: inherit;
 }
 
 .savLibraryMvc .editView .field .value select.multiple {
-	min-width: 50px;
-	margin-right: 5px;
+    min-width: 50px;
+    margin-right: 5px;
 }
 
 .savLibraryMvc .editView .field .value div.checkbox {
-	width: inherit;
+    width: inherit;
 }
 
 .savLibraryMvc .editView .field .value .checkbox input {
-	
+	margin: 0px;   
 }
 
 .savLibraryMvc .editView .field .value .checkbox span {
-	padding: 0 5px 0 5px;
+    padding: 0 5px 0 5px;
 }
 
 .savLibraryMvc .editView .field .value div.radioButton {
-	width: inherit;
+    width: inherit;
 }
 
 .savLibraryMvc .editView .field .value .radioButton input {
-	
+    
 }
 
 .savLibraryMvc .editView .field .value .radioButton span {
-	padding: 0 5px 0 5px;
+    padding: 0 5px 0 5px;
 }
 
 .savLibraryMvc .editView .field .value textarea {
-	width: inherit;
+    width: inherit;
 }
 
 .savLibraryMvc .editView .field .value  td {
-	border: red;
+    border: red;
 }
 
 .savLibraryMvc .editView div.block {
-	width: calc(100% - 10px);
-	min-width: 97.5%;
-	margin: 2px;
-	padding: 2px;
-	border: 1px #004898 solid;
+    width: calc(100% - 10px);
+    min-width: 97.5%;
+    margin: 2px;
+    padding: 2px;
+    border: 1px #004898 solid;
 }
 
 .savLibraryMvc .editView div.blockTitle {
-	font-weight: normal;
-	color: #000099;
-	font-weight: bold;
-	font-size: 90%;
-	border-bottom: solid 1px #004898;
-	width: 300px;
-	padding-left: 2px;
-	margin-bottom: 4px;
+    font-weight: normal;
+    color: #000099;
+    font-weight: bold;
+    font-size: 90%;
+    border-bottom: solid 1px #004898;
+    width: 300px;
+    padding-left: 2px;
+    margin-bottom: 4px;
 }
 
 /**
-	 * Edit view subform 
-	 */
+     * Edit view subform 
+     */
 .savLibraryMvc .editView div.subform {
-	width: 100%;
-	background-color: #ffffff;
-	width: calc(100% - 8px);
-	margin: 0 3px 0 3px;
-	border: 1px #000099 solid;
+    width: 100%;
+    background-color: #ffffff;
+    width: calc(100% - 8px);
+    margin: 0 3px 0 3px;
+    border: 1px #000099 solid;
 }
 
 .savLibraryMvc .editView .subform div.subform {
-	width: 100%;
-	width: calc(100% - 44px);
-	margin: 0 3px 0 38px;
+    width: 100%;
+    width: calc(100% - 44px);
+    margin: 0 3px 0 38px;
 }
 
 .savLibraryMvc .editView .subform div.subformItem {
-	margin-top: 5px;
-	width: 100%;
+    margin-top: 5px;
+    width: 100%;
 }
 
 .savLibraryMvc .editView .subform div.subformItem:first-child {
-	margin-top: 0;
+    margin-top: 0;
 }
 
 .savLibraryMvc .editView .subform div.items {
-	margin: 1px 0 1px 0;
+    margin: 1px 0 1px 0;
 }
 
 .savLibraryMvc .editView .items div.itemIconLeft {
-	width: 35px;
-	padding: 2px;
+    width: 35px;
+    padding: 2px;
 }
 
 .savLibraryMvc .editView .subform .items div.item {
-	margin-bottom: 1px;
+    margin-bottom: 1px;
 }
 
 .savLibraryMvc .editView .subform .items .item div.field {
-	
+    
 }
 
 .savLibraryMvc .editView .subform .items .item .field div.label {
-	width: 100px;
-	background-color: #d7e8e8;
-	color: #000099;
-	font-weight: bold;
-	text-align: left;
-	padding: 5px;
+    width: 100px;
+    background-color: #d7e8e8;
+    color: #000099;
+    font-weight: bold;
+    text-align: left;
+    padding: 5px;
 }
 
 .savLibraryMvc .editView .subform .items .item .field div.error {
-	width: 96px;
-	border: 2px solid red;
+    width: 96px;
+    border: 2px solid red;
 }
 
 .savLibraryMvc .editView .subform .items .item .field div.value {
-	min-width: 150px;
-	background-color: #ffffff;
-	padding: 5px;
+    min-width: 150px;
+    background-color: #ffffff;
+    padding: 5px;
 }
 
 /**
-	 * export view
-	 */
+     * export view
+     */
 .savLibraryMvc div.exportView {
-	width: 100%;
-	border: 1px #000099 solid;
-	background-color: #f1fbfd;
+    width: 100%;
+    border: 1px #000099 solid;
+    background-color: #f1fbfd;
 }
 
 .savLibraryMvc .exportView div.items {
-	width: 100%;
-	background-color: #ffffff;
-	margin: 2px 0 0 0;
+    width: 100%;
+    background-color: #ffffff;
+    margin: 2px 0 0 0;
 }
 
 .savLibraryMvc .exportView .items div.item {
-	width: 100%;
-	border-top: 1px #ddeeee solid;
-	border-bottom: 1px #ddeeee solid;
-	background-color: #ffffff;
-	margin: 1px 0 0 0;
+    width: 100%;
+    border-top: 1px #ddeeee solid;
+    border-bottom: 1px #ddeeee solid;
+    background-color: #ffffff;
+    margin: 1px 0 0 0;
 }
 
 /**
-	 * Export view general fields  
-	 */
+ * Export view general fields  
+ */
 .savLibraryMvc .exportView .field div.label {
-	width: 100px;
-	background-color: #d7e8e8;
-	color: #000099;
-	font-weight: bold;
-	text-align: left;
-	padding: 4px;
+    width: 100px;
+    background-color: #d7e8e8;
+    color: #000099;
+    font-weight: bold;
+    text-align: left;
+    padding: 4px;
 }
 
 .savLibraryMvc .exportView .field div.value {
-	min-width: 150px;
-	padding-left: 3px;
-	background-color: #ffffff;
+    min-width: 150px;
+    padding-left: 3px;
+    background-color: #ffffff;
 }
 
 /** 
-	 * Export view special fields 
-	 */
+     * Export view special fields 
+     */
 .savLibraryMvc .exportView .generatedFileLink a {
-	float: left;
-	padding: 5px;
-	margin: 0px;
+    float: left;
+    padding: 5px;
+    margin: 0px;
 }
 
 .savLibraryMvc .exportView .field input.xmlFile {
-	width: 500px;
+    width: 500px;
 }
 
 .savLibraryMvc .exportView .field input.xsltFile {
-	width: 500px;
+    width: 500px;
 }
 
 .savLibraryMvc .exportView .field input.exec {
-	width: 500px;
+    width: 500px;
 }
 
 .savLibraryMvc .exportView .field textarea.query {
-	width: 500px;
-	height: 300px;
+    width: 500px;
+    height: 300px;
 }
 
 .savLibraryMvc .exportView div.fields {
-	width: 100%;
+    width: 100%;
 }
 
 .savLibraryMvc .exportView .fields div.value {
-	width: 84%;
-	width: calc(86% - 8px);
+    width: 84%;
+    width: calc(86% - 8px);
 }
 
 .savLibraryMvc .exportView .fields div.checkbox {
-	width: 50%;
+    width: 50%;
 }
 
 .savLibraryMvc .exportView .fields .checkbox input {
-	margin-top: 4px;
+    margin-top: 4px;
 }
 
 .savLibraryMvc .exportView .fields .checkbox span {
-	width: 85%;
-	padding: 0 5px 0 5px;
-	-webkit-hyphens: auto;
-	-moz-hyphens: auto;
-	-ms-hyphens: auto;
-	-o-hyphens: auto;
-	hyphens: auto;
-	word-wrap: break-word;
+    width: 85%;
+    padding: 0 5px 0 5px;
+    -webkit-hyphens: auto;
+    -moz-hyphens: auto;
+    -ms-hyphens: auto;
+    -o-hyphens: auto;
+    hyphens: auto;
+    word-wrap: break-word;
 }
 
 .savLibraryMvc .exportView .field textarea.whereClause {
-	width: 500px;
-	height: 90px;
+    width: 500px;
+    height: 90px;
 }
 
 .savLibraryMvc .exportView .field input.orderByClause {
-	width: 500px;
+    width: 500px;
 }
 
 .savLibraryMvc .exportView .field textarea.additionalTables {
-	width: 500px;
-	height: 30px;
+    width: 500px;
+    height: 30px;
 }
 
 .savLibraryMvc .exportView .field textarea.additionalFields {
-	width: 500px;
-	height: 30px;
+    width: 500px;
+    height: 30px;
 }
 
 .savLibraryMvc .exportView .field input.groupByClause {
-	width: 259px;
+    width: 259px;
 }
 
 .savLibraryMvc .exportView .field textarea.orderedFieldList {
-	width: 500px;
-	height: 90px;
+    width: 500px;
+    height: 90px;
 }
 
 .savLibraryMvc .exportView .field textarea.fieldsConfiguration {
-	width: 500px;
-	height: 90px;
+    width: 500px;
+    height: 90px;
 }
 
 /** 
@@ -1215,32 +1189,32 @@
 * Keeps htmlarea properties 
 */
 .savLibraryMvc div.htmlarea table {
-	background: inherit !important;
-	width: auto !important;
-	margin: inherit !important;
-	position: inherit !important;
+    background: inherit !important;
+    width: auto !important;
+    margin: inherit !important;
+    position: inherit !important;
 }
 
 .savLibraryMvc div.htmlarea tr {
-	background: inherit !important;
-	margin: inherit !important;
-	padding: inherit !important;
+    background: inherit !important;
+    margin: inherit !important;
+    padding: inherit !important;
 }
 
 .savLibraryMvc div.htmlarea td {
-	background: inherit !important;
-	margin: inherit !important;
-	padding: inherit !important;
+    background: inherit !important;
+    margin: inherit !important;
+    padding: inherit !important;
 }
 
 .savLibraryMvc div.htmlarea label {
-	font: inherit !important;
-	margin: inherit !important;
+    font: inherit !important;
+    margin: inherit !important;
 }
 
 .savLibraryMvc div.htmlarea select {
-	display: inline-block;
-	float: none;
+    display: inline-block;
+    float: none;
 }
 
 .savLibraryMvc div.htmlarea .btn-toolbar .btn-group {

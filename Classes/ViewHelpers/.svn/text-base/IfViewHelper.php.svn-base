@@ -60,7 +60,7 @@
  * </f:if>
  * </code>
  *
- * Everything inside the <f:if> tag is being displayed if the condition evaluates to TRUE.
+ * Everything inside the <f:if> tag is being displayed if the condition evaluates to true.
  *
  * <code title="If / then / else">
  * <f:if condition="somecondition">
@@ -68,19 +68,19 @@
  *     This is being shown in case the condition matches.
  *   </f:then>
  *   <f:else>
- *     This is being displayed in case the condition evaluates to FALSE.
+ *     This is being displayed in case the condition evaluates to false.
  *   </f:else>
  * </f:if>
  * </code>
  *
- * Everything inside the "then" tag is displayed if the condition evaluates to TRUE.
+ * Everything inside the "then" tag is displayed if the condition evaluates to true.
  * Otherwise, everything inside the "else"-tag is displayed.
  *
  * <code title="inline notation">
  * {f:if(condition: someCondition, then: 'condition is met', else: 'condition is not met')}
  * </code>
  *
- * The value of the "then" attribute is displayed if the condition evaluates to TRUE.
+ * The value of the "then" attribute is displayed if the condition evaluates to true.
  * Otherwise, everything the value of the "else"-attribute is displayed.
  *
  *
@@ -97,7 +97,7 @@ class Tx_SavLibraryMvc_ViewHelpers_IfViewHelper extends Tx_Fluid_Core_ViewHelper
 	 * An array of Tx_Fluid_Core_Parser_SyntaxTree_AbstractNode
 	 * @var array
 	 */
-	protected $childNodes = array();
+	protected $childNodes = [];
 
 	/**
 	 * @var Tx_Fluid_Core_Rendering_RenderingContext
@@ -137,12 +137,12 @@ class Tx_SavLibraryMvc_ViewHelpers_IfViewHelper extends Tx_Fluid_Core_ViewHelper
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 */
-	public function render($condition, $then = NULL, $else = NULL, $elseif = NULL) {
+	public function render($condition, $then = null, $else = null, $elseif = null) {
 		if ($condition) {
 			return $this->renderThenChild();
 		} else {
       $renderElseIfChild = $this->renderElseIfChild();
-			if ($renderElseIfChild === NULL) {
+			if ($renderElseIfChild === null) {
 			 return $this->renderElseChild();
       } else {
         return $renderElseIfChild;
@@ -177,7 +177,7 @@ class Tx_SavLibraryMvc_ViewHelpers_IfViewHelper extends Tx_Fluid_Core_ViewHelper
 	/**
 	 * Returns value of "elseif" attribute.
 	 * If elseif attribute is set, iterates through child nodes and renders ElseIfViewHelper.
-	 * If else attribute is not set and no ElseViewHelper is found, a NULL string will be returned.
+	 * If else attribute is not set and no ElseViewHelper is found, a null string will be returned.
 	 *
 	 * @return string rendered ElseViewHelper or an empty string if no ThenViewHelper was found
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
@@ -194,9 +194,9 @@ class Tx_SavLibraryMvc_ViewHelpers_IfViewHelper extends Tx_Fluid_Core_ViewHelper
 			}
 		}
 		if ($this->arguments->hasArgument('elseif')) {
-			return $this->arguments['elseif']['condition'] ? $this->arguments['elseif']['then'] : NULL;
+			return $this->arguments['elseif']['condition'] ? $this->arguments['elseif']['then'] : null;
 		}
-		return NULL;
+		return null;
 	}
 	
 	/**

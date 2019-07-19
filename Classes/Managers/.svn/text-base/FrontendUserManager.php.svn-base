@@ -45,7 +45,7 @@ class Tx_SavLibraryMvc_Managers_FrontendUserManager {
 	 * @return boolean True if the user is logged
 	*/
   public function isLogged() {
-    return ($GLOBALS['TSFE']->fe_user->user['uid'] ? TRUE : FALSE);
+    return ($GLOBALS['TSFE']->fe_user->user['uid'] ? true : false);
   }
 
 	/**
@@ -55,9 +55,9 @@ class Tx_SavLibraryMvc_Managers_FrontendUserManager {
 	*/
   public function isAllowedToInputData() {
     if (!$this->isLogged()) {
-      return FALSE;
+      return false;
     } else {
-      return TRUE;
+      return true;
     }
 // TODO: Add other cases as in SAV Library
   }

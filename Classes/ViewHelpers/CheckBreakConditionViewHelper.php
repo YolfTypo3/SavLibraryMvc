@@ -1,62 +1,61 @@
 <?php
 namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
 
-/**
- * Copyright notice
+/*
+ * This file is part of the TYPO3 CMS project.
  *
- * (c) 2015 Laurent Foulloy <yolf.typo3@orange.fr>
- * All rights reserved
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
  *
- * This script is part of the TYPO3 project. The TYPO3 project is
- * free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with TYPO3 source code.
  *
- * The GNU General Public License can be found at
- * http://www.gnu.org/copyleft/gpl.html.
- *
- * This script is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * This copyright notice MUST APPEAR in all copies of the script!
+ * The TYPO3 project - inspiring people to share!
  */
+
+use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * A view helper for building the options for the field selector.
  *
  * = Examples =
  *
- * <code title="BuildOptionsForFieldSelectorbox">
- * <sav:BuildOptionsForFieldSelectorbox />
+ * <code title="CheckBreakCondition">
+ * <sav:CheckBreakCondition />
  * </code>
  *
  * Output:
- * the options
+ *
  */
-class CheckBreakConditionViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
+class CheckBreakConditionViewHelper extends AbstractViewHelper
 {
-
     /**
+     * Initializes arguments.
+     */
+    public function initializeArguments()
+    {
+        $this->registerArgument('counter', 'integer', 'Counter', false, null);
+        $this->registerArgument('breakCount', 'integer', 'Break count', false, null);
+    }
+    /**
+     * Renders the viewhelper
      *
-     * @param integer $counter
-     *            The counter
-     * @param integer $breakCount
-     *            The break count
-     *            
      * @return boolean the break condition
      */
-    public function render($counter = NULL, $breakCount = 0)
+    public function render()
     {
-        if ($counter === NULL) {
+        // Gets the arguments
+        $counter = $this->arguments['counter'];
+        $breakCount = $this->arguments['breakCount'];
+
+        if ($counter === null) {
             $counter = $this->renderChildren();
         }
         if ($breakCount != 0) {
             return (($counter % $breakCount) == 0);
         } else {
-            return TRUE;
+            return true;
         }
     }
 }

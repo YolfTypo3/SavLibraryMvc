@@ -50,13 +50,13 @@
 									condition="{field.fieldType} == 'RelationManyToManyAsSubform'">
 									<f:then>
 										<f:render partial="Types/Default/{field.fieldType}.html"
-											arguments="{field:field, general:general}" />
+											arguments="{_all}" />
 									</f:then>
 									<f:else>
 										<div class="{field.classValue}"
 											{f:if(condition:'{field.styleValue}',then:' style=""')}>
 											<f:render partial="Types/Default/{field.fieldType}.html"
-												arguments="{field:field, general:general}" />
+												arguments="{_all}" />
 										</div>
 									</f:else>
 								</f:if>
@@ -74,7 +74,7 @@
 		</f:if>
 		</f:for>
 	</div>
-	<div class="footer">
+	<div class="extensionFooter">
 		<f:render partial="Footers/SingleView/Default.html"
 			arguments="{general:general}" />
 	</div>

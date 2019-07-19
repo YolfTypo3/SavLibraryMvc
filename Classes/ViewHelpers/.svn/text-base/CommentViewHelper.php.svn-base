@@ -40,7 +40,7 @@ class Tx_SavLibraryMvc_ViewHelpers_CommentViewHelper extends Tx_Fluid_Core_ViewH
 	 * @author Laurent Foulloy <yolf.typo3@orange.fr>
 	 * @api
 	 */
-	public function render($show = FALSE) {
+	public function render($show = false) {
     if ($show) {
       return $this->renderChildren();
     } else {

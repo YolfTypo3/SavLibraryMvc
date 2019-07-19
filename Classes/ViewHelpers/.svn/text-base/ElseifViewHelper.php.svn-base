@@ -44,7 +44,7 @@ class Tx_SavLibraryMvc_ViewHelpers_ElseifViewHelper extends Tx_Fluid_Core_ViewHe
     if ($condition) {
 		  return $this->renderChildren();
     } else {
-      return NULL;
+      return null;
     }
 	}
 }

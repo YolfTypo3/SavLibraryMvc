@@ -31,8 +31,8 @@ class Tx_SavLibraryMvc_ViewHelpers_ChangeCompressedParametersViewHelper extends 
 	 * @author Laurent Foulloy <yolf.typo3@orange.fr>
 	 * @api
 	 */
-	public function render($parameters = NULL, $key, $value) {
-    if ($parameters === NULL) {
+	public function render($parameters = null, $key, $value) {
+    if ($parameters === null) {
       $parameters = $this->renderChildren();
     }
 

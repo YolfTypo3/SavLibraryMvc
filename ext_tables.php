@@ -1,7 +1,5 @@
 <?php
-if (! defined('TYPO3_MODE')) {
-    die('Access denied.');
-}
+defined('TYPO3_MODE') or die();
 
 // Adds user function for help in flexforms for extension depending on the SAV Library Mvc
 if (! function_exists('user_savlibraryMvcHelp')) {
@@ -15,17 +13,26 @@ if (! function_exists('user_savlibraryMvcHelp')) {
         }
         $cshTag = $PA['fieldConf']['config']['userFuncParameters']['cshTag'];
 
+        $languageService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Lang\LanguageService::class);
+        $message = '<b>' . $languageService->sL('LLL:EXT:' . $extensionKey . '/Resources/Private/Language/locallang.xlf:extensionFlexform.help') . '</b>';
 
-        $cshTag = lcfirst($cshTag);
-        $languageService = $GLOBALS['LANG'];
-        $message = $languageService->sL('LLL:EXT:' . $extensionKey . '/Resources/Private/Language/locallang.xlf:extensionFlexform.help');
-        $moduleToken = \TYPO3\CMS\Core\FormProtection\FormProtectionFactory::get()->generateToken('moduleCall', 'help_CshmanualCshmanual');
-        $helpUrl = 'index.php?M=help_CshmanualCshmanual&moduleToken=' . $moduleToken . '&tx_cshmanual_help_cshmanualcshmanual[controller]=Help&tx_cshmanual_help_cshmanualcshmanual[action]=detail&';
-
-        $iconSrcAttribute = 'src="../typo3conf/ext/' . $extensionKey . '/Resources/Public/Icons/helpbubble.gif"';
-        $icon = '<img ' . $iconSrcAttribute . ' class="typo3-csh-icon" alt="' . $cshTag . '" />';
-
-        return '<a href="#" onclick="vHWin=window.open(\'' . $helpUrl . 'tx_cshmanual_help_cshmanualcshmanual[table]=xEXT_' . $extensionKey . ($cshTag ? '_' . $cshTag : '') . '\',\'viewFieldHelp\',\'height=400,width=600,status=0,menubar=0,scrollbars=1\');vHWin.focus();return FALSE;">' . $icon . ' ' . $message . '</a>';
+        return \TYPO3\CMS\Backend\Utility\BackendUtility::cshItem('xEXT_' . $extensionKey . '_' . $cshTag, '', '', $message . '|');
     }
+}
+
+// Context sensitive tags
+$contextSensitiveHelpFiles = [
+    'helpGeneral' => 'locallang_csh_flexform_helpGeneral',
+    'helpInputControls' => 'locallang_csh_flexform_helpInputControls',
+    'helpAdvanced' => 'locallang_csh_flexform_helpAdvanced',
+];
+
+// Sets the Context Sensitive Help
+foreach ($contextSensitiveHelpFiles as $contextSensitiveHelpFileKey => $contextSensitiveHelpFile) {
+    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addLLrefForTCAdescr(
+        'xEXT_sav_library_mvc_' . $contextSensitiveHelpFileKey,
+        'EXT:sav_library_mvc/Resources/Private/Language/ContextSensitiveHelp/' . $contextSensitiveHelpFile . '.xlf'
+    );
+
 }
 ?>

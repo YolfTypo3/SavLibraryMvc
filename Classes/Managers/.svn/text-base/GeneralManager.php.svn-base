@@ -70,7 +70,7 @@ class Tx_SavLibraryMvc_Managers_GeneralManager {
 	/**
 	 * @var array
 	 */
-  protected $generalConfiguration = array();
+  protected $generalConfiguration = [];
   
 	/**
 	 * @var string
@@ -83,7 +83,7 @@ class Tx_SavLibraryMvc_Managers_GeneralManager {
 	 * @var array Array of repository
 	 *
 	 */
-  protected $repositories = array();
+  protected $repositories = [];
 
   // Variable to encode/decode form parameters
   private static $specialParameters = array (
@@ -280,7 +280,7 @@ class Tx_SavLibraryMvc_Managers_GeneralManager {
 	 * @return array The uncompressed parameter array
 	 */
   public static function uncompressParameters($compressedParameters) {
-    $parameters = array();
+    $parameters = [];
     while (!empty($compressedParameters)) {
       // Reads the index
       list($parameterIndex) = sscanf($compressedParameters, '%1x');
@@ -346,7 +346,7 @@ class Tx_SavLibraryMvc_Managers_GeneralManager {
 	 * @return boolean True if the preview mode is active
 	*/
   public function isInPreviewMode() {
-    return ($GLOBALS['TSFE']->sys_page->versioningPreview ? TRUE : FALSE);
+    return ($GLOBALS['TSFE']->sys_page->versioningPreview ? true : false);
   }
 
 	/**
@@ -355,7 +355,7 @@ class Tx_SavLibraryMvc_Managers_GeneralManager {
 	 * @return integer The versioning workspace id
 	*/
   public function getVersioningWorkspaceId() {
-    return (isset($GLOBALS['TSFE']->sys_page->versioningWorkspaceId) ? $GLOBALS['TSFE']->sys_page->versioningWorkspaceId : NULL);
+    return (isset($GLOBALS['TSFE']->sys_page->versioningWorkspaceId) ? $GLOBALS['TSFE']->sys_page->versioningWorkspaceId : null);
   }
 }
 ?>

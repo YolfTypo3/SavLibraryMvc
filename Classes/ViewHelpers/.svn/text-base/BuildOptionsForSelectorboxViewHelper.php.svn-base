@@ -37,12 +37,12 @@ class Tx_SavLibraryMvc_ViewHelpers_BuildOptionsForSelectorboxViewHelper extends 
    * @return string the options array
 	 * @author Laurent Foulloy <yolf.typo3@orange.fr>
 	 */
-	public function render($fields = NULL, $extensionName = '') {
-    if ($fields === NULL) {
+	public function render($fields = null, $extensionName = '') {
+    if ($fields === null) {
       $fields = $this->renderChildren();
     }
     
-    $options = array();
+    $options = [];
     
     foreach ($fields as $field) {
       $options[$field[1]] = Tx_Extbase_Utility_Localization::translate($field[0],$extensionName);

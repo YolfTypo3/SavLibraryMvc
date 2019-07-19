@@ -78,16 +78,12 @@
 			</sav:typoscript.wrap>
 			</f:for>
 	</div>
-	<div class="footer">
+	<div class="extensionFooter">
 		<f:render partial="Footers/EditView/Default.html"
 			arguments="{general:general}" />
 	</div>
-	<sav:form.additionalJavaScriptHeader />
-	<f:comment>
-		<!--  sav:form.rteUpdate / -->
-		<!-- sav:form.checkIfChanged / -->
-	</f:comment>
-	</f:form>
+    </f:form>
 	</div>
+	<sav:addAdditionalJavaScriptHeader />
 </f:format.raw>
 </f:section>

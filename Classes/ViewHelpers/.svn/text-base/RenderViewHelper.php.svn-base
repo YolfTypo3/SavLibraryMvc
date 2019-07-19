@@ -44,8 +44,8 @@ class Tx_SavLibraryMvc_ViewHelpers_RenderViewHelper extends Tx_Fluid_Core_ViewHe
 	 * @param string $directory If not null, it replaces the PARTIALS_DIRECTORY constant.
 	 * @return string Rendered string
 	 */
-	public function render($partial, $arguments = array(), $directory = NULL) {
-    if ($directory === NULL) {
+	public function render($partial, $arguments = [], $directory = null) {
+    if ($directory === null) {
       $directory = self::PARTIALS_DIRECTORY;
     }
     

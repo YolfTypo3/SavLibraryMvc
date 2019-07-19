@@ -29,8 +29,8 @@ class Tx_SavLibraryMvc_ViewHelpers_Typoscript_WrapViewHelper extends Tx_Fluid_Co
 	 * @return string Rendered The link
 	 * @author Laurent Foulloy <yolf.typo3@orange.fr>
 	 */
-	public function render($data = NULL, $configuration = NULL) {
-		if ($data === NULL) {
+	public function render($data = null, $configuration = null) {
+		if ($data === null) {
 			$data = $this->renderChildren();
 		}
 

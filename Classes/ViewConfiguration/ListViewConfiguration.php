@@ -1,27 +1,17 @@
 <?php
 namespace YolfTypo3\SavLibraryMvc\ViewConfiguration;
 
-/**
- * Copyright notice
+/*
+ * This file is part of the TYPO3 CMS project.
  *
- * (c) 2015 Laurent Foulloy <yolf.typo3@orange.fr>
- * All rights reserved
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
  *
- * This script is part of the TYPO3 project. The TYPO3 project is
- * free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with TYPO3 source code.
  *
- * The GNU General Public License can be found at
- * http://www.gnu.org/copyleft/gpl.html.
- *
- * This script is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * This copyright notice MUST APPEAR in all copies of the script!
+ * The TYPO3 project - inspiring people to share!
  */
 
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
@@ -36,7 +26,6 @@ use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
  */
 class ListViewConfiguration extends AbstractViewConfiguration
 {
-
     /**
      * Gets the view configuration
      *
@@ -67,6 +56,7 @@ class ListViewConfiguration extends AbstractViewConfiguration
         $this->addGeneralViewConfiguration('extensionKey', AbstractController::getControllerExtensionKey());
         $this->addGeneralViewConfiguration('controllerName', AbstractController::getControllerName());
         $this->addGeneralViewConfiguration('special', $special);
+        $this->addGeneralViewConfiguration('contentUid', $this->controller->getContentObjectRenderer()->data['uid']);
         $this->addGeneralViewConfiguration('orderLink', $uncompressedParameters['orderLink']);
         $this->addGeneralViewConfiguration('currentMode', $uncompressedParameters['mode']);
         $this->addGeneralViewConfiguration('page', $page);
@@ -90,58 +80,65 @@ class ListViewConfiguration extends AbstractViewConfiguration
                 case self::DO_NOT_SHOW_MESSAGE:
                     break;
                 case self::HIDE_EXTENSION:
-                    $this->addGeneralViewConfiguration('hideExtension', TRUE);
+                    $this->addGeneralViewConfiguration('hideExtension', true);
                     break;
             }
-            $viewConfiguration = array(
+            $viewConfiguration = [
                 'general' => $this->getGeneralViewConfiguration()
-            );
+            ];
             return $viewConfiguration;
         }
 
-        // Generates thes fluid template
+        // Generates the fluid template
         $fluidItemTemplate = $this->generateFluidItemTemplate();
 
         // Gets the fields configuration
         $this->fieldConfigurationManager->setStaticFieldsConfiguration($this->getViewIdentifier(), $mainRepository);
 
         // Gets the query result from the main repository
-        $itemsConfiguration = array();
+        $itemsConfiguration = [];
         $objects = $mainRepository->findAllForListView();
 
         foreach ($objects as $this->object) {
-            $this->fieldConfigurationManager->addDynamicFieldsConfiguration($this->object);
 
             // Gets the item configuration
             $itemConfiguration = $this->getItemConfiguration();
+            $this->fieldConfigurationManager->addGeneralConfiguration($itemConfiguration);
+            $this->fieldConfigurationManager->addDynamicFieldsConfiguration($this->object);
 
             // Parses the fluid template
-            $template = $this->templateParser->parse($fluidItemTemplate, array(
-                'fields' => $this->fieldConfigurationManager->getFieldsConfiguration(),
-                'general' => $itemConfiguration
-            ));
+            $template = $this->templateParser->parse(
+                $fluidItemTemplate,
+                [
+                    'fields' => $this->fieldConfigurationManager::getFieldsConfiguration(),
+                    'general' => $itemConfiguration
+                ]
+            );
 
-            $itemsConfiguration[] = array(
+            $itemsConfiguration[] = [
                 'template' => $template,
                 'general' => $itemConfiguration
-            );
+            ];
         }
 
         // Gets the view identifier
         $viewIdentifier = $this->getViewIdentifier();
 
         // Adds the title
-        $title = $this->parseTitle($viewIdentifier, array(
-            'general' => $this->getGeneralViewConfiguration(),
-            'fields' => $this->fieldConfigurationManager->getFieldsConfiguration()
-        ));
+        $title = $this->parseTitle(
+            $viewIdentifier,
+            [
+                'general' => $this->getGeneralViewConfiguration(),
+                'fields' => $this->fieldConfigurationManager::getFieldsConfiguration()
+            ]
+        );
         $this->addGeneralViewConfiguration('title', $title);
 
         // Returns the view configuration
-        $viewConfiguration = array(
+        $viewConfiguration = [
             'general' => $this->getGeneralViewConfiguration(),
             'items' => $itemsConfiguration
-        );
+        ];
 
         return $viewConfiguration;
     }
@@ -174,12 +171,12 @@ class ListViewConfiguration extends AbstractViewConfiguration
         $uncompressedParameters['uid'] = $this->object->getUid();
         $special = AbstractController::compressParameters($uncompressedParameters);
 
-        $itemConfiguration = array(
+        $itemConfiguration = [
             'isInDraftWorkspace' => $isInDraftWorkspace,
             'editButtonIsAllowed' => $editButtonIsAllowed,
             'deleteButtonIsAllowed' => $deleteButtonIsAllowed,
             'special' => $special
-        );
+        ];
 
         return $itemConfiguration;
     }
@@ -212,5 +209,4 @@ class ListViewConfiguration extends AbstractViewConfiguration
         return $itemTemplate;
     }
 }
-
 ?>

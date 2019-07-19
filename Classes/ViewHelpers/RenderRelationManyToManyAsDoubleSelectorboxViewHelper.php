@@ -1,29 +1,22 @@
 <?php
 namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
 
-/**
- * Copyright notice
+/*
+ * This file is part of the TYPO3 CMS project.
  *
- * (c) 2015 Laurent Foulloy <yolf.typo3@orange.fr>
- * All rights reserved
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
  *
- * This script is part of the TYPO3 project. The TYPO3 project is
- * free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with TYPO3 source code.
  *
- * The GNU General Public License can be found at
- * http://www.gnu.org/copyleft/gpl.html.
- *
- * This script is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * This copyright notice MUST APPEAR in all copies of the script!
+ * The TYPO3 project - inspiring people to share!
  */
+
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
+use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 use YolfTypo3\SavLibraryMvc\Domain\Repository\AbstractRepository;
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 use YolfTypo3\SavLibraryMvc\Managers\AdditionalHeaderManager;
@@ -42,31 +35,44 @@ use YolfTypo3\SavLibraryMvc\Managers\AdditionalHeaderManager;
  *
  * Output:
  * the options
+ *
+ * @package SavLibraryMvc
  */
-class RenderRelationManyToManyAsDoubleSelectorboxViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
+class RenderRelationManyToManyAsDoubleSelectorboxViewHelper extends AbstractViewHelper
 {
+    /**
+     * Initializes arguments.
+     */
+    public function initializeArguments()
+    {
+        $this->registerArgument('field', 'array', 'Fields', false, null);
+        $this->registerArgument('action', 'string', 'Action to execute', false, null);
+    }
 
     /**
      *
-     * @param array $field
-     *            The fields
-     * @param string $action
-     *            The action to execute
+     * Renders the viewhelper
      *
-     * @return string the options array
-     * @author Laurent Foulloy <yolf.typo3@orange.fr>
+     * @return mixed
      */
-    public function render($field = NULL, $action = NULL)
+    public function render()
     {
-        if ($field === NULL) {
+        // Gets the arguments
+        $field = $this->arguments['field'];
+        $action = $this->arguments['action'];
+
+        if ($field === null) {
             $field = $this->renderChildren();
         }
+
+        // Creates the object manager
+        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
 
         // Gets the repository class name
         $repositoryClassName = AbstractRepository::resolveRepositoryClassNameFromTableName($field['foreign_table']);
 
         // Gets the repository
-        $repository = $this->objectManager->get($repositoryClassName);
+        $repository = $objectManager->get($repositoryClassName);
 
         // Defines the label field getter
         $labelFieldGetter = 'get' . GeneralUtility::underscoredToUpperCamelCase($repository->getDataMapFactory()->getLabelField());
@@ -81,7 +87,7 @@ class RenderRelationManyToManyAsDoubleSelectorboxViewHelper extends \TYPO3\CMS\F
 
             case 'optionsSource':
                 // Defines the options
-                $options = array();
+                $options = [];
                 $objects = $repository->findAll();
                 foreach ($objects as $object) {
                     $uid = $object->getUid();
@@ -100,7 +106,7 @@ class RenderRelationManyToManyAsDoubleSelectorboxViewHelper extends \TYPO3\CMS\F
                 return $out;
 
             case 'values':
-                $items = array();
+                $items = [];
                 foreach ($field['value'] as $item) {
                     $object = $repository->findByUid($item);
                     if (! is_null($object)) {
@@ -110,7 +116,7 @@ class RenderRelationManyToManyAsDoubleSelectorboxViewHelper extends \TYPO3\CMS\F
                 return $items;
 
             case 'valuesMM':
-                $items = array();
+                $items = [];
                 foreach ($field['value'] as $object) {
                     if (! is_null($object)) {
                         $items[$object->getUid()] = $object->$labelFieldGetter();

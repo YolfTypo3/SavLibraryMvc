@@ -1,29 +1,19 @@
 <?php
 namespace YolfTypo3\SavLibraryMvc\Property\TypeConverter;
 
-/**
- * Copyright notice
+/*
+ * This file is part of the TYPO3 CMS project.
  *
- * (c) 2014 Helmut Hummel
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
  *
- * All rights reserved
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with TYPO3 source code.
  *
- * This script is part of the TYPO3 project. The TYPO3 project is
- * free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- *
- * The GNU General Public License can be found at
- * http://www.gnu.org/copyleft/gpl.html.
- *
- * This script is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * This copyright notice MUST APPEAR in all copies of the script!
+ * The TYPO3 project - inspiring people to share!
  */
+
 use TYPO3\CMS\Core\Resource\Exception\ExistingTargetFileNameException;
 use TYPO3\CMS\Core\Resource\File as FalFile;
 use TYPO3\CMS\Core\Resource\FileReference as FalFileReference;
@@ -36,10 +26,12 @@ use TYPO3\CMS\Extbase\Property\TypeConverter\AbstractTypeConverter;
 
 /**
  * Class UploadedFileReferenceConverter
+ *
+ * For compatibility with TYPO3 v7
+ * @todo This class will be removed in TYPO3 v10
  */
 class UploadedFileReferenceConverter extends AbstractTypeConverter
 {
-
     /**
      * Folder where the file upload should go to (including storage).
      */
@@ -58,7 +50,6 @@ class UploadedFileReferenceConverter extends AbstractTypeConverter
     const CONFIGURATION_ALLOWED_FILE_EXTENSIONS = 4;
 
     /**
-     *
      * @var string
      */
     protected $defaultUploadFolder = '1:/user_upload/';
@@ -71,15 +62,13 @@ class UploadedFileReferenceConverter extends AbstractTypeConverter
     protected $defaultConflictMode = 'replace';
 
     /**
-     *
      * @var array<string>
      */
-    protected $sourceTypes = array(
+    protected $sourceTypes = [
         'array'
-    );
+    ];
 
     /**
-     *
      * @var string
      */
     protected $targetType = 'TYPO3\\CMS\\Extbase\\Domain\\Model\\FileReference';
@@ -92,31 +81,30 @@ class UploadedFileReferenceConverter extends AbstractTypeConverter
     protected $priority = 2;
 
     /**
-     *
      * @var \TYPO3\CMS\Core\Resource\ResourceFactory
+     * @extensionScannerIgnoreLine
      * @inject
      */
     protected $resourceFactory;
 
     /**
-     *
      * @var \TYPO3\CMS\Extbase\Security\Cryptography\HashService
+     * @extensionScannerIgnoreLine
      * @inject
      */
     protected $hashService;
 
     /**
-     *
      * @var \TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager
+     * @extensionScannerIgnoreLine
      * @inject
      */
     protected $persistenceManager;
 
     /**
-     *
      * @var \TYPO3\CMS\Core\Resource\FileInterface[]
      */
-    protected $convertedResources = array();
+    protected $convertedResources = [];
 
     /**
      * Actually convert from $source to $targetType, taking into account the fully
@@ -129,7 +117,7 @@ class UploadedFileReferenceConverter extends AbstractTypeConverter
      * @throws \TYPO3\CMS\Extbase\Property\Exception
      * @return \TYPO3\CMS\Extbase\Domain\Model\AbstractFileFolder @api
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = array(), PropertyMappingConfigurationInterface $configuration = NULL)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
         if (! isset($source['error']) || $source['error'] === \UPLOAD_ERR_NO_FILE) {
             if (isset($source['submittedFile']['resourcePointer'])) {
@@ -186,7 +174,7 @@ class UploadedFileReferenceConverter extends AbstractTypeConverter
             throw new TypeConverterException('Uploading files with PHP file extensions is not allowed!', 1399312430);
         }
         $allowedFileExtensions = $configuration->getConfigurationValue(\YolfTypo3\SavLibraryMvc\Property\TypeConverter\UploadedFileReferenceConverter::class, self::CONFIGURATION_ALLOWED_FILE_EXTENSIONS);
-        if ($allowedFileExtensions !== NULL) {
+        if ($allowedFileExtensions !== null) {
             $filePathInfo = PathUtility::pathinfo($uploadInfo['name']);
             if (! GeneralUtility::inList($allowedFileExtensions, strtolower($filePathInfo['extension']))) {
                 throw new TypeConverterException('File extension is not allowed!', 1399312430);
@@ -196,46 +184,45 @@ class UploadedFileReferenceConverter extends AbstractTypeConverter
         $conflictMode = $configuration->getConfigurationValue(\YolfTypo3\SavLibraryMvc\Property\TypeConverter\UploadedFileReferenceConverter::class, self::CONFIGURATION_UPLOAD_CONFLICT_MODE) ?  : $this->defaultConflictMode;
         $uploadFolder = $this->resourceFactory->retrieveFileOrFolderObject($uploadFolderId);
         $uploadedFile = $uploadFolder->addUploadedFile($uploadInfo, $conflictMode);
-        $resourcePointer = isset($uploadInfo['submittedFile']['resourcePointer']) && strpos($uploadInfo['submittedFile']['resourcePointer'], 'file:') === FALSE ? $this->hashService->validateAndStripHmac($uploadInfo['submittedFile']['resourcePointer']) : NULL;
+        $resourcePointer = isset($uploadInfo['submittedFile']['resourcePointer']) && strpos($uploadInfo['submittedFile']['resourcePointer'], 'file:') === false ? $this->hashService->validateAndStripHmac($uploadInfo['submittedFile']['resourcePointer']) : null;
         $fileReferenceModel = $this->createFileReferenceFromFalFileObject($uploadedFile, $resourcePointer);
         return $fileReferenceModel;
     }
 
     /**
-     *
      * @param FalFile $file
      * @param int $resourcePointer
      * @return \YolfTypo3\SavLibraryMvc\Domain\Model\DefaultModel
      */
-    protected function createFileReferenceFromFalFileObject(FalFile $file, $resourcePointer = NULL)
+    protected function createFileReferenceFromFalFileObject(FalFile $file, $resourcePointer = null)
     {
-        $fileReference = $this->resourceFactory->createFileReferenceObject(array(
-            'uid_local' => $file->getUid(),
-            'uid_foreign' => uniqid('NEW_'),
-            'uid' => uniqid('NEW_'),
-            'crop' => NULL
-        ));
+        $fileReference = $this->resourceFactory->createFileReferenceObject([
+                'uid_local' => $file->getUid(),
+                'uid_foreign' => uniqid('NEW_'),
+                'uid' => uniqid('NEW_'),
+                'crop' => null
+            ]
+        );
         return $this->createFileReferenceFromFalFileReferenceObject($fileReference, $resourcePointer);
     }
 
     /**
-     *
      * @param FalFileReference $falFileReference
      * @param int $resourcePointer
      * @return \YolfTypo3\SavLibraryMvc\Domain\Model\DefaultModel
      */
-    protected function createFileReferenceFromFalFileReferenceObject(FalFileReference $falFileReference, $resourcePointer = NULL)
+    protected function createFileReferenceFromFalFileReferenceObject(FalFileReference $falFileReference, $resourcePointer = null)
     {
-        if ($resourcePointer === NULL) {
+        if ($resourcePointer === null) {
             /**
-             *
              * @var $fileReference \YolfTypo3\SavLibraryMvc\Domain\Model\DefaultModel
              */
             $fileReference = $this->objectManager->get(\TYPO3\CMS\Extbase\Domain\Model\FileReference::class);
         } else {
-            $fileReference = $this->persistenceManager->getObjectByIdentifier($resourcePointer, \TYPO3\CMS\Extbase\Domain\Model\FileReference::class, FALSE);
+            $fileReference = $this->persistenceManager->getObjectByIdentifier($resourcePointer, \TYPO3\CMS\Extbase\Domain\Model\FileReference::class, false);
         }
         $fileReference->setOriginalResource($falFileReference);
         return $fileReference;
     }
+
 }

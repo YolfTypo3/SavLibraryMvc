@@ -230,14 +230,14 @@ class Tx_SavLibraryMvc_Managers_FieldConfigurationManager {
 	 */
 	protected function getCutDivItemBegin() {
     if ($this->fieldConfiguration['fusion'] == 'begin') {
-      $fusionBegin = TRUE;
+      $fusionBegin = true;
     }
     $cut = (
       ($this->fusionInProgress && !$fusionBegin) |
       ($this->getCutFlag() && !$this->fusionInProgress)
     );
     if ($fusionBegin) {
-      $this->fusionInProgress = TRUE;
+      $this->fusionInProgress = true;
     }
     return $cut;
 	}
@@ -250,14 +250,14 @@ class Tx_SavLibraryMvc_Managers_FieldConfigurationManager {
 	 */
 	protected function getCutDivItemEnd() {
     if ($this->fieldConfiguration['fusion'] == 'end') {
-      $fusionEnd = TRUE;
+      $fusionEnd = true;
     }
     $cut = (
       ($this->fusionInProgress && !$fusionEnd) |
       ($this->getCutFlag() && !$this->fusionInProgress)
     );
     if ($fusionEnd) {
-      $this->fusionInProgress = FALSE;
+      $this->fusionInProgress = false;
     }
     return $cut;
 	}
@@ -304,7 +304,7 @@ class Tx_SavLibraryMvc_Managers_FieldConfigurationManager {
       $value = $this->getValue();
       return empty($value);
     } else {
-      return FALSE;
+      return false;
     }
 	}
 
@@ -342,7 +342,7 @@ class Tx_SavLibraryMvc_Managers_FieldConfigurationManager {
                 $this->generalManager->getFlashMessageContainer()->add(
                   sprintf(Tx_Extbase_Utility_Localization::translate('error.unknownGetMethod', 'sav_library_mvc'), $lhs)
                 );
-                return FALSE;
+                return false;
               }
               $lhsValue = $this->domainObject->$method();
             } else {
@@ -355,7 +355,7 @@ class Tx_SavLibraryMvc_Managers_FieldConfigurationManager {
                   $this->generalManager->getFlashMessageContainer()->add(
                     sprintf(Tx_Extbase_Utility_Localization::translate('error.unknownGetMethod', 'sav_library_mvc'), $rootField)
                   );
-                  return FALSE;
+                  return false;
                 }
                 $lshValue  = $lshValue->$rootMethod();
               }
@@ -365,7 +365,7 @@ class Tx_SavLibraryMvc_Managers_FieldConfigurationManager {
                 $this->generalManager->getFlashMessageContainer()->add(
                   sprintf(Tx_Extbase_Utility_Localization::translate('error.unknownGetMethod', 'sav_library_mvc'), $rootField)
                 );
-                return FALSE;
+                return false;
               }
               $lhsValue = $lshValue->$method();
             }
@@ -403,7 +403,7 @@ class Tx_SavLibraryMvc_Managers_FieldConfigurationManager {
       }
       return $cut;
     } else {
-      return FALSE;
+      return false;
     }
 	}
 

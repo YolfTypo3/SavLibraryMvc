@@ -28,8 +28,8 @@ class Tx_SavLibraryMvc_ViewHelpers_Typoscript_TypolinkViewHelper extends Tx_Flui
 	 * @return string Rendered The link
 	 * @author Laurent Foulloy <yolf.typo3@orange.fr>
 	 */
-	public function render($data = NULL, $configuration = NULL) {
-		if ($data === NULL) {
+	public function render($data = null, $configuration = null) {
+		if ($data === null) {
 			$data = $this->renderChildren();
 		}
 

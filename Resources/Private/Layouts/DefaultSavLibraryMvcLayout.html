@@ -4,7 +4,7 @@
 <f:if condition="{general.hideExtension} != 1">
 <div class="savLibraryMvc {general.extensionKey} {general.controllerName}">
     <div class="message">
-		<sav:flashMessages queueIdentifier="core.template.flashMessages" />
+		<f:flashMessages queueIdentifier="core.template.flashMessages" />
 	</div>
 	<f:render partial="Errors" arguments="{object:data}" />
 	<f:render section="content" />

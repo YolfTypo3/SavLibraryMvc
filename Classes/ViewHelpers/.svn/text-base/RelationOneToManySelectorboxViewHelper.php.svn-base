@@ -38,8 +38,8 @@ class Tx_SavLibraryMvc_ViewHelpers_RelationOneToManySelectorboxViewHelper extend
    * @return string the options array
 	 * @author Laurent Foulloy <yolf.typo3@orange.fr>
 	 */
-	public function render($field = NULL, $configuration = NULL, $action = NULL) {
-    if ($field === NULL) {
+	public function render($field = null, $configuration = null, $action = null) {
+    if ($field === null) {
       $field = $this->renderChildren();
     }
 
@@ -55,7 +55,7 @@ class Tx_SavLibraryMvc_ViewHelpers_RelationOneToManySelectorboxViewHelper extend
         if (is_array($field['items'][0])) {
           $options = array('0' => $field['items'][0][0]);
         } else {
-          $options = array();
+          $options = [];
         }
         $objects = $repository->findAll();
         foreach($objects as $object) {

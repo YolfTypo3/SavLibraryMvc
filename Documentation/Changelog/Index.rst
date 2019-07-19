@@ -21,6 +21,8 @@ Changelog
 =======  ===========================================================================
 Version  Changes
 =======  ===========================================================================
+1.2.0    - Compatibility changed to TYPO3 9.x
+
 1.1.0    - Processing for RichTextEditor modified.
          - Compatibility changed to TYPO3 8.9.
          - composer.json added

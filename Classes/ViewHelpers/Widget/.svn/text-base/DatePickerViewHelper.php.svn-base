@@ -56,7 +56,7 @@ class Tx_SavLibraryMvc_ViewHelpers_Widget_DatePickerViewHelper extends Tx_Fluid_
    * @return string the options array
 	 * @author Laurent Foulloy <yolf.typo3@orange.fr>
 	 */
-	public function render($configuration, $default = array()) {
+	public function render($configuration, $default = []) {
 
     // Sets the date format
     if (!isset($default['format'])) {
@@ -87,7 +87,7 @@ class Tx_SavLibraryMvc_ViewHelpers_Widget_DatePickerViewHelper extends Tx_Fluid_
     $datePickerConfiguration['showsTime'] = $configuration['showsTime'];
 
     // Sets the value
-    if($this->getValue() === NULL) {
+    if($this->getValue() === null) {
       $value = $fieldConfiguration['noDefault'] ? '' : date();
     } elseif ($fieldConfiguration['noDefault'] && $configuration['newRecord']) {
       $value = '';

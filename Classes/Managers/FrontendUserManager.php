@@ -1,28 +1,19 @@
 <?php
 namespace YolfTypo3\SavLibraryMvc\Managers;
 
-/**
- * Copyright notice
+/*
+ * This file is part of the TYPO3 CMS project.
  *
- * (c) 2015 Laurent Foulloy <yolf.typo3@orange.fr>
- * All rights reserved
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
  *
- * This script is part of the TYPO3 project. The TYPO3 project is
- * free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with TYPO3 source code.
  *
- * The GNU General Public License can be found at
- * http://www.gnu.org/copyleft/gpl.html.
- *
- * This script is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * This copyright notice MUST APPEAR in all copies of the script!
+ * The TYPO3 project - inspiring people to share!
  */
+
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 use YolfTypo3\SavLibraryMvc\Controller\DefaultController;
@@ -46,7 +37,7 @@ class FrontendUserManager
      *
      * @var \YolfTypo3\SavLibraryMvc\Controller\DefaultController
      */
-    protected $controller = NULL;
+    protected $controller = null;
 
     /**
      * Sets the controller
@@ -66,7 +57,7 @@ class FrontendUserManager
      */
     public function userIsAuthenticated()
     {
-        return (is_null($GLOBALS['TSFE']->fe_user->user['uid']) ? FALSE : TRUE);
+        return (is_null($GLOBALS['TSFE']->fe_user->user['uid']) ? false : true);
     }
 
     /**
@@ -77,8 +68,8 @@ class FrontendUserManager
     public function userIsAllowedToInputData()
     {
         // Checks if the user is authenticated
-        if ($this->userIsAuthenticated() === FALSE) {
-            return FALSE;
+        if ($this->userIsAuthenticated() === false) {
+            return false;
         }
 
         // Condition on date
@@ -86,23 +77,23 @@ class FrontendUserManager
         $conditionOnInputDate = (AbstractController::getSetting('inputStartDate') && ($time >= AbstractController::getSetting('inputStartDate')) && AbstractController::getSetting('inputEndDate') && ($time <= AbstractController::getSetting('inputEndDate')));
         switch (AbstractController::getSetting('dateUserRestriction')) {
             case self::NOBODY:
-                $conditionOnInputDate = TRUE;
+                $conditionOnInputDate = true;
             case self::ALL:
                 // The condition is applied to all users including super Admin
                 break;
             case self::ADMIN_PLUS_USER:
                 // The condition will be checked in userIsAdmin and applied to admin Plus users
-                $conditionOnInputDate = TRUE;
+                $conditionOnInputDate = true;
                 break;
             case self::ALL_EXCLUDING_SUPER_ADMIN:
                 // Checks if the user is super Admin.
-                $conditionOnInputDate = ($this->userIsSuperAdmin() ? TRUE : $conditionOnInputDate);
+                $conditionOnInputDate = ($this->userIsSuperAdmin() ? true : $conditionOnInputDate);
                 break;
         }
 
         // Condition on allowedGroups
-        $result = (count(array_intersect(explode(',', AbstractController::getSetting('allowedGroups')), array_keys($GLOBALS['TSFE']->fe_user->groupData['uid']))) > 0 ? TRUE : FALSE);
-        $conditionOnAllowedGroups = (AbstractController::getSetting('allowedGroups') ? $result : TRUE);
+        $result = (count(array_intersect(explode(',', AbstractController::getSetting('allowedGroups')), array_keys($GLOBALS['TSFE']->fe_user->groupData['uid']))) > 0 ? true : false);
+        $conditionOnAllowedGroups = (AbstractController::getSetting('allowedGroups') ? $result : true);
 
         return AbstractController::getSetting('inputIsAllowed') && $conditionOnAllowedGroups && $conditionOnInputDate;
     }
@@ -119,14 +110,14 @@ class FrontendUserManager
     public function userIsAllowedToChangeData($object, $additionalString = '')
     {
         if ($this->userIsSuperAdmin()) {
-            return TRUE;
+            return true;
         }
 
         // Gets the admin configuration fronm the user TS Config
         $inputAdminConfiguration = $GLOBALS['TSFE']->fe_user->getUserTSconf();
 
         // Condition on the Input Admin Field
-        $conditionOnInputAdminField = TRUE;
+        $conditionOnInputAdminField = true;
         $inputAdminField = AbstractController::getSetting('inputAdminField');
 
         if (! empty($inputAdminField)) {
@@ -143,12 +134,12 @@ class FrontendUserManager
                 case 'cruser_id':
                     // Checks if the user created the record
                     if ($fieldValue != $GLOBALS['TSFE']->fe_user->user['uid']) {
-                        $conditionOnInputAdminField = FALSE;
+                        $conditionOnInputAdminField = false;
                     }
                     break;
                 default:
                     $extensionKey = DefaultController::getControllerExtensionKey();
-                    $conditionOnInputAdminField = (strpos($inputAdminConfiguration[$extensionKey . '_Admin'], $fieldValue) === FALSE ? FALSE : TRUE);
+                    $conditionOnInputAdminField = (strpos($inputAdminConfiguration[$extensionKey . '_Admin'], $fieldValue) === false ? false : true);
                     break;
             }
         }
@@ -201,8 +192,8 @@ class FrontendUserManager
     public function userIsAllowedToExportDataWithQuery()
     {
         // Checks if the user is allowad to export data
-        if ($this->userIsAllowedToExportData() === FALSE) {
-            return FALSE;
+        if ($this->userIsAllowedToExportData() === false) {
+            return false;
         }
 
         // Gets the extension key

@@ -102,7 +102,7 @@ class Tx_Extbase_Property_Mapper {
 	/**
 	 * Maps the given properties to the target object and validates the properties according to the defined
 	 * validators. If the result object is not valid, the operation will be undone (the target object remains
-	 * unchanged) and this method returns FALSE.
+	 * unchanged) and this method returns false.
 	 *
 	 * If in doubt, always prefer this method over the map() method because skipping validation can easily become
 	 * a security issue.
@@ -112,21 +112,21 @@ class Tx_Extbase_Property_Mapper {
 	 * @param object $target The target object
 	 * @param Tx_Extbase_Validation_Validator_ObjectValidatorInterface $targetObjectValidator A validator used for validating the target object
 	 * @param array $optionalPropertyNames Names of optional properties. If a property is specified here and it doesn't exist in the source, no error is issued.
-	 * @return boolean TRUE if the mapped properties are valid, otherwise FALSE
+	 * @return boolean true if the mapped properties are valid, otherwise false
 	 * @see getMappingResults()
 	 * @see map()
 	 * @api
 	 */
-	public function mapAndValidate(array $propertyNames, $source, $target, $optionalPropertyNames = array(), Tx_Extbase_Validation_Validator_ObjectValidatorInterface $targetObjectValidator) {
-		$backupProperties = array();
+	public function mapAndValidate(array $propertyNames, $source, $target, $optionalPropertyNames = [], Tx_Extbase_Validation_Validator_ObjectValidatorInterface $targetObjectValidator) {
+		$backupProperties = [];
 
 		$this->map($propertyNames, $source, $backupProperties, $optionalPropertyNames);
-		if ($this->mappingResults->hasErrors()) return FALSE;
+		if ($this->mappingResults->hasErrors()) return false;
 
 		$this->map($propertyNames, $source, $target, $optionalPropertyNames);
-		if ($this->mappingResults->hasErrors()) return FALSE;
+		if ($this->mappingResults->hasErrors()) return false;
 
-		if ($targetObjectValidator->isValid($target) !== TRUE) {
+		if ($targetObjectValidator->isValid($target) !== true) {
 			$this->addErrorsFromObjectValidator($targetObjectValidator->getErrors());
 			$backupMappingResult = $this->mappingResults;
 			$this->map($propertyNames, $backupProperties, $source, $optionalPropertyNames);
@@ -152,8 +152,8 @@ class Tx_Extbase_Property_Mapper {
 
 	/**
 	 * Maps the given properties to the target object WITHOUT VALIDATING THE RESULT.
-	 * If the properties could be set, this method returns TRUE, otherwise FALSE.
-	 * Returning TRUE does not mean that the target object is valid and secure!
+	 * If the properties could be set, this method returns true, otherwise false.
+	 * Returning true does not mean that the target object is valid and secure!
 	 *
 	 * Only use this method if you're sure that you don't need validation!
 	 *
@@ -161,14 +161,14 @@ class Tx_Extbase_Property_Mapper {
 	 * @param mixed $source Source containing the properties to map to the target object. Must either be an array, ArrayObject or any other object.
 	 * @param object $target The target object
 	 * @param array $optionalPropertyNames Names of optional properties. If a property is specified here and it doesn't exist in the source, no error is issued.
-	 * @return boolean TRUE if the properties could be mapped, otherwise FALSE
+	 * @return boolean true if the properties could be mapped, otherwise false
 	 * @see mapAndValidate()
 	 * @api
 	 */
-	public function map(array $propertyNames, $source, $target, $optionalPropertyNames = array()) {
+	public function map(array $propertyNames, $source, $target, $optionalPropertyNames = []) {
 		if (!is_object($source) && !is_array($source)) throw new Tx_Extbase_Property_Exception_InvalidSource('The source object must be a valid object or array, ' . gettype($target) . ' given.', 1187807099);
 
-		if (is_string($target) && strpos($target, '_') !== FALSE) {
+		if (is_string($target) && strpos($target, '_') !== false) {
 			return $this->transformToObject($source, $target, '--none--');
 		}
 
@@ -178,11 +178,11 @@ class Tx_Extbase_Property_Mapper {
 		if (is_object($target)) {
 			$targetClassSchema = $this->reflectionService->getClassSchema(get_class($target));
 		} else {
-			$targetClassSchema = NULL;
+			$targetClassSchema = null;
 		}
 
 		foreach ($propertyNames as $propertyName) {
-			$propertyValue = NULL;
+			$propertyValue = null;
 			if (is_array($source) || $source instanceof ArrayAccess) {
 				if (isset($source[$propertyName])) {
 					$propertyValue = $source[$propertyName];
@@ -191,14 +191,14 @@ class Tx_Extbase_Property_Mapper {
 				$propertyValue = Tx_Extbase_Reflection_ObjectAccess::getProperty($source, $propertyName);
 			}
 
-			if ($propertyValue === NULL && !in_array($propertyName, $optionalPropertyNames)) {
+			if ($propertyValue === null && !in_array($propertyName, $optionalPropertyNames)) {
 				$this->mappingResults->addError(new Tx_Extbase_Error_Error("Required property '$propertyName' does not exist." , 1236785359), $propertyName);
 			} else {
-				if ($targetClassSchema !== NULL && $targetClassSchema->hasProperty($propertyName)) {
+				if ($targetClassSchema !== null && $targetClassSchema->hasProperty($propertyName)) {
 					$propertyMetaData = $targetClassSchema->getProperty($propertyName);
 
-					if (in_array($propertyMetaData['type'], array('array', 'ArrayObject', 'Tx_Extbase_Persistence_ObjectStorage')) && strpos($propertyMetaData['elementType'], '_') !== FALSE) {
-						$objects = array();
+					if (in_array($propertyMetaData['type'], array('array', 'ArrayObject', 'Tx_Extbase_Persistence_ObjectStorage')) && strpos($propertyMetaData['elementType'], '_') !== false) {
+						$objects = [];
 						foreach ($propertyValue as $value) {
 							$objects[] = $this->transformToObject($value, $propertyMetaData['elementType'], $propertyName);
 						}
@@ -214,19 +214,19 @@ class Tx_Extbase_Property_Mapper {
 						} else {
 							$propertyValue = $objects;
 						}
-					} elseif ($propertyMetaData['type'] === 'DateTime' || strpos($propertyMetaData['type'], '_') !== FALSE) {
+					} elseif ($propertyMetaData['type'] === 'DateTime' || strpos($propertyMetaData['type'], '_') !== false) {
 						$propertyValue = $this->transformToObject($propertyValue, $propertyMetaData['type'], $propertyName);
-						if ($propertyValue === NULL) {
+						if ($propertyValue === null) {
 							continue;
 						}
 					}
-				} elseif ($targetClassSchema !== NULL) {
+				} elseif ($targetClassSchema !== null) {
 					$this->mappingResults->addError(new Tx_Extbase_Error_Error("Property '$propertyName' does not exist in target class schema." , 1251813614), $propertyName);
 				}
 
 				if (is_array($target)) {
 					$target[$propertyName] = $propertyValue;
-				} elseif (Tx_Extbase_Reflection_ObjectAccess::setProperty($target, $propertyName, $propertyValue) === FALSE) {
+				} elseif (Tx_Extbase_Reflection_ObjectAccess::setProperty($target, $propertyName, $propertyValue) === false) {
 					$this->mappingResults->addError(new Tx_Extbase_Error_Error("Property '$propertyName' could not be set." , 1236783102), $propertyName);
 				}
 			}
@@ -242,31 +242,31 @@ class Tx_Extbase_Property_Mapper {
 	 * @param mixed $propertyValue The value to transform, string or array
 	 * @param string $targetType The type to transform to
 	 * @param string $propertyName In case of an error we add this to the error message
-	 * @return object The object, when no transformation was possible this may return NULL as well
+	 * @return object The object, when no transformation was possible this may return null as well
 	 */
 	protected function transformToObject($propertyValue, $targetType, $propertyName) {
 		if ($targetType === 'DateTime' || is_subclass_of($targetType, 'DateTime')) {
 			// TODO replace this with converter implementation of FLOW3
 			if ($propertyValue === '') {
-//				$propertyValue = NULL;
-				$propertyValue = 0; // Return 0 in aorder to have 0 saved in the data baase. With NULL the field is skipped in Tx_Extbase_Property_Mapper map().
+//				$propertyValue = null;
+				$propertyValue = 0; // Return 0 in aorder to have 0 saved in the data baase. With null the field is skipped in Tx_Extbase_Property_Mapper map().
 			} else {
 				try {
 					$propertyValue = new $targetType($propertyValue);
 				} catch (Exception $e) {
-					$propertyValue = NULL;
+					$propertyValue = null;
 				}
 			}
 		} else {
 			if (is_numeric($propertyValue)) {
 				$propertyValue = $this->findObjectByUid($targetType, $propertyValue);
-				if ($propertyValue === FALSE) {
+				if ($propertyValue === false) {
 					$this->mappingResults->addError(new Tx_Extbase_Error_Error('Querying the repository for the specified object with UUID ' . $propertyValue . ' was not successful.' , 1249379517), $propertyName);
 				}
 			} elseif (is_array($propertyValue)) {
 				if (isset($propertyValue['__identity'])) {
 					$existingObject = $this->findObjectByUid($targetType, $propertyValue['__identity']);
-					if ($existingObject === FALSE) throw new Tx_Extbase_Property_Exception_TargetNotFound('Querying the repository for the specified object was not successful.', 1237305720);
+					if ($existingObject === false) throw new Tx_Extbase_Property_Exception_TargetNotFound('Querying the repository for the specified object was not successful.', 1237305720);
           if ($propertyValue['__identity'] == 0) {
             $propertyTagsValues = $this->reflectionService->getPropertyTagsValues($targetType, 'uid');
             if (in_array('AllowUidToBeEqualToZero', $propertyTagsValues['param'])) {
@@ -277,12 +277,12 @@ class Tx_Extbase_Property_Mapper {
 					}
 					if (count($propertyValue) === 0) {
 						$propertyValue = $existingObject;
-					} elseif ($existingObject !== NULL) {
+					} elseif ($existingObject !== null) {
 						$newObject = clone $existingObject;
 						if ($this->map(array_keys($propertyValue), $propertyValue, $newObject)) {
 							$propertyValue = $newObject;
 						} else {
-							$propertyValue = NULL;
+							$propertyValue = null;
 						}
 					}
 				} else {
@@ -290,7 +290,7 @@ class Tx_Extbase_Property_Mapper {
 					if ($this->map(array_keys($propertyValue), $propertyValue, $newObject)) {
 						$propertyValue = $newObject;
 					} else {
-						$propertyValue = NULL;
+						$propertyValue = null;
 					}
 				}
 			} else {
@@ -304,7 +304,7 @@ class Tx_Extbase_Property_Mapper {
 	/**
 	 * Returns the results of the last mapping operation.
 	 *
-	 * @return Tx_Extbase_Property_MappingResults The mapping results (or NULL if no mapping has been carried out yet)
+	 * @return Tx_Extbase_Property_MappingResults The mapping results (or null if no mapping has been carried out yet)
 	 * @api
 	 */
 	public function getMappingResults() {
@@ -316,13 +316,13 @@ class Tx_Extbase_Property_Mapper {
 	 *
 	 * @param string $dataType the data type to fetch
 	 * @param int $uid The object's uid
-	 * @return mixed Either the object matching the uid or, if none or more than one object was found, FALSE
+	 * @return mixed Either the object matching the uid or, if none or more than one object was found, false
 	 */
 	protected function findObjectByUid($dataType, $uid) {
 		$query = $this->queryFactory->create($dataType);
-		$query->getQuerySettings()->setRespectSysLanguage(FALSE);
+		$query->getQuerySettings()->setRespectSysLanguage(false);
 		$result = $query->matching($query->equals('uid', intval($uid)))->execute();
-		$object = NULL;
+		$object = null;
 		if (count($result) > 0) {
 			$object = current($result);
 		}

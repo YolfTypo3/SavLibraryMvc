@@ -2,32 +2,23 @@
 namespace YolfTypo3\SavLibraryMvc\Compatibility\RichTextEditor;
 
 /*
- * This script belongs to the FLOW3 package "Fluid". *
- * *
- * It is free software; you can redistribute it and/or modify it under *
- * the terms of the GNU Lesser General Public License as published by the *
- * Free Software Foundation, either version 3 of the License, or (at your *
- * option) any later version. *
- * *
- * This script is distributed in the hope that it will be useful, but *
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN- *
- * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser *
- * General Public License for more details. *
- * *
- * You should have received a copy of the GNU Lesser General Public *
- * License along with the script. *
- * If not, see http://www.gnu.org/licenses/lgpl.html *
- * *
- * The TYPO3 project - inspiring people to share! *
+ * This file is part of the TYPO3 CMS project.
+ *
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with TYPO3 source code.
+ *
+ * The TYPO3 project - inspiring people to share!
  */
-
 
 /**
  * Abstract Rich text editor renderer
  */
 abstract class AbstractRichTextEditorRenderer
 {
-
     /**
      * @var array $arguments
      */
@@ -43,13 +34,12 @@ abstract class AbstractRichTextEditorRenderer
      */
     protected $valueAttribute;
 
-
     /**
      * Setter for the arguments
      *
      * @param array $arguments
      */
-    public function setArguments($arguments) {
+    public function setArguments(array $arguments) {
         $this->arguments = $arguments;
     }
 
@@ -58,7 +48,7 @@ abstract class AbstractRichTextEditorRenderer
      *
      * @param string $name
      */
-    public function setName($name) {
+    public function setName(string $name) {
         $this->name = $name;
     }
 
@@ -67,7 +57,7 @@ abstract class AbstractRichTextEditorRenderer
      *
      * @param string $valueAttribute
      */
-    public function setValueAttribute($valueAttribute) {
+    public function setValueAttribute(string $valueAttribute) {
         $this->valueAttribute = $valueAttribute;
     }
 
@@ -78,7 +68,6 @@ abstract class AbstractRichTextEditorRenderer
      */
     public function render()
     {
-
     }
 }
 

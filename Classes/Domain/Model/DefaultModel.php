@@ -1,28 +1,19 @@
 <?php
 namespace YolfTypo3\SavLibraryMvc\Domain\Model;
 
-/**
- * Copyright notice
+/*
+ * This file is part of the TYPO3 CMS project.
  *
- * (c) 2015 Laurent Foulloy <yolf.typo3@orange.fr>
- * All rights reserved
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
  *
- * This script is part of the TYPO3 project. The TYPO3 project is
- * free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with TYPO3 source code.
  *
- * The GNU General Public License can be found at
- * http://www.gnu.org/copyleft/gpl.html.
- *
- * This script is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * This copyright notice MUST APPEAR in all copies of the script!
+ * The TYPO3 project - inspiring people to share!
  */
+
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use YolfTypo3\SavLibraryMvc\Controller\FlashMessages;
@@ -32,7 +23,6 @@ use YolfTypo3\SavLibraryMvc\Controller\FlashMessages;
  */
 class DefaultModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
 {
-
     /**
      * The crdate variable
      *
@@ -131,17 +121,17 @@ class DefaultModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      */
     protected function updateFileStorage($fileStorage, $uploadedFileStorage)
     {
-        $files = array();
+        $files = [];
         foreach ($uploadedFileStorage->toArray() as $uploadedFileKey => $uploadedFile) {
-            if ($uploadedFile !== NULL) {
-                if ($uploadedFile->_getProperty(originalResource) !== NULL) {
+            if ($uploadedFile !== null) {
+                if ($uploadedFile->_getProperty('originalResource') !== null) {
                     $files[$uploadedFileKey] = $uploadedFile;
                 } else {
                     $existingFiles = $fileStorage->toArray();
                     if (count($uploadedFileStorage->toArray()) === 1) {
                         $files = $existingFiles;
                     } elseif (isset($existingFiles[$uploadedFileKey])) {
-                        if ($existingFiles[$uploadedFileKey] !== NULL) {
+                        if ($existingFiles[$uploadedFileKey] !== null) {
                             $files[$uploadedFileKey] = $existingFiles[$uploadedFileKey];
                         }
                     } else {
@@ -154,7 +144,7 @@ class DefaultModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
         if (count($files) > 0) {
             $storage = new ObjectStorage();
             // Duplicates existing files
-            if ($fileStorage !== NULL) {
+            if ($fileStorage !== null) {
                 foreach ($fileStorage as $file) {
                     $storage->attach($file);
                 }
@@ -164,7 +154,7 @@ class DefaultModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
                 $storage->attach($file);
             }
         } else {
-            $storage = NULL;
+            $storage = null;
         }
         return $storage;
     }
@@ -195,7 +185,6 @@ class DefaultModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      */
     public function getFieldValueFromFieldName($fieldName)
     {
-
         // Splits the fieldName
         $field = explode('.', $fieldName);
 
@@ -204,18 +193,24 @@ class DefaultModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
             $getterName = 'get' . GeneralUtility::underscoredToUpperCamelCase($field[0]);
         } else {
             if ($this->resolveTableNameFromObject() != $field[0]) {
-                return FlashMessages::addError('error.unknownFieldName', array(
-                    $fieldName
-                ));
+                return FlashMessages::addError(
+                    'error.unknownFieldName',
+                    [
+                        $fieldName
+                    ]
+                );
             } else {
                 $getterName = 'get' . GeneralUtility::underscoredToUpperCamelCase($field[1]);
             }
         }
 
         if (! method_exists($this, $getterName)) {
-            return FlashMessages::addError('error.unknownFieldName', array(
-                $fieldName
-            ));
+            return FlashMessages::addError(
+                'error.unknownFieldName',
+                [
+                    $fieldName
+                ]
+            );
         } else {
             return $this->$getterName();
         }

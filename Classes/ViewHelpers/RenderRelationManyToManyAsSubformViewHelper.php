@@ -1,29 +1,22 @@
 <?php
 namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
 
-/**
- * Copyright notice
+/*
+ * This file is part of the TYPO3 CMS project.
  *
- * (c) 2015 Laurent Foulloy <yolf.typo3@orange.fr>
- * All rights reserved
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
  *
- * This script is part of the TYPO3 project. The TYPO3 project is
- * free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with TYPO3 source code.
  *
- * The GNU General Public License can be found at
- * http://www.gnu.org/copyleft/gpl.html.
- *
- * This script is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * This copyright notice MUST APPEAR in all copies of the script!
+ * The TYPO3 project - inspiring people to share!
  */
 
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
+use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 use YolfTypo3\SavLibraryMvc\Domain\Repository\AbstractRepository;
 use YolfTypo3\SavLibraryMvc\Managers\FieldConfigurationManager;
@@ -40,45 +33,67 @@ use YolfTypo3\SavLibraryMvc\Managers\FieldConfigurationManager;
  *
  * Output:
  * the options
+ *
+ * @package SavLibraryMvc
  */
 class RenderRelationManyToManyAsSubformViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
 {
+    /**
+     * Initializes arguments.
+     */
+    public function initializeArguments()
+    {
+        $this->registerArgument('field', 'array', 'Fields', false, null);
+    }
 
     /**
      *
-     * @param array $field
-     *            The fields
+     * Renders the viewhelper
      *
-     * @return string the options array
+     * @return mixed
      */
-    public function render($field = NULL)
+    public function render()
     {
-        if ($field === NULL) {
+        // Gets the arguments
+        $field = $this->arguments['field'];
+
+        if ($field === null) {
             $field = $this->renderChildren();
         }
 
+        // Creates the object manager
+        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+
         // Gets the controller
-        $controller = $this->objectManager->get(AbstractController::getControllerObjectName());
+        $controller = $objectManager->get(AbstractController::getControllerObjectName());
 
         // Gets the repository
         $repositoryClassName = AbstractRepository::resolveRepositoryClassNameFromTableName($field['foreign_table']);
-        $repository = $this->objectManager->get($repositoryClassName);
+        $repository = $objectManager->get($repositoryClassName);
         $repository->setController($controller);
 
         // Gets the view type
-        $controllerActionName = $this->controllerContext->getRequest()->getControllerActionName();
+        $controllerActionName = $this->renderingContext
+            ->getControllerContext()
+            ->getRequest()
+            ->getControllerActionName();
         $viewType = lcfirst($controllerActionName) . 'View';
 
         // Gets the view identifier
         $viewIdentifier = $controller->getViewerConfiguration($controllerActionName)->getViewIdentifier($viewType);
+
         // Gets the field configuration manager
-        $fieldConfigurationManager = $this->objectManager->get(FieldConfigurationManager::class);
+        $fieldConfigurationManager = $objectManager->get(FieldConfigurationManager::class);
+        $fieldConfigurationManager::storeFieldsConfiguration();
 
         // Sets the general parameters
         $general = $field['general'];
 
         // Adds the special arguments to the general configuration
-        $arguments = $this->controllerContext->getRequest()->getArguments();
+        $arguments = $this->renderingContext
+            ->getControllerContext()
+            ->getRequest()
+            ->getArguments();
         $general['special'] = $arguments['special'];
 
         // Adds the subformKey to the general configuration
@@ -86,9 +101,9 @@ class RenderRelationManyToManyAsSubformViewHelper extends \TYPO3\CMS\Fluid\Core\
 
         // Checks if the maximum number of relations is reached
         if (($field['value'] instanceof \TYPO3\CMS\Extbase\Persistence\ObjectStorage) && $field['value']->count() < $field['maxitems']) {
-            $newButtonIsAllowed = TRUE;
+            $newButtonIsAllowed = true;
         } else {
-            $newButtonIsAllowed = FALSE;
+            $newButtonIsAllowed = false;
         }
 
         $general['newButtonIsAllowed'] = $newButtonIsAllowed;
@@ -96,7 +111,7 @@ class RenderRelationManyToManyAsSubformViewHelper extends \TYPO3\CMS\Fluid\Core\
         $general['deleteButtonIsAllowed'] = $field['addDelete'];
 
         // TODO check this
-        //'saveButtonIsAllowed' => ($isNewInSubform === FALSE) && $saveButtonIsAllowed,
+        //'saveButtonIsAllowed' => ($isNewInSubform === false) && $saveButtonIsAllowed,
 
         // Processes the items
         $start = min($general['pageInSubform'], $general['lastPageInSubform']) * $field['maxSubformItems'];
@@ -111,13 +126,13 @@ class RenderRelationManyToManyAsSubformViewHelper extends \TYPO3\CMS\Fluid\Core\
         if ($isNewItemInSubform) {
             // Creates a new object
             $subform = $controller->getSubform($uncompressedParameters['subformKey']);
-            $subformForeignRepository = $this->objectManager->get($subform['foreignRepository']);
+            $subformForeignRepository = $objectManager->get($subform['foreignRepository']);
             $object = $subformForeignRepository->createModelObject();
 
             // Gets the field configuration
             $fieldConfigurationManager->setStaticFieldsConfiguration($viewIdentifier, $repository);
             $fieldConfigurationManager->addDynamicFieldsConfiguration($object);
-            $fieldsConfiguration = $fieldConfigurationManager->getFieldsConfiguration();
+            $fieldsConfiguration = $fieldConfigurationManager::getFieldsConfiguration();
 
             // Adds the property name to the field configuration
             $uid = - 1;
@@ -135,12 +150,12 @@ class RenderRelationManyToManyAsSubformViewHelper extends \TYPO3\CMS\Fluid\Core\
                     // Gets the field configuration
                     $fieldConfigurationManager->setStaticFieldsConfiguration($viewIdentifier, $repository);
                     $fieldConfigurationManager->addDynamicFieldsConfiguration($object);
-                    $fieldsConfiguration = $fieldConfigurationManager->getFieldsConfiguration();
+                    $fieldsConfiguration = $fieldConfigurationManager::getFieldsConfiguration();
 
                     // Checks if it is the first field
                     reset($fieldsConfiguration);
                     $firstFieldKey = key($fieldsConfiguration);
-                    $fieldsConfiguration[$firstFieldKey]['isFirstField'] = TRUE;
+                    $fieldsConfiguration[$firstFieldKey]['isFirstField'] = true;
 
                     // Adds the property name to the field configuration
                     $uid = $object->getUid();
@@ -166,14 +181,17 @@ class RenderRelationManyToManyAsSubformViewHelper extends \TYPO3\CMS\Fluid\Core\
         } else {
             // Processes localization tags
             $subformTitle = $fieldConfigurationManager->parseLocalizationTags($subformTitle);
-            // TODO Parse field tags
+            // @TODO Parse field tags
         }
         $general['title'] = $subformTitle;
 
-        return array(
+        // Restores the field configuration
+        $fieldConfigurationManager::restoreFieldsConfiguration();
+
+        return [
             'items' => $items,
             'general' => $general
-        );
+        ];
     }
 }
 ?>

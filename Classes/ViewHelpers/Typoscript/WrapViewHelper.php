@@ -2,17 +2,21 @@
 namespace YolfTypo3\SavLibraryMvc\ViewHelpers\Typoscript;
 
 /*
- * This script is part of the TYPO3 project - inspiring people to share! *
- * *
- * TYPO3 is free software; you can redistribute it and/or modify it under *
- * the terms of the GNU General Public License version 2 as published by *
- * the Free Software Foundation. *
- * *
- * This script is distributed in the hope that it will be useful, but *
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN- *
- * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General *
- * Public License for more details. *
+ * This file is part of the TYPO3 CMS project.
+ *
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with TYPO3 source code.
+ *
+ * The TYPO3 project - inspiring people to share!
  */
+
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
+use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * Typoscript wrapper view helper.
@@ -21,25 +25,34 @@ namespace YolfTypo3\SavLibraryMvc\ViewHelpers\Typoscript;
  * @package SavLibraryMvc
  * @subpackage ViewHelpers
  */
-class WrapViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
+class WrapViewHelper extends AbstractViewHelper
 {
+    /**
+     * Initializes arguments.
+     */
+    public function initializeArguments()
+    {
+        $this->registerArgument('data', 'mixed', 'Data to be used for rendering the cObject. Can be an object, array or string', false, null);
+        $this->registerArgument('configuration', 'string', 'Configuration', false, null);
+    }
 
     /**
+     * Renders the viewhelper
      *
-     * @param mixed $data
-     *            the data to be used for rendering the cObject. Can be an object, array or string. If this argument is not set, child nodes will be used
-     * @param string $configuration            
      * @return string Rendered The wrapped content
-     * @author Laurent Foulloy <yolf.typo3@orange.fr>
      */
-    public function render($data = NULL, $configuration = NULL)
+    public function render()
     {
-        if ($data === NULL) {
+        // Gets the arguments
+        $data = $this->arguments['data'];
+        $configuration = $this->arguments['configuration'];
+
+        if ($data === null) {
             $data = html_entity_decode($this->renderChildren());
         }
-        
-        $contentObject = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer');
-        
+
+        $contentObject = GeneralUtility::makeInstance(ContentObjectRenderer::class);
+
         return $contentObject->dataWrap($data, $configuration);
     }
 }

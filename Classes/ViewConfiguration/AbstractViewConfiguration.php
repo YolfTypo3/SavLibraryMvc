@@ -1,28 +1,19 @@
 <?php
 namespace YolfTypo3\SavLibraryMvc\ViewConfiguration;
 
-/**
- * Copyright notice
+/*
+ * This file is part of the TYPO3 CMS project.
  *
- * (c) 2015 Laurent Foulloy <yolf.typo3@orange.fr>
- * All rights reserved
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
  *
- * This script is part of the TYPO3 project. The TYPO3 project is
- * free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with TYPO3 source code.
  *
- * The GNU General Public License can be found at
- * http://www.gnu.org/copyleft/gpl.html.
- *
- * This script is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * This copyright notice MUST APPEAR in all copies of the script!
+ * The TYPO3 project - inspiring people to share!
  */
+
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
@@ -34,7 +25,6 @@ use YolfTypo3\SavLibraryMvc\Managers\FieldConfigurationManager;
  */
 abstract class AbstractViewConfiguration
 {
-
     /**
      * Constants associated with the flag showNoAvailableInformation
      */
@@ -47,31 +37,31 @@ abstract class AbstractViewConfiguration
     /**
      * Pattern for the cutter
      */
-    const CUT_IF_PATTERN = '/    (?:      (?:        \s+        (?P<connector>[\|&]|or|and|OR|AND)        \s+      )?      (?P<expression>        (?:        	FALSE | TRUE |	        (?:\#{3})?		        (?P<lhs>(?:(?:\w+\.)+)?\w+)		        \s*(?P<operator>=|!=|>=|<=|>|<)\s*		        (?P<rhs>[-\w]+|\#{3}[^\#]+\#{3})	        (?:\#{3})?				)      )    )  /x';
+    const CUT_IF_PATTERN = '/    (?:      (?:        \s+        (?P<connector>[\|&]|or|and|OR|AND)        \s+      )?      (?P<expression>        (?:        	false | true |	        (?:\#{3})?		        (?P<lhs>(?:(?:\w+\.)+)?\w+)		        \s*(?P<operator>=|!=|>=|<=|>|<)\s*		        (?P<rhs>[-\w]+|\#{3}[^\#]+\#{3})	        (?:\#{3})?				)      )    )  /x';
 
     /**
      *
      * @var \YolfTypo3\SavLibraryMvc\Controller\DefaultController
      */
-    protected $controller = NULL;
+    protected $controller = null;
 
     /**
      *
      * @var \YolfTypo3\SavLibraryMvc\Parser\TemplateParser
      */
-    protected $templateParser = NULL;
+    protected $templateParser = null;
 
     /**
      *
      * @var array
      */
-    protected $generalViewConfiguration = array();
+    protected $generalViewConfiguration = [];
 
     /**
      *
      * @var integer
      */
-    protected $viewIdentifier = NULL;
+    protected $viewIdentifier = null;
 
     /**
      *
@@ -134,11 +124,11 @@ abstract class AbstractViewConfiguration
     /**
      * Gets the view identifer.
      *
-     * return integer
+     * return int
      */
-    public function getViewIdentifier()
+    public function getViewIdentifier() : int
     {
-        if ($this->viewIdentifier !== NULL) {
+        if ($this->viewIdentifier !== null) {
             return $this->viewIdentifier;
         }
 
@@ -161,17 +151,19 @@ abstract class AbstractViewConfiguration
                 if (!empty($viewWithConditionConfiguration['cutIf']) || !empty($viewWithConditionConfiguration['showIf'])) {
                     // Builds a field configuration manager
                     $fieldConfigurationManager = GeneralUtility::makeInstance(FieldConfigurationManager::class);
+                    $fieldConfigurationManager::storeFieldsConfiguration();
                     $fieldConfigurationManager->setFieldConfiguration($viewWithConditionConfiguration);
                     $fieldConfigurationManager->addDynamicFieldsConfiguration($this->object);
+                    $fieldConfigurationManager::restoreFieldsConfiguration();
 
                     // Checks the cutif condition
-                    if ($fieldConfigurationManager->cutIf() === FALSE) {
+                    if ($fieldConfigurationManager->cutIf() === false) {
                         return $viewWithConditionKey;
                     }
                 }
             }
 
-            // If no FALSE condition was found, return the default view
+            // If no false condition was found, return the default view
             return $viewIdentifiers[$viewType];
         }
     }
@@ -197,9 +189,9 @@ abstract class AbstractViewConfiguration
      *            The key
      *            return mixed
      */
-    public function getGeneralViewConfiguration($key = NULL)
+    public function getGeneralViewConfiguration($key = null)
     {
-        if ($key === NULL) {
+        if ($key === null) {
             return $this->generalViewConfiguration;
         }
         return $this->generalViewConfiguration[$key];
@@ -244,7 +236,6 @@ abstract class AbstractViewConfiguration
      */
     protected function parseTitle($viewIdentifier, $configuration)
     {
-
         // Gets and processes the title
         $title = $this->controller->getViewTitleBar($viewIdentifier);
 
@@ -281,53 +272,15 @@ abstract class AbstractViewConfiguration
         }
 
         // Parses the title template
-        $title = $this->templateParser->parse($title, array(
-            'general' => $configuration['general'],
-            'fields' => $configuration['fields']
-        ));
+        $title = $this->templateParser->parse(
+            $title,
+            [
+                'general' => $configuration['general'],
+                'fields' => $configuration['fields']
+            ]
+        );
 
         return $title;
     }
-
-    /**
-     * Processes localization tags
-     *
-     * @param $input string
-     *            String to process
-     * @return string
-     */
-    public function processLocalizationTags($input)
-    {
-        // Processes labels associated with fields
-        if (preg_match_all('/\$\$\$label\[([^\]]+)\]\$\$\$/', $input, $matches)) {
-
-            foreach ($matches[1] as $matchKey => $match) {
-                // Checks if the label is in language files, no default table is assumed
-                // In that case the full name must be used, i.e. tableName.fieldName
-                $label = LocalizationUtility::translate($match, AbstractController::getControllerExtensionKey());
-                if (! empty($label)) {
-                    $input = str_replace($matches[0][$matchKey], $label, $input);
-                } else {
-                    // Checks if the label is associated with the current table
-                    $label = LocalizationUtility::translate($this->controller->getMainRepository()->resolveModelClassName() . '.' . $match, AbstractController::getControllerExtensionKey());
-                    if (! empty($label)) {
-                        $input = str_replace($matches[0][$matchKey], $label, $input);
-                    } else {
-                        FlashMessages::addError('error.missingLabel');
-                    }
-                }
-            }
-        }
-
-        // Processes labels as $$$label$$$
-        preg_match_all('/\$\$\$([^\$]+)\$\$\$/', $input, $matches);
-        foreach ($matches[1] as $matchKey => $match) {
-            $label = LocalizationUtility::translate($match, AbstractController::getControllerExtensionKey());
-            $input = str_replace($matches[0][$matchKey], $label, $input);
-        }
-
-        return $input;
-    }
 }
-
 ?>

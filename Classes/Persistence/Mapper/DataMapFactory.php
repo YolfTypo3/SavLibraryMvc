@@ -1,27 +1,17 @@
 <?php
 namespace YolfTypo3\SavLibraryMvc\Persistence\Mapper;
 
-/**
- * Copyright notice
+/*
+ * This file is part of the TYPO3 CMS project.
  *
- * (c) 2015 Laurent Foulloy <yolf.typo3@orange.fr>
- * All rights reserved
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
  *
- * This script is part of the TYPO3 project. The TYPO3 project is
- * free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with TYPO3 source code.
  *
- * The GNU General Public License can be found at
- * http://www.gnu.org/copyleft/gpl.html.
- *
- * This script is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * This copyright notice MUST APPEAR in all copies of the script!
+ * The TYPO3 project - inspiring people to share!
  */
 
 /**
@@ -29,7 +19,6 @@ namespace YolfTypo3\SavLibraryMvc\Persistence\Mapper;
  */
 class DataMapFactory extends \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapFactory
 {
-
     /**
      *
      * @var array
@@ -46,7 +35,7 @@ class DataMapFactory extends \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataM
      *
      * @var integer
      */
-    protected $viewIdentifier = NULL;
+    protected $viewIdentifier = null;
 
     /**
      *
@@ -95,10 +84,10 @@ class DataMapFactory extends \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataM
      */
     protected function setSavLibraryMvcConfiguration()
     {
-        $this->savLibraryMvcConfiguration = is_array($this->controlSection['EXT']['sav_library_mvc']) ? $this->controlSection['EXT']['sav_library_mvc'] : array();
-        $this->savLibraryMvcColumns = is_array($this->savLibraryMvcConfiguration['columns']) ? $this->savLibraryMvcConfiguration['columns'] : array();
-        $this->savLibraryMvcCtrl = is_array($this->savLibraryMvcConfiguration['ctrl']) ? $this->savLibraryMvcConfiguration['ctrl'] : array();
-        $this->savLibraryMvcControllers = is_array($this->savLibraryMvcConfiguration['controllers']) ? $this->savLibraryMvcConfiguration['controllers'] : array();
+        $this->savLibraryMvcConfiguration = is_array($this->controlSection['EXT']['sav_library_mvc']) ? $this->controlSection['EXT']['sav_library_mvc'] : [];
+        $this->savLibraryMvcColumns = is_array($this->savLibraryMvcConfiguration['columns']) ? $this->savLibraryMvcConfiguration['columns'] : [];
+        $this->savLibraryMvcCtrl = is_array($this->savLibraryMvcConfiguration['ctrl']) ? $this->savLibraryMvcConfiguration['ctrl'] : [];
+        $this->savLibraryMvcControllers = is_array($this->savLibraryMvcConfiguration['controllers']) ? $this->savLibraryMvcConfiguration['controllers'] : [];
     }
 
     /**
@@ -160,7 +149,7 @@ class DataMapFactory extends \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataM
         if (is_array($this->savLibraryMvcControllers[$controllerName]) && is_array($this->savLibraryMvcControllers[$controllerName]['viewIdentifiers'])) {
             return $this->savLibraryMvcControllers[$controllerName]['viewIdentifiers'];
         } else {
-            return array();
+            return [];
         }
     }
 
@@ -211,7 +200,7 @@ class DataMapFactory extends \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataM
         if (is_array($this->savLibraryMvcControllers[$controllerName]) && is_array($this->savLibraryMvcControllers[$controllerName]['folders'])) {
             return $this->savLibraryMvcControllers[$controllerName]['folders'][$viewType];
         } else {
-            return array();
+            return [];
         }
     }
 
@@ -240,7 +229,7 @@ class DataMapFactory extends \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataM
      */
     public function getTCAFieldConfiguration($fieldName)
     {
-        return is_array($this->columnsDefinition[$fieldName]['config']) ? $this->columnsDefinition[$fieldName]['config'] : array();
+        return is_array($this->columnsDefinition[$fieldName]['config']) ? $this->columnsDefinition[$fieldName]['config'] : [];
     }
 
     /**

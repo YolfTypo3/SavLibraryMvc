@@ -19,5 +19,4 @@ namespace YolfTypo3\SavLibraryMvc;
 class Exception extends \Exception
 {
 }
-
 ?>

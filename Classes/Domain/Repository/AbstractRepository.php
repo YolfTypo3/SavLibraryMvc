@@ -1,28 +1,19 @@
 <?php
 namespace YolfTypo3\SavLibraryMvc\Domain\Repository;
 
-/**
- * Copyright notice
+/*
+ * This file is part of the TYPO3 CMS project.
  *
- * (c) 2015 Laurent Foulloy <yolf.typo3@orange.fr>
- * All rights reserved
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
  *
- * This script is part of the TYPO3 project. The TYPO3 project is
- * free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with TYPO3 source code.
  *
- * The GNU General Public License can be found at
- * http://www.gnu.org/copyleft/gpl.html.
- *
- * This script is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * This copyright notice MUST APPEAR in all copies of the script!
+ * The TYPO3 project - inspiring people to share!
  */
+
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 use YolfTypo3\SavLibraryMvc\Persistence\Mapper\DataMapFactory;
@@ -36,13 +27,13 @@ abstract class AbstractRepository extends \TYPO3\CMS\Extbase\Persistence\Reposit
      *
      * @var \YolfTypo3\SavLibraryMvc\Controller\DefaultController
      */
-    protected $controller = NULL;
+    protected $controller = null;
 
     /**
      *
      * @var \YolfTypo3\SavLibraryMvc\Persistence\Mapper\DataMapFactory
      */
-    protected $dataMapFactory = NULL;
+    protected $dataMapFactory = null;
 
     /**
      * Sets the controller
@@ -106,7 +97,7 @@ abstract class AbstractRepository extends \TYPO3\CMS\Extbase\Persistence\Reposit
      */
     public function getDataMapFactory()
     {
-        if ($this->dataMapFactory === NULL) {
+        if ($this->dataMapFactory === null) {
             $this->dataMapFactory = $this->objectManager->get(DataMapFactory::class);
         }
         $this->dataMapFactory->initialize($this->resolveModelClassName());
@@ -174,7 +165,7 @@ abstract class AbstractRepository extends \TYPO3\CMS\Extbase\Persistence\Reposit
         // Gets the where clause constraints
         $whereClauseConstraints = $this->whereClause($query);
 
-        $finalConstraints = array();
+        $finalConstraints = [];
         if ($filterConstraints === null) {
             // Applies the where clause
             if($whereClauseConstraints !== null) {
@@ -226,7 +217,7 @@ abstract class AbstractRepository extends \TYPO3\CMS\Extbase\Persistence\Reposit
     {
         $controllerName = $this->getController()->getControllerName();
         $queryIdentifier = $this->dataMapFactory->getSavLibraryMvcControllerQueryIdentifier($controllerName);
-        if ($queryIdentifier !== NULL) {
+        if ($queryIdentifier !== null) {
             $whereClauseMethod = 'whereClause' . $queryIdentifier;
             if(method_exists($this, $whereClauseMethod)) {
                 return $this->$whereClauseMethod($query);
@@ -243,6 +234,5 @@ abstract class AbstractRepository extends \TYPO3\CMS\Extbase\Persistence\Reposit
     protected function getPageId() {
         return $GLOBALS['TSFE']->id;
     }
-
 }
 ?>

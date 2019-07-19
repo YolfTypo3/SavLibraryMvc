@@ -37,8 +37,8 @@ class Tx_SavLibraryMvc_ViewHelpers_CheckBreakConditionViewHelper extends Tx_Flui
    * @return boolean the break condition
 	 * @author Laurent Foulloy <yolf.typo3@orange.fr>
 	 */
-	public function render($counter = NULL, $breakCount=0) {
-    if ($counter === NULL) {
+	public function render($counter = null, $breakCount=0) {
+    if ($counter === null) {
       $counter = $this->renderChildren();
     }
     return (($counter % $breakCount) == ($breakCount - 1));

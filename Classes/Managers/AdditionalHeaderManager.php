@@ -1,46 +1,37 @@
 <?php
 namespace YolfTypo3\SavLibraryMvc\Managers;
 
-/**
- * Copyright notice
+/*
+ * This file is part of the TYPO3 CMS project.
  *
- * (c) 2015 Laurent Foulloy <yolf.typo3@orange.fr>
- * All rights reserved
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
  *
- * This script is part of the TYPO3 project. The TYPO3 project is
- * free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with TYPO3 source code.
  *
- * The GNU General Public License can be found at
- * http://www.gnu.org/copyleft/gpl.html.
- *
- * This script is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * This copyright notice MUST APPEAR in all copies of the script!
+ * The TYPO3 project - inspiring people to share!
  */
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+
 use TYPO3\CMS\Core\Page\PageRenderer;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 use YolfTypo3\SavLibraryMvc\Controller\FlashMessages;
+use YolfTypo3\SavLibraryMvc\Exception;
 
 /**
  * Additional header manager.
  */
 class AdditionalHeaderManager
 {
-
     /**
      * Array of javaScript code used for the view
      *
      * @var array
      */
-    protected static $javaScript = array();
+    protected static $javaScript = [];
 
     /**
      * Adds the css files
@@ -59,7 +50,7 @@ class AdditionalHeaderManager
     /**
      * Adds the library css file
      * - from the stylesheet TypoScript configuration if any
-     * - else from the default css file which is in the "Styles" directory of the SAV Library Mvc
+     * - else from the default css file which is in the "Css" directory of the SAV Library Mvc
      *
      * @return void
      */
@@ -68,7 +59,8 @@ class AdditionalHeaderManager
         $extensionKey = AbstractController::LIBRARY_NAME;
         $typoScriptConfiguration = AbstractController::getTypoScriptConfiguration($extensionKey);
         if (empty($typoScriptConfiguration['stylesheet'])) {
-            $cascadingStyleSheet = ExtensionManagementUtility::siteRelPath($extensionKey) . AbstractController::$cssRootPath . '/' . $extensionKey . '.css';
+            $extensionWebPath = AbstractController::getExtensionWebPath($extensionKey);
+            $cascadingStyleSheet = $extensionWebPath . AbstractController::$cssRootPath . '/' . $extensionKey . '.css';
             self::addCascadingStyleSheet($cascadingStyleSheet);
         } else {
             $cascadingStyleSheetAbsoluteFileName = GeneralUtility::getFileAbsFileName($typoScriptConfiguration['stylesheet']);
@@ -76,16 +68,21 @@ class AdditionalHeaderManager
                 $cascadingStyleSheet = substr($cascadingStyleSheetAbsoluteFileName, strlen(PATH_site));
                 self::addCascadingStyleSheet($cascadingStyleSheet);
             } else {
-                throw new \YolfTypo3\SavLibraryMvc\Exception(FlashMessages::translate('error.fileDoesNotExist', array(
-                    htmlspecialchars($cascadingStyleSheetAbsoluteFileName)
-                )));
+                throw new Exception(
+                    FlashMessages::translate(
+                        'error.fileDoesNotExist',
+                        [
+                            htmlspecialchars($cascadingStyleSheetAbsoluteFileName)
+                        ]
+                    )
+                );
             }
         }
     }
 
     /**
      * Adds the extension css file if any
-     * The css file should be extension.css in the "Styles" directory
+     * The css file should be extension.css in the "Css" directory
      * where "extension" is the extension key
      *
      * @return void
@@ -94,21 +91,28 @@ class AdditionalHeaderManager
     {
         $extensionKey = AbstractController::getControllerExtensionKey();
         $typoScriptConfiguration = AbstractController::getTypoScriptConfiguration($extensionKey);
-        if (empty($typoScriptConfiguration['stylesheet']) === FALSE) {
+        if (empty($typoScriptConfiguration['stylesheet']) === false) {
             $cascadingStyleSheetAbsoluteFileName = GeneralUtility::getFileAbsFileName($typoScriptConfiguration['stylesheet']);
             if (is_file($cascadingStyleSheetAbsoluteFileName)) {
                 $cascadingStyleSheet = substr($cascadingStyleSheetAbsoluteFileName, strlen(PATH_site));
                 self::addCascadingStyleSheet($cascadingStyleSheet);
             } else {
-                throw new \YolfTypo3\SavLibraryMvc\Exception(FlashMessages::translate('error.fileDoesNotExist', array(
-                    htmlspecialchars($cascadingStyleSheetAbsoluteFileName)
-                )));
+                throw new Exception(
+                    FlashMessages::translate(
+                        'error.fileDoesNotExist',
+                        [
+                            htmlspecialchars($cascadingStyleSheetAbsoluteFileName)
+                        ]
+                    )
+                );
             }
         } elseif (is_file(ExtensionManagementUtility::extPath($extensionKey) . AbstractController::$cssRootPath . '/' . $extensionKey . '.css')) {
-            $cascadingStyleSheet = ExtensionManagementUtility::siteRelPath($extensionKey) . AbstractController::$cssRootPath . '/' . $extensionKey . '.css';
+            $extensionWebPath = AbstractController::getExtensionWebPath($extensionKey);
+            $cascadingStyleSheet = $extensionWebPath . AbstractController::$cssRootPath . '/' . $extensionKey . '.css';
             self::addCascadingStyleSheet($cascadingStyleSheet);
         } elseif (is_file(ExtensionManagementUtility::extPath($extensionKey) . AbstractController::$stylesRootPath . '/' . $extensionKey . '.css')) {
-            $cascadingStyleSheet = ExtensionManagementUtility::siteRelPath($extensionKey) . AbstractController::$stylesRootPath . '/' . $extensionKey . '.css';
+            $extensionWebPath = AbstractController::getExtensionWebPath($extensionKey);
+            $cascadingStyleSheet = $extensionWebPath . AbstractController::$stylesRootPath . '/' . $extensionKey . '.css';
             self::addCascadingStyleSheet($cascadingStyleSheet);
         }
     }
@@ -116,12 +120,10 @@ class AdditionalHeaderManager
     /**
      * Adds a cascading style Sheet
      *
-     * @param string $key
      * @param string $cascadingStyleSheet
-     *
      * @return void
      */
-    public static function addCascadingStyleSheet($cascadingStyleSheet)
+    public static function addCascadingStyleSheet(string $cascadingStyleSheet)
     {
         $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
         $pageRenderer->addCssFile($cascadingStyleSheet);
@@ -131,51 +133,21 @@ class AdditionalHeaderManager
      * gets the cascading style Sheet link
      *
      * @param string $cascadingStyleSheet
-     *
      * @return string
      */
-    protected static function getCascadingStyleSheetLink($cascadingStyleSheet)
+    protected static function getCascadingStyleSheetLink(string $cascadingStyleSheet) : string
     {
         $cascadingStyleSheetLink = '<link rel="stylesheet" type="text/css" href="' . $cascadingStyleSheet . '" />' . chr(10);
         return $cascadingStyleSheetLink;
     }
 
     /**
-     * Loads a required Js module
-     *
-     * @param string $mainModuleName
-     *
-     * @return void
-     */
-    public static function loadRequireJsModule($mainModuleName)
-    {
-        $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
-        if(is_array($mainModuleName)) {
-            $pageRenderer->loadRequireJsModule(key($mainModuleName), current($mainModuleName));
-        } else {
-            $pageRenderer->loadRequireJsModule($mainModuleName);
-        }
-    }
-
-    /**
-     * Loads the extJS library
-     *
-     * @return void
-     */
-    public static function loadExtJS()
-    {
-        $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
-        $pageRenderer->loadExtJS();
-    }
-
-    /**
      * Adds a javaScript file
      *
      * @param string $javaScriptFileName
-     *
      * @return void
      */
-    public static function addJavaScriptFile($javaScriptFileName)
+    public static function addJavaScriptFile(string $javaScriptFileName)
     {
         $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
         $pageRenderer->addJsFile($javaScriptFileName);
@@ -184,11 +156,12 @@ class AdditionalHeaderManager
     /**
      * Adds a javaScript inline code
      *
+     * @param string $key
      * @param string $javaScriptFileName
      *
      * @return void
      */
-    public static function addJavaScriptInlineCode($key, $javaScriptInlineCode)
+    public static function addJavaScriptInlineCode(string $key, string $javaScriptInlineCode)
     {
         $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
         $pageRenderer->addJsInlineCode($key, $javaScriptInlineCode);
@@ -201,15 +174,41 @@ class AdditionalHeaderManager
      * @param array $array
      * @return void
      */
-    public static function addInlineSettingArray($namespace, array $array)
+    public static function addInlineSettingArray(string $namespace, array $array)
     {
         $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
         $pageRenderer->addInlineSettingArray($namespace, $array);
     }
 
     /**
-     * Adds the javaScript header
+     * Adds a javaScript footer file
      *
+     * @param string $javaScriptFileName
+     *
+     * @return void
+     */
+    public static function addJavaScriptFooterFile(string $javaScriptFileName)
+    {
+        $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
+        $pageRenderer->addJsFooterFile($javaScriptFileName);
+    }
+
+    /**
+     * Adds a javaScript footer inline code
+     *
+     * @param string $key
+     * @param string $javaScriptFileName
+     *
+     * @return void
+     */
+    public static function addJavaScriptFooterInlineCode(string $key, string $javaScriptInlineCode)
+    {
+        $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
+        $pageRenderer->addJsFooterInlineCode($key, $javaScriptInlineCode);
+    }
+
+    /**
+     * Adds the javaScript header
      *
      * @return void
      */
@@ -217,8 +216,8 @@ class AdditionalHeaderManager
     {
         if (count(self::$javaScript) > 0) {
             if (count(self::$javaScript['selectAll']) > 0) {
-                $javaScriptFileName = ExtensionManagementUtility::siteRelPath(AbstractController::LIBRARY_NAME) .
-                    AbstractController::$javaScriptRootPath . '/' . AbstractController::LIBRARY_NAME . '.js';
+                $extensionWebPath = AbstractController::getExtensionWebPath(AbstractController::LIBRARY_NAME);
+                $javaScriptFileName = $extensionWebPath . AbstractController::$javaScriptRootPath . '/' . AbstractController::LIBRARY_NAME . '.js';
                 self::addJavaScriptFile($javaScriptFileName);
             }
             $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
@@ -231,15 +230,14 @@ class AdditionalHeaderManager
      *
      * @param $key string
      *            The key
-     * @param $javaScript array
+     * @param $javaScript string
      *            The javaScript
-     *
      * @return void
      */
-    public static function addJavaScript($key, $javaScript = NULL)
+    public static function addJavaScript(string $key, string $javaScript = null)
     {
         if (! is_array(self::$javaScript[$key])) {
-            self::$javaScript[$key] = array();
+            self::$javaScript[$key] = [];
         }
         self::$javaScript[$key][] = $javaScript;
     }
@@ -249,7 +247,6 @@ class AdditionalHeaderManager
      *
      * @param $key string
      *            The key
-     *
      * @return string the javaScript
      */
     protected static function getJavaScript($key)
@@ -266,16 +263,16 @@ class AdditionalHeaderManager
      *
      * @return string The javaScript Header
      */
-    protected static function getJavaScriptHeader()
+    protected static function getJavaScriptHeader() : string
     {
-        $javaScript = array();
+        $javaScript = [];
 
         $javaScript[] = '';
         $javaScript[] = '  document.addEventListener(\'DOMContentLoaded\', init, false);';
         $javaScript[] = '  ' . self::getJavaScript('documentChanged');
         $javaScript[] = '  function checkIfRteChanged(x) {';
         $javaScript[] = '    if (RTEarea[x].editor.plugins.UndoRedo.instance.undoPosition>0) {';
-        $javaScript[] = '      document.changed = TRUE;';
+        $javaScript[] = '      document.changed = true;';
         $javaScript[] = '    }';
         $javaScript[] = '  }';
         $javaScript[] = '  function submitIfChanged(x) {';

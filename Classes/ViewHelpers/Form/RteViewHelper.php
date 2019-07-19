@@ -2,31 +2,21 @@
 namespace YolfTypo3\SavLibraryMvc\ViewHelpers\Form;
 
 /*
- * This script belongs to the FLOW3 package "Fluid". *
- * *
- * It is free software; you can redistribute it and/or modify it under *
- * the terms of the GNU Lesser General Public License as published by the *
- * Free Software Foundation, either version 3 of the License, or (at your *
- * option) any later version. *
- * *
- * This script is distributed in the hope that it will be useful, but *
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN- *
- * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser *
- * General Public License for more details. *
- * *
- * You should have received a copy of the GNU Lesser General Public *
- * License along with the script. *
- * If not, see http://www.gnu.org/licenses/lgpl.html *
- * *
- * The TYPO3 project - inspiring people to share! *
+ * This file is part of the TYPO3 CMS project.
+ *
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with TYPO3 source code.
+ *
+ * The TYPO3 project - inspiring people to share!
  */
 
-use TYPO3\CMS\Backend\Form\NodeFactory;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
-use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
-use YolfTypo3\SavLibraryMvc\Managers\AdditionalHeaderManager;
+use TYPO3\CMS\Fluid\ViewHelpers\Form\TextareaViewHelper;
 use YolfTypo3\SavLibraryMvc\Compatibility\RichTextEditor\RichTextEditorCompatibility;
 
 /**
@@ -44,19 +34,15 @@ use YolfTypo3\SavLibraryMvc\Compatibility\RichTextEditor\RichTextEditorCompatibi
  *
  * @package SavLibraryMvc
  */
-class RteViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\Form\TextareaViewHelper
+class RteViewHelper extends TextareaViewHelper
 {
-
     /**
-     * Renders the rte htmlarea.
+     * Renders the rte.
      *
      * @return string
-     * @author Laurent Foulloy <yolf.typo3@orange.fr>
-     *         @api
      */
     public function render()
     {
-
         $name = $this->getName();
         $this->registerFieldNameForFormTokenGeneration($name);
         $this->setRespectSubmittedDataValue(true);
@@ -72,7 +58,6 @@ class RteViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\Form\TextareaViewHelper
         $richTextEditorRenderer->setValueAttribute($this->getValueAttribute());
 
         return  $richTextEditorRenderer->render();
-
     }
 }
 

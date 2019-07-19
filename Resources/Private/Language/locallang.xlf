@@ -57,6 +57,9 @@
 			<trans-unit id="extensionFlexform.maxItems" xml:space="preserve">
 				<source>Max number of items</source>
 			</trans-unit>
+            <trans-unit id="extensionFlexform.helpPage" xml:space="preserve">
+                <source>Help page</source>
+            </trans-unit>			
 			<trans-unit id="extensionFlexform.sheetTitle.sInput" xml:space="preserve">
 				<source>Input controls</source>
 			</trans-unit>
@@ -98,7 +101,19 @@
 			</trans-unit>
 			<trans-unit id="error.forbiddenFileTypeInUpload" xml:space="preserve">
 				<source>This type of file cannot be uploaded.</source>
-			</trans-unit>   			
+			</trans-unit>   		
+            <trans-unit id="error.graphFieldIsEmpty" xml:space="preserve">
+                <source>Error: the field &quot;%s&quot; should not be empty to display the graph.</source>
+            </trans-unit>
+            <trans-unit id="error.graphExtensionNotLoaded" xml:space="preserve">
+                <source>Extension sav_charts must be loaded to use graphs.</source>
+            </trans-unit>
+            <trans-unit id="error.graphTemplateNotSet" xml:space="preserve">
+                <source>A graph template must be set using the attribute &quot;graphTemplate&quot;.</source>
+            </trans-unit>
+            <trans-unit id="error.graphTemplateUnknown" xml:space="preserve">
+                <source>The graph template &quot;%s&quot; is unknown.</source>
+            </trans-unit>				
 			<trans-unit id="error.unknownGetMethod" xml:space="preserve">
 				<source>Error in the configuration. The getter associated with the following field is unknown: %s.</source>
 			</trans-unit>

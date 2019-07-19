@@ -57,7 +57,7 @@ class Tx_SavLibraryMvc_Utility_Conversion {
 	 * @return array Array of booleans
 	 */
 	static public function integerToBooleanArray($integer) {
-    $result = array();
+    $result = [];
     while ($integer) {
       $result[] = $integer % 2;
       $integer = (int) ($integer / 2);

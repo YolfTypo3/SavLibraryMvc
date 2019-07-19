@@ -30,8 +30,8 @@ class Tx_SavLibraryMvc_ViewHelpers_ExplodeViewHelper extends Tx_Fluid_Core_ViewH
 	 * @author Laurent Foulloy <yolf.typo3@oranage.fr>
 	 * @api
 	 */
-	public function render($delimiter, $string = NULL) {
-    if ($string === NULL) {
+	public function render($delimiter, $string = null) {
+    if ($string === null) {
       $string = $this->renderChildren();
     }
 

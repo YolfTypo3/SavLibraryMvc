@@ -1,41 +1,35 @@
 <?php
 namespace YolfTypo3\SavLibraryMvc\Controller;
 
-/**
- * Copyright notice
+/*
+ * This file is part of the TYPO3 CMS project.
  *
- * (c) 2015 Laurent Foulloy <yolf.typo3@orange.fr>
- * All rights reserved
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
  *
- * This script is part of the TYPO3 project. The TYPO3 project is
- * free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with TYPO3 source code.
  *
- * The GNU General Public License can be found at
- * http://www.gnu.org/copyleft/gpl.html.
- *
- * This script is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * This copyright notice MUST APPEAR in all copies of the script!
+ * The TYPO3 project - inspiring people to share!
  */
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\PathUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
+use TYPO3\CMS\Extbase\Configuration\FrontendConfigurationManager;
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use YolfTypo3\SavLibraryMvc\Managers\AdditionalHeaderManager;
-use YolfTypo3\SavLibraryMvc\Compatibility\CompatibilityUtility;
 
 /**
  * Abstract controller for the SAV Library MVC
+ *
+ * @package SavLibraryMvc
  */
-abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
+abstract class AbstractController extends ActionController
 {
-
     // Constants
     const LIBRARY_NAME = 'sav_library_mvc';
 
@@ -87,24 +81,25 @@ abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\Acti
     protected static $allowedIconFileNameExtensions = '.gif,.png,.jpg,.jpeg,.svg';
 
     // Variable to encode/decode the special parameters
-    protected static $specialParameters = array(
-        'page', // 0
-        'formKey', // 1
-        'mode', // 2
-        'folder', // 3
-        'orderLink', // 4
-        'uid', // 5
-        'subformKey', // 6
-        'subformUidForeign', // 7
-        'subformUidLocal', // 8
-        'subformPage', // 9
-        'subformActivePages', // 10
-    );
+    protected static $specialParameters = [
+        'page',                 // 0
+        'formKey',              // 1
+        'mode',                 // 2
+        'folder',               // 3
+        'orderLink',            // 4
+        'uid',                  // 5
+        'subformKey',           // 6
+        'subformUidForeign',    // 7
+        'subformUidLocal',      // 8
+        'subformPage',          // 9
+        'subformActivePages',   // 10
+        'fileUid',              // 11
+    ];
 
     // Variable to encode/decode the special parameters
-    protected static $specialParametersToRemoveIfNotSet = array(
+    protected static $specialParametersToRemoveIfNotSet = [
         'subformUidForeign'
-    );
+    ];
 
 
     /**
@@ -161,7 +156,7 @@ abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\Acti
      *
      * @var \YolfTypo3\SavLibraryMvc\ViewConfiguration\AbstractViewConfiguration
      */
-    protected $viewerConfiguration = NULL;
+    protected $viewerConfiguration = null;
 
     /**
      * Injects the frontend user manager
@@ -219,19 +214,19 @@ abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\Acti
      *
      * @return \YolfTypo3\SavLibraryMvc\ViewConfiguration\AbstractViewConfiguration
      */
-    public function getViewerConfiguration($actionMethodName = NULL)
+    public function getViewerConfiguration($actionMethodName = null)
     {
-        if ($actionMethodName === NULL) {
+        if ($actionMethodName === null) {
             $actionMethodName = $this->actionMethodName;
         }
 
-        if ($this->viewerConfiguration === NULL) {
+        if ($this->viewerConfiguration === null) {
 
             $action = str_replace('Action', '', ucfirst($actionMethodName));
             $viewerConfigurationClass = 'YolfTypo3\\SavLibraryMvc\\ViewConfiguration\\' . $action . 'ViewConfiguration';
             if (! $this->objectManager->isRegistered($viewerConfigurationClass)) {
                 // TODO Adds an error message
-                return NULL;
+                return null;
             }
             // Gets the viewer configuration object
             $this->viewerConfiguration = $this->objectManager->get($viewerConfigurationClass, $this);
@@ -259,7 +254,6 @@ abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\Acti
         $dataMapFactory = $this->mainRepository->getDataMapFactory();
         return $dataMapFactory->getSavLibraryMvcControllerViewIdentifiers(self::$controllerName);
     }
-
 
     /**
      * Gets the view title bar
@@ -320,7 +314,6 @@ abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\Acti
      */
     protected function initializeAction()
     {
-
         // Gets the extension settings
         self::$extensionSettings = $this->settings;
 
@@ -328,6 +321,15 @@ abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\Acti
         self::$controllerObjectName = $this->request->getControllerObjectName();
         self::$controllerExtensionKey = $this->request->getControllerExtensionKey();
         self::$originalArguments = $this->request->getArguments();
+
+        // Checks if the static extension template is included
+        /** @var FrontendConfigurationManager $frontendConfigurationManager */
+        $frontendConfigurationManager = GeneralUtility::makeInstance(FrontendConfigurationManager::class);
+        $typoScriptSetup = $frontendConfigurationManager->getTypoScriptSetup();
+        $pluginSetupName = 'tx_' . strtolower($this->request->getControllerExtensionName()) . '.';
+        if (!@is_array($typoScriptSetup['plugin.'][$pluginSetupName]['view.'])) {
+            die('Fatal error: You have to include the static template of the extension ' . $this->request->getControllerExtensionKey() . '.');
+        }
 
         // Sets the controller index from the settings
         $controllerIndex = self::getSetting('formId');
@@ -431,6 +433,16 @@ abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\Acti
     }
 
     /**
+     * Gets the content object
+     *
+     * @return \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer
+     */
+    public function getContentObjectRenderer()
+    {
+        return $this->configurationManager->getContentObject();
+    }
+
+    /**
      * Gets the default date format from the library TypoScript configuration if any.
      *
      * @param string $extensionKey
@@ -444,7 +456,7 @@ abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\Acti
         if (is_array($typoScriptConfiguration)) {
             return $typoScriptConfiguration;
         } else {
-            return NULL;
+            return null;
         }
     }
 
@@ -485,15 +497,17 @@ abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\Acti
         }
 
         // If not found, checks if the file name is in Resources/Icons folder of the extension
-        $fileNameWithExtension = self::getFileNameWithExtension(ExtensionManagementUtility::siteRelPath(self::getControllerExtensionKey()) . self::$iconRootPath . '/', $fileName);
+        $extensionWebPath = self::getExtensionWebPath(self::getControllerExtensionKey());
+        $fileNameWithExtension = self::getFileNameWithExtension($extensionWebPath . self::$iconRootPath . '/', $fileName);
         if (! empty($fileNameWithExtension)) {
-            return ExtensionManagementUtility::siteRelPath(self::getControllerExtensionKey()) . self::$iconRootPath . '/' . $fileNameWithExtension;
+            return $extensionWebPath . self::$iconRootPath . '/' . $fileNameWithExtension;
         }
 
-        // If not found, checks if the file name is in Resources/Icons folder of the SAV Library Plus extension
-        $fileNameWithExtension = self::getFileNameWithExtension(ExtensionManagementUtility::siteRelPath(self::LIBRARY_NAME) . self::$iconRootPath . '/', $fileName);
+        // If not found, checks if the file name is in Resources/Icons folder of the SAV Library Mvc extension
+        $extensionWebPath = self::getExtensionWebPath(self::LIBRARY_NAME);
+        $fileNameWithExtension = self::getFileNameWithExtension($extensionWebPath . self::$iconRootPath . '/', $fileName);
         if (! empty($fileNameWithExtension)) {
-            return ExtensionManagementUtility::siteRelPath(self::LIBRARY_NAME) . self::$iconRootPath . '/' . $fileNameWithExtension;
+            return $extensionWebPath . self::$iconRootPath . '/' . $fileNameWithExtension;
         }
 
         return '';
@@ -512,21 +526,40 @@ abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\Acti
         $libraryTypoScriptConfiguration = self::getTypoScriptConfiguration(self::LIBRARY_NAME);
         $extensionTypoScriptConfiguration = self::getTypoScriptConfiguration(self::getControllerExtensionKey());
         $formTypoScriptConfiguration = $extensionTypoScriptConfiguration[self::getControllerName() . '.'];
+        $extensionWebPath = self::getExtensionWebPath(self::getControllerExtensionKey());
+
         if (is_file(GeneralUtility::getFileAbsFileName($formTypoScriptConfiguration['imageRootPath'] . '/' . $fileName))) {
             return substr(GeneralUtility::getFileAbsFileName($formTypoScriptConfiguration['imageRootPath']), strlen(PATH_site)) . '/';
         } elseif (is_file(GeneralUtility::getFileAbsFileName($extensionTypoScriptConfiguration['imageRootPath'] . '/' . $fileName))) {
             return substr(GeneralUtility::getFileAbsFileName($extensionTypoScriptConfiguration['imageRootPath']), strlen(PATH_site)) . '/';
         } elseif (is_file(GeneralUtility::getFileAbsFileName($libraryTypoScriptConfiguration['imageRootPath'] . '/' . $fileName))) {
             return substr(GeneralUtility::getFileAbsFileName($libraryTypoScriptConfiguration['imageRootPath']), strlen(PATH_site)) . '/';
-        } elseif (is_file(ExtensionManagementUtility::siteRelPath(self::getControllerExtensionKey()) . self::$imageRootPath . '/' . $fileName)) {
-            return ExtensionManagementUtility::siteRelPath(self::getControllerExtensionKey()) . self::$imageRootPath . '/';
+        } elseif (is_file($extensionWebPath . self::$imageRootPath . '/' . $fileName)) {
+            return $extensionWebPath . self::$imageRootPath . '/';
         } else {
-            return ExtensionManagementUtility::siteRelPath(self::LIBRARY_NAME) . self::$imageRootPath. '/';
+            $extensionWebPath = self::getExtensionWebPath(self::LIBRARY_NAME);
+            return $extensionWebPath . self::$imageRootPath. '/';
         }
     }
 
     /**
-     * *
+     * Gets the relative web path of a give extension.
+     *
+     * @param string $extension
+     *            The extension
+     *
+     * @return string The relative web path
+     */
+    public static function getExtensionWebPath($extension) {
+        $extensionWebPath = PathUtility::getAbsoluteWebPath(ExtensionManagementUtility::extPath($extension));
+        if ($extensionWebPath[0] === '/') {
+            // Makes the path relative
+            $extensionWebPath = substr($extensionWebPath, 1);
+        }
+        return $extensionWebPath;
+    }
+
+    /**
      * Gets the icon file name with its extension by checking if it exists in the given path.
      *
      * @param string $path
@@ -557,6 +590,7 @@ abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\Acti
     }
 
     /**
+     * Sets the view configuration
      *
      * @param ViewInterface $view
      *
@@ -587,7 +621,7 @@ abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\Acti
      *            Arguments from the action
      * @return array
      */
-    public function getViewConfiguration($arguments = array())
+    public function getViewConfiguration($arguments = [])
     {
         $viewConfiguration = $this->getViewerConfiguration()->getConfiguration($arguments);
 
@@ -603,7 +637,7 @@ abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\Acti
      */
     public static function uncompressParameters($compressedParameters)
     {
-        $parameters = array();
+        $parameters = [];
         while (! empty($compressedParameters)) {
             // Reads the index
             list ($parameterIndex) = sscanf($compressedParameters, '%1x');
@@ -659,7 +693,7 @@ abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\Acti
      */
     public static function uncompressSubformActivePages($compressedParameters)
     {
-        $parameters = array();
+        $parameters = [];
         while (! empty($compressedParameters)) {
             // Reads the index
             list ($parameterIndex) = sscanf($compressedParameters, '%1x');
@@ -751,10 +785,11 @@ abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\Acti
         $uncompressedSubformActivePages[$subformKey] = $subformPage;
         // Compresses the subform active pages
         foreach ($uncompressedSubformActivePages as $subformKey => $subformPage) {
-            $compressedParameters .= self::compressParameters(array(
-                'subformKey' => $subformKey,
-                'subformPage' => $subformPage
-            ));
+            $compressedParameters .= self::compressParameters([
+                    'subformKey' => $subformKey,
+                    'subformPage' => $subformPage
+                ]
+            );
         }
 
         return $compressedParameters;
@@ -767,7 +802,7 @@ abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\Acti
      */
     public function getVersioningWorkspaceId()
     {
-        return (isset($GLOBALS['TSFE']->sys_page->versioningWorkspaceId) ? $GLOBALS['TSFE']->sys_page->versioningWorkspaceId : NULL);
+        return (isset($GLOBALS['TSFE']->sys_page->versioningWorkspaceId) ? $GLOBALS['TSFE']->sys_page->versioningWorkspaceId : null);
     }
 
     /**
@@ -814,5 +849,4 @@ abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\Acti
         return $viewFolders;
     }
 }
-
 ?>
