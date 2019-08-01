@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2013-02-27T15:12:49Z" product-name="sav_library_mvc">
+		<header/>
+		<body>
+			<trans-unit id=".alttitle" xml:space="preserve">
+				<source>SAV Library Mvc &gt; General</source>
+			</trans-unit>
+			<trans-unit id=".description" xml:space="preserve">
+				<source>Help for the General folder</source>
+			</trans-unit>
+            <trans-unit id=".seeAlso" xml:space="preserve">
+                <source>xEXT_sav_library_mvc_helpGeneral:*</source>
+            </trans-unit>   			
+			<trans-unit id="LLL:EXT:sav_library_mvc/Resources/Private/Language/locallang.xlf:extensionFlexform.formId.description" xml:space="preserve">
+				<source>Use this selector to select the form name. Let use recall that the &quot;SAV Library Plus&quot; makes it possible to build several forms associated with the same extension, thus providing different views of your tables.</source>
+			</trans-unit>
+			<trans-unit id="LLL:EXT:sav_library_mvc/Resources/Private/Language/locallang.xlf:extensionFlexform.noFilterShowAll.description" xml:space="preserve">
+				<source>If set, all items are displayed if no filter is applied, for example by means of the &quot;sav_filter_abc&quot; extension.</source>
+			</trans-unit>
+			<trans-unit id="LLL:EXT:sav_library_mvc/Resources/Private/Language/locallang.xlf:extensionFlexform.showNoAvailableInformation.description" xml:space="preserve">
+				<source>Use the selector to choose what to display when no information are available.</source>
+			</trans-unit>
+			<trans-unit id="LLL:EXT:sav_library_mvc/Resources/Private/Language/locallang.xlf:extensionFlexform.maxItems.description" xml:space="preserve">
+				<source>Maximum number of items that will be displayed in a page. If set to 0, all items are displayed.</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

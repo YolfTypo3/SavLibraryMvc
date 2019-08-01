@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2013-02-27T15:13:06Z" product-name="sav_library_plus">
+		<header/>
+		<body>
+			<trans-unit id=".alttitle" xml:space="preserve">
+				<source>SAV Library Plus &gt; Input control</source>
+			</trans-unit>
+			<trans-unit id=".description" xml:space="preserve">
+				<source>Help for the Input Control folder</source>
+			</trans-unit>
+            <trans-unit id=".seeAlso" xml:space="preserve">
+                <source>xEXT_sav_library_plus_helpInputControls:*</source>
+            </trans-unit>       			
+			<trans-unit id="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.inputIsAllowed.description" xml:space="preserve">
+				<source>If set, Front End inputs are allowed.</source>
+			</trans-unit>
+			<trans-unit id="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.allowedGroups.description" xml:space="preserve">
+				<source>If you select user groups, user must belong to one of these groups to be allowed to input data in the Front End.</source>
+			</trans-unit>
+			<trans-unit id="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.inputAdminField.description" xml:space="preserve">
+				<source>Put here a field under the form &quot;tablename.fieldname&quot; (if you use only &quot;fieldname&quot;, the main table is taken as &quot;tablename&quot;).
+This will restrict the input to users that have &quot;Admin&quot; right for this field in their TS Config.
+For example, if one user has &quot;extKey_Admin=value1,value2&quot; in his TS Config, he will be allowed to edit or delete items for which &quot;fieldname&quot; is equal to &quot;value1&quot; or &quot;value2&quot; for the extension &quot;extKey&quot;.
+The fields or the folders which have the attribute &quot;editAdminPlus= 1;&quot; can be modified if the user has the &quot;Admin+&quot; rights. For example, if the TS Config is &quot;extKey_Admin=value1+,value2&quot; , the user is an &quot;Admin+&quot; for the records where &quot;fieldname&quot; is equal to &quot;value1&quot; and just &quot;Admin&quot; for the records where &quot;fieldname&quot; is equal to &quot;value2&quot;.
+Users become &quot;Super Admin&quot; for the extension &quot;extKey&quot; their TS Config is &quot;extKey_Admin=*&quot;.</source>
+			</trans-unit>
+			<trans-unit id="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.noNewButton.description" xml:space="preserve">
+				<source>No new button is added to the form. It means that you can modify existing records but you cannot create new record.</source>
+			</trans-unit>
+			<trans-unit id="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.noEditButton.description" xml:space="preserve">
+				<source>An edit button will not be added in front of the records in &quot;List&quot; views.</source>
+			</trans-unit>
+			<trans-unit id="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.noDeleteButton.description" xml:space="preserve">
+				<source>A delete button will not be added in front of the records in &quot;List&quot; views.</source>
+			</trans-unit>
+			<trans-unit id="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.deleteButtonOnlyForCreationUser.description" xml:space="preserve">
+				<source>Add a &quot;delete&quot; button only for records created by the user.</source>
+			</trans-unit>
+			<trans-unit id="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.inputStartDate.description" xml:space="preserve">
+				<source>If set, inputs in the Front End will not be possible before this date.</source>
+			</trans-unit>
+			<trans-unit id="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.inputEndDate.description" xml:space="preserve">
+				<source>If set, inputs in the Front End will not be possible after this date.</source>
+			</trans-unit>
+			<trans-unit id="LLL:EXT:sav_library_plus/Resources/Private/Language/locallang.xml:pi_flexform.dateUserRestriction.description" xml:space="preserve">
+				<source>Use the selector to set either &quot;Nobody&quot;, &quot;All&quot;, &quot;Admin plus users&quot;, &quot;All excludind Super Admin&quot;. The date limit is applied according to this selector.</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2013-02-27T15:12:43Z" product-name="sav_library_mvc">
+		<header/>
+		<body>
+			<trans-unit id=".alttitle" xml:space="preserve">
+				<source>SAV Library Mvc &gt; Advanced</source>
+			</trans-unit>
+			<trans-unit id=".description" xml:space="preserve">
+				<source>Help for the Advanced folder</source>
+			</trans-unit>
+            <trans-unit id=".seeAlso" xml:space="preserve">
+                <source>xEXT_sav_library_mvc_helpAdvanced:*</source>
+            </trans-unit>   			
+			<trans-unit id="LLL:EXT:sav_library_mvc/Resources/Private/Language/locallang.xml:extensionFlexform.permanentFilter.description" xml:space="preserve">
+				<source>You can use this field to add a where clause that will be added to the where clause of the form query.</source>
+			</trans-unit>
+			<trans-unit id="LLL:EXT:sav_library_mvc/Resources/Private/Language/locallang.xml:extensionFlexform.addFragment.description" xml:space="preserve">
+				<source>The content id is added as a fragment to the links.</source>
+			</trans-unit>
+			<trans-unit id="LLL:EXT:sav_library_mvc/Resources/Private/Language/locallang.xml:extensionFlexform.allowQueryProperty.description" xml:space="preserve">
+				<source>The &quot;query&quot; property makes it possible to execute queries in &quot;input&quot; or &quot;update&quot; forms.
+Because any query may be executed, for security reason, only admin users can check this field must when this property is needed.</source>
+			</trans-unit>
+			<trans-unit id="LLL:EXT:sav_library_mvc/Resources/Private/Language/locallang.xml:extensionFlexform.allowExec.description" xml:space="preserve">
+				<source>The use of the php exec function is allowed in export which makes the execution of text processors possible, for example.</source>
+			</trans-unit>
+			<trans-unit id="LLL:EXT:sav_library_mvc/Resources/Private/Language/locallang.xml:extensionFlexform.storagePage.description" xml:space="preserve">
+				<source>This option makes it possible to store your record in a storage page, for example a &quot;sysfolder&quot;, otherwise records are stored in the current page.
+When this option is used, records are fetched in the storage page and in the pages defined in the &quot;starting point&quot; if any.</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>
