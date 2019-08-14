@@ -13,10 +13,9 @@ namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
  *
  * The TYPO3 project - inspiring people to share!
  */
-
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 use YolfTypo3\SavLibraryMvc\Domain\Repository\AbstractRepository;
 use YolfTypo3\SavLibraryMvc\Managers\FieldConfigurationManager;
@@ -36,8 +35,9 @@ use YolfTypo3\SavLibraryMvc\Managers\FieldConfigurationManager;
  *
  * @package SavLibraryMvc
  */
-class RenderRelationManyToManyAsSubformViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
+class RenderRelationManyToManyAsSubformViewHelper extends AbstractViewHelper
 {
+
     /**
      * Initializes arguments.
      */
@@ -73,8 +73,7 @@ class RenderRelationManyToManyAsSubformViewHelper extends \TYPO3\CMS\Fluid\Core\
         $repository->setController($controller);
 
         // Gets the view type
-        $controllerActionName = $this->renderingContext
-            ->getControllerContext()
+        $controllerActionName = $this->renderingContext->getControllerContext()
             ->getRequest()
             ->getControllerActionName();
         $viewType = lcfirst($controllerActionName) . 'View';
@@ -90,8 +89,7 @@ class RenderRelationManyToManyAsSubformViewHelper extends \TYPO3\CMS\Fluid\Core\
         $general = $field['general'];
 
         // Adds the special arguments to the general configuration
-        $arguments = $this->renderingContext
-            ->getControllerContext()
+        $arguments = $this->renderingContext->getControllerContext()
             ->getRequest()
             ->getArguments();
         $general['special'] = $arguments['special'];
@@ -111,7 +109,7 @@ class RenderRelationManyToManyAsSubformViewHelper extends \TYPO3\CMS\Fluid\Core\
         $general['deleteButtonIsAllowed'] = $field['addDelete'];
 
         // TODO check this
-        //'saveButtonIsAllowed' => ($isNewInSubform === false) && $saveButtonIsAllowed,
+        // 'saveButtonIsAllowed' => ($isNewInSubform === false) && $saveButtonIsAllowed,
 
         // Processes the items
         $start = min($general['pageInSubform'], $general['lastPageInSubform']) * $field['maxSubformItems'];
@@ -136,6 +134,7 @@ class RenderRelationManyToManyAsSubformViewHelper extends \TYPO3\CMS\Fluid\Core\
 
             // Adds the property name to the field configuration
             $uid = - 1;
+            $items = [];
             if ($field['edit'] == 1) {
                 foreach ($fieldsConfiguration as $fieldConfigurationKey => $fieldConfiguration) {
                     $fieldsConfiguration[$fieldConfigurationKey]['propertyName'] = $field['propertyName'] . '.' . $uid . '.' . $fieldsConfiguration[$fieldConfigurationKey]['propertyName'];

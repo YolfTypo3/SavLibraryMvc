@@ -18,6 +18,9 @@
 			<trans-unit id="extensionFlexform.noFilterShowAll" xml:space="preserve">
 				<source>Show all if no filter</source>
 			</trans-unit>
+			<trans-unit id="extensionFlexform.help" xml:space="preserve">
+				<source>Help</source>
+			</trans-unit>			
 			<trans-unit id="extensionFlexform.inputIsAllowed" xml:space="preserve">
 				<source>Allow authenticated FE users to input data</source>
 			</trans-unit>

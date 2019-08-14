@@ -13,7 +13,6 @@ namespace YolfTypo3\SavLibraryMvc\Compatibility\RichTextEditor;
  *
  * The TYPO3 project - inspiring people to share!
  */
-
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -23,6 +22,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class RichTextEditorCompatibility
 {
+
     /**
      * Gets the rich text editor renderer
      *
@@ -30,11 +30,7 @@ class RichTextEditorCompatibility
      */
     public static function getRichTextEditorRenderer()
     {
-        if (version_compare(TYPO3_version, '8.0', '<')) {
-            $richTextEditorRenderer = GeneralUtility::makeInstance(RichTextEditorRendererForTypo3VersionLowerThan8::class);
-        }  else {
-            $richTextEditorRenderer = GeneralUtility::makeInstance(RichTextEditorRenderer::class);
-        }
+        $richTextEditorRenderer = GeneralUtility::makeInstance(RichTextEditorRenderer::class);
 
         return $richTextEditorRenderer;
     }

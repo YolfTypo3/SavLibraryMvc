@@ -13,7 +13,6 @@ namespace YolfTypo3\SavLibraryMvc\Domain\Model;
  *
  * The TYPO3 project - inspiring people to share!
  */
-
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use YolfTypo3\SavLibraryMvc\Controller\FlashMessages;
@@ -23,6 +22,7 @@ use YolfTypo3\SavLibraryMvc\Controller\FlashMessages;
  */
 class DefaultModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
 {
+
     /**
      * The crdate variable
      *
@@ -115,8 +115,8 @@ class DefaultModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     /**
      * Updates the file storage with the uploaded files
      *
-     * @param \TYPO3\CMS\Extbase\Persistence\ObjectStorage $fileStorage
-     * @param \TYPO3\CMS\Extbase\Persistence\ObjectStorage $uploadedFileStorage
+     * @param ObjectStorage $fileStorage
+     * @param ObjectStorage $uploadedFileStorage
      * @return void
      */
     protected function updateFileStorage($fileStorage, $uploadedFileStorage)
@@ -162,7 +162,7 @@ class DefaultModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     /**
      * Resolves the table name from an object
      *
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage $object
+     * @var ObjectStorage $object
      * @return string
      */
     public function resolveTableNameFromObject()
@@ -180,7 +180,7 @@ class DefaultModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     /**
      * Resolves the table name from an object
      *
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage $object
+     * @var ObjectStorage $object
      * @return string
      */
     public function getFieldValueFromFieldName($fieldName)
@@ -193,24 +193,18 @@ class DefaultModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
             $getterName = 'get' . GeneralUtility::underscoredToUpperCamelCase($field[0]);
         } else {
             if ($this->resolveTableNameFromObject() != $field[0]) {
-                return FlashMessages::addError(
-                    'error.unknownFieldName',
-                    [
-                        $fieldName
-                    ]
-                );
+                return FlashMessages::addError('error.unknownFieldName', [
+                    $fieldName
+                ]);
             } else {
                 $getterName = 'get' . GeneralUtility::underscoredToUpperCamelCase($field[1]);
             }
         }
 
         if (! method_exists($this, $getterName)) {
-            return FlashMessages::addError(
-                'error.unknownFieldName',
-                [
-                    $fieldName
-                ]
-            );
+            return FlashMessages::addError('error.unknownFieldName', [
+                $fieldName
+            ]);
         } else {
             return $this->$getterName();
         }

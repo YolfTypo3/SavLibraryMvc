@@ -13,8 +13,7 @@ namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
  *
  * The TYPO3 project - inspiring people to share!
  */
-
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * A view helper for building the options for the field selector.
@@ -26,10 +25,10 @@ use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
  * </code>
  *
  * Output:
- *
  */
 class CheckBreakConditionViewHelper extends AbstractViewHelper
 {
+
     /**
      * Initializes arguments.
      */
@@ -38,6 +37,7 @@ class CheckBreakConditionViewHelper extends AbstractViewHelper
         $this->registerArgument('counter', 'integer', 'Counter', false, null);
         $this->registerArgument('breakCount', 'integer', 'Break count', false, null);
     }
+
     /**
      * Renders the viewhelper
      *

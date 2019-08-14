@@ -13,18 +13,21 @@ namespace YolfTypo3\SavLibraryMvc\ViewConfiguration;
  *
  * The TYPO3 project - inspiring people to share!
  */
-
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
+use YolfTypo3\SavLibraryMvc\Controller\DefaultController;
 use YolfTypo3\SavLibraryMvc\Controller\FlashMessages;
 use YolfTypo3\SavLibraryMvc\Managers\FieldConfigurationManager;
+use YolfTypo3\SavLibraryMvc\Parser\TemplateParser;
 
 /**
  * Abstract view configuration for the SAV Library MVC
  */
 abstract class AbstractViewConfiguration
 {
+
     /**
      * Constants associated with the flag showNoAvailableInformation
      */
@@ -40,14 +43,15 @@ abstract class AbstractViewConfiguration
     const CUT_IF_PATTERN = '/    (?:      (?:        \s+        (?P<connector>[\|&]|or|and|OR|AND)        \s+      )?      (?P<expression>        (?:        	false | true |	        (?:\#{3})?		        (?P<lhs>(?:(?:\w+\.)+)?\w+)		        \s*(?P<operator>=|!=|>=|<=|>|<)\s*		        (?P<rhs>[-\w]+|\#{3}[^\#]+\#{3})	        (?:\#{3})?				)      )    )  /x';
 
     /**
+     * Controller
      *
-     * @var \YolfTypo3\SavLibraryMvc\Controller\DefaultController
+     * @var DefaultController
      */
     protected $controller = null;
 
     /**
      *
-     * @var \YolfTypo3\SavLibraryMvc\Parser\TemplateParser
+     * @var TemplateParser
      */
     protected $templateParser = null;
 
@@ -65,20 +69,20 @@ abstract class AbstractViewConfiguration
 
     /**
      *
-     * @var \YolfTypo3\SavLibraryMvc\Managers\FieldConfigurationManager
+     * @var FieldConfigurationManager
      */
     protected $fieldConfigurationManager;
 
     /**
      *
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage $object
+     * @var ObjectStorage $object
      */
     protected $object;
 
     /**
      * Constructor
      *
-     * @param \YolfTypo3\SavLibraryMvc\Controller\DefaultController $controller
+     * @param DefaultController $controller
      * @return void
      */
     public function __construct($controller)
@@ -101,8 +105,8 @@ abstract class AbstractViewConfiguration
     /**
      * Injects the field configuration manager
      *
-     * @param
-     *            \YolfTypo3\SavLibraryMvc\Managers\FieldConfigurationManager
+     * @param FieldConfigurationManager $fieldConfigurationManager
+     *
      * @return void
      */
     public function injectFieldConfigurationManager(FieldConfigurationManager $fieldConfigurationManager)
@@ -126,7 +130,7 @@ abstract class AbstractViewConfiguration
      *
      * return int
      */
-    public function getViewIdentifier() : int
+    public function getViewIdentifier(): int
     {
         if ($this->viewIdentifier !== null) {
             return $this->viewIdentifier;
@@ -148,7 +152,7 @@ abstract class AbstractViewConfiguration
                 $viewWithConditionConfiguration = $viewWithCondition['config'];
 
                 // Processes the condition if it exists
-                if (!empty($viewWithConditionConfiguration['cutIf']) || !empty($viewWithConditionConfiguration['showIf'])) {
+                if (! empty($viewWithConditionConfiguration['cutIf']) || ! empty($viewWithConditionConfiguration['showIf'])) {
                     // Builds a field configuration manager
                     $fieldConfigurationManager = GeneralUtility::makeInstance(FieldConfigurationManager::class);
                     $fieldConfigurationManager::storeFieldsConfiguration();
@@ -214,7 +218,7 @@ abstract class AbstractViewConfiguration
         if ($uncompressedParameters['folder']) {
             $activeFolder = (empty($viewFolders) ? 0 : $uncompressedParameters['folder']);
             // Checks if the folder exists otherwise return the first folder
-            if($activeFolder > 0 && empty($viewFolders[$activeFolder])) {
+            if ($activeFolder > 0 && empty($viewFolders[$activeFolder])) {
                 $activeFolder = key($viewFolders);
             }
         } else {
@@ -242,7 +246,8 @@ abstract class AbstractViewConfiguration
         // Processes the localization markers
         $title = $this->fieldConfigurationManager->parseLocalizationTags($title);
 
-        // Processes the markers
+        // Processes the marker
+        $matches = [];
         preg_match_all('/###(\w+)###/', $title, $matches);
 
         // Gets the view type
@@ -272,13 +277,10 @@ abstract class AbstractViewConfiguration
         }
 
         // Parses the title template
-        $title = $this->templateParser->parse(
-            $title,
-            [
-                'general' => $configuration['general'],
-                'fields' => $configuration['fields']
-            ]
-        );
+        $title = $this->templateParser->parse($title, [
+            'general' => $configuration['general'],
+            'fields' => $configuration['fields']
+        ]);
 
         return $title;
     }

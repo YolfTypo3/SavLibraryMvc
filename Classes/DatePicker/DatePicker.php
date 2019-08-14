@@ -13,7 +13,6 @@ namespace YolfTypo3\SavLibraryMvc\DatePicker;
  *
  * The TYPO3 project - inspiring people to share!
  */
-
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 use YolfTypo3\SavLibraryMvc\Managers\AdditionalHeaderManager;
@@ -89,17 +88,12 @@ class DatePicker
             // The style sheet is given by the extension TypoScript
             $cascadingStyleSheetAbsoluteFileName = GeneralUtility::getFileAbsFileName($datePickerTypoScriptConfiguration['stylesheet']);
             if (is_file($cascadingStyleSheetAbsoluteFileName)) {
-                $cascadingStyleSheet = substr($cascadingStyleSheetAbsoluteFileName, strlen(PATH_site));
+                $cascadingStyleSheet = substr($cascadingStyleSheetAbsoluteFileName, strlen(AbstractController::getSitePath()));
                 AdditionalHeaderManager::addCascadingStyleSheet($cascadingStyleSheet);
             } else {
-                throw new Exception(
-                    FlashMessages::translate(
-                        'error.fileDoesNotExist',
-                        [
-                            htmlspecialchars($cascadingStyleSheetAbsoluteFileName)
-                        ]
-                    )
-                );
+                throw new Exception(FlashMessages::translate('error.fileDoesNotExist', [
+                    htmlspecialchars($cascadingStyleSheetAbsoluteFileName)
+                ]));
             }
         } else {
             $libraryTypoScriptConfiguration = AbstractController::getTypoScriptConfiguration(AbstractController::LIBRARY_NAME);
@@ -108,21 +102,16 @@ class DatePicker
                 // The style sheet is given by the library TypoScript
                 $cascadingStyleSheetAbsoluteFileName = GeneralUtility::getFileAbsFileName($datePickerTypoScriptConfiguration['stylesheet']);
                 if (is_file($cascadingStyleSheetAbsoluteFileName)) {
-                    $cascadingStyleSheet = substr($cascadingStyleSheetAbsoluteFileName, strlen(PATH_site));
+                    $cascadingStyleSheet = substr($cascadingStyleSheetAbsoluteFileName, strlen(AbstractController::getSitePath()));
                     AdditionalHeaderManager::addCascadingStyleSheet($cascadingStyleSheet);
                 } else {
-                    throw new Exception(
-                        FlashMessages::translate(
-                            'error.fileDoesNotExist',
-                            [
-                                htmlspecialchars($cascadingStyleSheetAbsoluteFileName)
-                            ]
-                        )
-                    );
+                    throw new Exception(FlashMessages::translate('error.fileDoesNotExist', [
+                        htmlspecialchars($cascadingStyleSheetAbsoluteFileName)
+                    ]));
                 }
             } else {
                 // The style sheet is the default one
-                $extensionWebPath = AbstractController::getExtensionWebPath(AbstractController::LIBRARY_NAME);
+                $extensionWebPath = AbstractController::getExtensionWebPath($extensionKey);
                 $cascadingStyleSheet = $extensionWebPath . self::$datePickerPath . 'css/' . self::$datePickerCssFile;
                 AdditionalHeaderManager::addCascadingStyleSheet($cascadingStyleSheet);
             }
@@ -157,7 +146,7 @@ class DatePicker
         if (is_array($datePickerTypoScriptConfiguration['format.'])) {
             return $datePickerTypoScriptConfiguration['format.'];
         } else {
-            $libraryTypoScriptConfiguration = AbstractController::getTypoScriptConfiguration(AbstractController::LIBRARY_NAME);
+            $libraryTypoScriptConfiguration = AbstractController::getTypoScriptConfiguration($extensionKey);
             $datePickerTypoScriptConfiguration = $libraryTypoScriptConfiguration[$key];
             if (is_array($datePickerTypoScriptConfiguration['format.'])) {
                 return $datePickerTypoScriptConfiguration['format.'];
@@ -173,6 +162,7 @@ class DatePicker
      */
     public function render($datePickerConfiguration)
     {
+        $datePickerSetup = [];
         $datePickerSetup[] = '<a href="#">';
         $datePickerSetup[] = '<img class="datePickerCalendar" id="button_' . $datePickerConfiguration['id'] . '" src="' . $datePickerConfiguration['iconPath'] . '" alt="" title="" />';
         $datePickerSetup[] = '</a>';

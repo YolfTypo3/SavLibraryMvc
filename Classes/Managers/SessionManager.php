@@ -13,8 +13,6 @@ namespace YolfTypo3\SavLibraryMvc\Managers;
  *
  * The TYPO3 project - inspiring people to share!
  */
-
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 
 /**
@@ -47,9 +45,6 @@ class SessionManager
     /**
      * Loads the session
      *
-     * @param
-     *            none
-     *
      * @return void
      */
     public static function loadSession()
@@ -66,9 +61,6 @@ class SessionManager
     /**
      * Loads the library data
      *
-     * @param
-     *            none
-     *
      * @return void
      */
     protected static function loadLibraryData()
@@ -78,9 +70,6 @@ class SessionManager
 
     /**
      * Loads the filters data
-     *
-     * @param
-     *            none
      *
      * @return void
      */
@@ -92,9 +81,6 @@ class SessionManager
     /**
      * Loads the filter selected data
      *
-     * @param
-     *            none
-     *
      * @return void
      */
     protected static function loadSelectedFilterKey()
@@ -104,9 +90,6 @@ class SessionManager
 
     /**
      * Cleans the filter data
-     *
-     * @param
-     *            none
      *
      * @return void
      */
@@ -134,9 +117,6 @@ class SessionManager
 
     /**
      * Saves the session
-     *
-     * @param
-     *            none
      *
      * @return void
      */
@@ -217,9 +197,6 @@ class SessionManager
     /**
      * Clears the subform fields
      *
-     * @param
-     *            none
-     *
      * @return void
      */
     public static function clearSessionSubformm()
@@ -229,9 +206,6 @@ class SessionManager
 
     /**
      * Gets the selected filter key
-     *
-     * @param
-     *            none
      *
      * @return string
      */

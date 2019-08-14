@@ -13,10 +13,9 @@ namespace YolfTypo3\SavLibraryMvc\ViewHelpers\Typoscript;
  *
  * The TYPO3 project - inspiring people to share!
  */
-
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * Typoscript wrapper view helper.
@@ -27,6 +26,7 @@ use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
  */
 class WrapViewHelper extends AbstractViewHelper
 {
+
     /**
      * Initializes arguments.
      */

@@ -13,13 +13,18 @@ namespace YolfTypo3\SavLibraryMvc\Property\TypeConverter;
  *
  * The TYPO3 project - inspiring people to share!
  */
+use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Extbase\Error\Error;
+use TYPO3\CMS\Extbase\Property\PropertyMappingConfigurationInterface;
+use TYPO3\CMS\Extbase\Property\TypeConverter\AbstractTypeConverter;
+use YolfTypo3\SavLibraryMvc\Utility\Conversion;
 
 /**
  * Converter which transforms simple types to a string.
  *
  * @api
  */
-class StringConverter extends \TYPO3\CMS\Extbase\Property\TypeConverter\AbstractTypeConverter implements \TYPO3\CMS\Core\SingletonInterface
+class StringConverter extends AbstractTypeConverter implements SingletonInterface
 {
 
     /**
@@ -49,21 +54,17 @@ class StringConverter extends \TYPO3\CMS\Extbase\Property\TypeConverter\Abstract
      * @param string $source
      * @param string $targetType
      * @param array $convertedChildProperties
-     * @param \TYPO3\CMS\Extbase\Property\PropertyMappingConfigurationInterface $configuration
-     * @return string @api
+     * @param PropertyMappingConfigurationInterface $configuration
+     * @return string | Error @api
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = [], \TYPO3\CMS\Extbase\Property\PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
         if (! is_array($source)) {
-            return new \TYPO3\CMS\Extbase\Error\Error(
-                '"%s" is not an array.',
-                1332933658,
-                [
-                    $source
-                ]
-            );
+            return new Error('"%s" is not an array.', 1332933658, [
+                $source
+            ]);
         } else {
-            return \YolfTypo3\SavLibraryMvc\Utility\Conversion::stringArrayToCommaSeparatedString($source);
+            return Conversion::stringArrayToCommaSeparatedString($source);
         }
     }
 }

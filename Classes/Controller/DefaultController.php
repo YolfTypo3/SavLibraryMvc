@@ -13,11 +13,9 @@ namespace YolfTypo3\SavLibraryMvc\Controller;
  *
  * The TYPO3 project - inspiring people to share!
  */
-
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
-use YolfTypo3\SavLibraryMvc\Controller\FlashMessages;
 use YolfTypo3\SavLibraryMvc\Persistence\ObjectStorage;
 
 /**
@@ -25,6 +23,7 @@ use YolfTypo3\SavLibraryMvc\Persistence\ObjectStorage;
  */
 class DefaultController extends AbstractController
 {
+
     /**
      * List action
      *
@@ -74,9 +73,8 @@ class DefaultController extends AbstractController
         if ($this->getFrontendUserManager()->userIsAuthenticated() === false) {
             FlashMessages::addError('fatal.notAuthenticated');
             return $this->redirect('single', null, null, [
-                    'special' => $special
-                ]
-            );
+                'special' => $special
+            ]);
         }
 
         $arguments = [
@@ -109,9 +107,8 @@ class DefaultController extends AbstractController
         if ($this->getFrontendUserManager()->userIsAuthenticated() === false) {
             FlashMessages::addError('fatal.notAuthenticated');
             return $this->redirect('single', null, null, [
-                    'special' => $special
-                ]
-            );
+                'special' => $special
+            ]);
         }
 
         // Gets the arguments
@@ -153,7 +150,8 @@ class DefaultController extends AbstractController
             // Finds the new object in the saved data from its path and
             // sets the uid to the new created object
             $newSubformItemPath = $arguments['newSubformItemPath'];
-            preg_match_all('/(\w+)\.(-?\d+)/', $arguments['newSubformItemPath'], $matches);
+            $matches = [];
+            preg_match_all('/(\w+)\.(-?\d+)/', $newSubformItemPath, $matches);
             if (! empty($matches[0])) {
                 $objectToInsert = $data;
                 foreach ($matches[0] as $matchKey => $match) {
@@ -210,9 +208,8 @@ class DefaultController extends AbstractController
 
         // Redirects to the action
         $this->redirect($action, null, null, [
-                'special' => $special
-            ]
-        );
+            'special' => $special
+        ]);
     }
 
     /**
@@ -227,9 +224,8 @@ class DefaultController extends AbstractController
         if ($this->getFrontendUserManager()->userIsAuthenticated() === false) {
             FlashMessages::addError('fatal.notAuthenticated');
             return $this->redirect('single', null, null, [
-                    'special' => $special
-                ]
-            );
+                'special' => $special
+            ]);
         }
 
         // Uncompresses the special parameter
@@ -246,9 +242,8 @@ class DefaultController extends AbstractController
 
         // Redirects to the list in edit mode action
         $this->redirect('list', null, null, [
-                'special' => $special
-            ]
-        );
+            'special' => $special
+        ]);
     }
 
     /**
@@ -263,9 +258,8 @@ class DefaultController extends AbstractController
         if ($this->getFrontendUserManager()->userIsAuthenticated() === false) {
             FlashMessages::addError('fatal.notAuthenticated');
             return $this->redirect('single', null, null, [
-                    'special' => $special
-                ]
-            );
+                'special' => $special
+            ]);
         }
 
         // Uncompresses the special parameter
@@ -295,9 +289,8 @@ class DefaultController extends AbstractController
 
         // Redirects to the list in edit mode action
         $this->redirect('edit', null, null, [
-                'special' => $special
-            ]
-        );
+            'special' => $special
+        ]);
     }
 
     /**
@@ -312,9 +305,8 @@ class DefaultController extends AbstractController
         if ($this->getFrontendUserManager()->userIsAuthenticated() === false) {
             FlashMessages::addError('fatal.notAuthenticated');
             return $this->redirect('single', null, null, [
-                    'special' => $special
-                ]
-            );
+                'special' => $special
+            ]);
         }
 
         // Uncompresses the special parameter
@@ -344,9 +336,8 @@ class DefaultController extends AbstractController
 
         // Redirects to the list in edit mode action
         $this->redirect('edit', null, null, [
-                'special' => $special
-            ]
-        );
+            'special' => $special
+        ]);
     }
 
     /**
@@ -361,9 +352,8 @@ class DefaultController extends AbstractController
         if ($this->getFrontendUserManager()->userIsAuthenticated() === false) {
             FlashMessages::addError('fatal.notAuthenticated');
             return $this->redirect('single', null, null, [
-                    'special' => $special
-                ]
-            );
+                'special' => $special
+            ]);
         }
 
         // Uncompresses the special parameter
@@ -393,9 +383,8 @@ class DefaultController extends AbstractController
 
         // Redirects to the list in edit mode action
         $this->redirect('edit', null, null, [
-                'special' => $special
-            ]
-        );
+            'special' => $special
+        ]);
     }
 
     /**
@@ -410,9 +399,8 @@ class DefaultController extends AbstractController
         if ($this->getFrontendUserManager()->userIsAuthenticated() === false) {
             FlashMessages::addError('fatal.notAuthenticated');
             return $this->redirect('single', null, null, [
-                    'special' => $special
-                ]
-           );
+                'special' => $special
+            ]);
         }
 
         // Uncompresses the special parameter
@@ -426,30 +414,19 @@ class DefaultController extends AbstractController
         // Deletes the file
         $fileReferenceObject->getOriginalFile()->delete();
 
-        // Marks the file reference as deleted
-        // @todo Test will be removed in TYPO3 v10
-        if (version_compare(TYPO3_version, '8.0', '<')) {
-            // @extensionScannerIgnoreLine
-            $GLOBALS['TYPO3_DB']
-            ->exec_UPDATEquery(
-                'sys_file_reference',
-                'uid = '. $fileReferenceUid,
-                [ 'deleted' => 1 ]
-            );
-        } else {
-            GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable('sys_file_reference')
-            ->update(
-                'sys_file_reference',
-                [ 'deleted' => 1 ],  // set
-                [ 'uid' => $fileReferenceUid ] // where
-            );
-        }
+        // Marks the file reference as delete
+        GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable('sys_file_reference')->update('sys_file_reference', [
+            'deleted' => 1
+        ], // set
+        [
+            'uid' => $fileReferenceUid
+        ] // where
+        );
 
         // Redirects to the list in edit mode action
         $this->redirect('edit', null, null, [
-                'special' => $special
-            ]
-        );
+            'special' => $special
+        ]);
     }
 }
 ?>

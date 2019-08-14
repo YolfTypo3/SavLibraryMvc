@@ -13,7 +13,6 @@ namespace YolfTypo3\SavLibraryMvc\Managers;
  *
  * The TYPO3 project - inspiring people to share!
  */
-
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -26,6 +25,7 @@ use YolfTypo3\SavLibraryMvc\Exception;
  */
 class AdditionalHeaderManager
 {
+
     /**
      * Array of javaScript code used for the view
      *
@@ -65,17 +65,12 @@ class AdditionalHeaderManager
         } else {
             $cascadingStyleSheetAbsoluteFileName = GeneralUtility::getFileAbsFileName($typoScriptConfiguration['stylesheet']);
             if (is_file($cascadingStyleSheetAbsoluteFileName)) {
-                $cascadingStyleSheet = substr($cascadingStyleSheetAbsoluteFileName, strlen(PATH_site));
+                $cascadingStyleSheet = substr($cascadingStyleSheetAbsoluteFileName, strlen(AbstractController::getSitePath()));
                 self::addCascadingStyleSheet($cascadingStyleSheet);
             } else {
-                throw new Exception(
-                    FlashMessages::translate(
-                        'error.fileDoesNotExist',
-                        [
-                            htmlspecialchars($cascadingStyleSheetAbsoluteFileName)
-                        ]
-                    )
-                );
+                throw new Exception(FlashMessages::translate('error.fileDoesNotExist', [
+                    htmlspecialchars($cascadingStyleSheetAbsoluteFileName)
+                ]));
             }
         }
     }
@@ -94,17 +89,12 @@ class AdditionalHeaderManager
         if (empty($typoScriptConfiguration['stylesheet']) === false) {
             $cascadingStyleSheetAbsoluteFileName = GeneralUtility::getFileAbsFileName($typoScriptConfiguration['stylesheet']);
             if (is_file($cascadingStyleSheetAbsoluteFileName)) {
-                $cascadingStyleSheet = substr($cascadingStyleSheetAbsoluteFileName, strlen(PATH_site));
+                $cascadingStyleSheet = substr($cascadingStyleSheetAbsoluteFileName, strlen(AbstractController::getSitePath()));
                 self::addCascadingStyleSheet($cascadingStyleSheet);
             } else {
-                throw new Exception(
-                    FlashMessages::translate(
-                        'error.fileDoesNotExist',
-                        [
-                            htmlspecialchars($cascadingStyleSheetAbsoluteFileName)
-                        ]
-                    )
-                );
+                throw new Exception(FlashMessages::translate('error.fileDoesNotExist', [
+                    htmlspecialchars($cascadingStyleSheetAbsoluteFileName)
+                ]));
             }
         } elseif (is_file(ExtensionManagementUtility::extPath($extensionKey) . AbstractController::$cssRootPath . '/' . $extensionKey . '.css')) {
             $extensionWebPath = AbstractController::getExtensionWebPath($extensionKey);
@@ -135,7 +125,7 @@ class AdditionalHeaderManager
      * @param string $cascadingStyleSheet
      * @return string
      */
-    protected static function getCascadingStyleSheetLink(string $cascadingStyleSheet) : string
+    protected static function getCascadingStyleSheetLink(string $cascadingStyleSheet): string
     {
         $cascadingStyleSheetLink = '<link rel="stylesheet" type="text/css" href="' . $cascadingStyleSheet . '" />' . chr(10);
         return $cascadingStyleSheetLink;
@@ -263,7 +253,7 @@ class AdditionalHeaderManager
      *
      * @return string The javaScript Header
      */
-    protected static function getJavaScriptHeader() : string
+    protected static function getJavaScriptHeader(): string
     {
         $javaScript = [];
 

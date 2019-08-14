@@ -13,7 +13,6 @@ namespace YolfTypo3\SavLibraryMvc\ViewHelpers\Widget;
  *
  * The TYPO3 project - inspiring people to share!
  */
-
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\ViewHelpers\Form\AbstractFormFieldViewHelper;
 use YolfTypo3\SavLibraryMvc\Controller\FlashMessages;
@@ -34,6 +33,7 @@ use YolfTypo3\SavLibraryMvc\DatePicker\DatePicker;
  */
 class DatePickerViewHelper extends AbstractFormFieldViewHelper
 {
+
     /**
      *
      * @var string
@@ -86,6 +86,7 @@ class DatePickerViewHelper extends AbstractFormFieldViewHelper
         $this->tag->addAttribute('name', $name);
 
         // Creates a unique id which will be used by the calendar and adds it
+        $datePickerConfiguration = [];
         $datePickerConfiguration['id'] = $fieldConfiguration['fieldName'] . '_' . uniqid();
         $this->tag->addAttribute('id', 'input_' . $datePickerConfiguration['id']);
 
@@ -130,15 +131,15 @@ class DatePickerViewHelper extends AbstractFormFieldViewHelper
             'd' => 'd', // 01 to 31
             'e' => 'j', // 1 to 31
             'j' => 'z', // 001 to 366
-                        // Month
+                         // Month
             'b' => 'M', // Jan through Dec
             'B' => 'F', // January through December
             'h' => 'M', // Jan through Dec
             'm' => 'm', // 01 (for January) through 12 (for December)
-                        // Year
+                         // Year
             'y' => 'y', // Example: 09 for 2009, 79 for 1979
             'Y' => 'Y', // Example: 2038
-                        // Time
+                         // Time
             'H' => 'H', // hour: 00 through 23
             'k' => 'G', // hour: 1 through 23 (space preceeding single digits)
             'I' => 'h', // hour: 01 through 12
@@ -153,27 +154,22 @@ class DatePickerViewHelper extends AbstractFormFieldViewHelper
             '%' => '%'
         ]; // %
 
+        $matches = [];
         if (preg_match_all('/\%([a-zA-Z\%])/', $format, $matches) > 0) {
             foreach ($matches[1] as $matchKey => $match) {
                 if (array_key_exists($match, $conversionArray)) {
                     $format = str_replace('%' . $match, $conversionArray[$match], $format);
                 } else {
-                    FlashMessages::addError(
-                        'error.incorectDateFormat',
-                        [
-                            $match
-                        ]
-                    );
+                    FlashMessages::addError('error.incorectDateFormat', [
+                        $match
+                    ]);
                 }
             }
             return $format;
         }
-        FlashMessages::addError(
-            'error.incorectDateFormat',
-            [
-                $format
-            ]
-        );
+        FlashMessages::addError('error.incorectDateFormat', [
+            $format
+        ]);
         return $format;
     }
 }

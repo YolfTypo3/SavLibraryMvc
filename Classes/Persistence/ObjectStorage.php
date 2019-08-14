@@ -13,9 +13,9 @@ namespace YolfTypo3\SavLibraryMvc\Persistence;
  *
  * The TYPO3 project - inspiring people to share!
  */
-
 class ObjectStorage extends \TYPO3\CMS\Extbase\Persistence\ObjectStorage
 {
+
     /**
      * Moves the object one position up.
      * If it is the first one, it becomes the last one.

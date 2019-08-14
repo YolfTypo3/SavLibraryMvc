@@ -13,10 +13,9 @@ namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
  *
  * The TYPO3 project - inspiring people to share!
  */
-
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 use YolfTypo3\SavLibraryMvc\Controller\FlashMessages;
 use YolfTypo3\SavLibraryMvc\Managers\AdditionalHeaderManager;
@@ -30,10 +29,11 @@ use YolfTypo3\SavCharts\XmlParser\XmlParser;
  */
 class GraphViewHelper extends AbstractViewHelper
 {
+
     /**
      * The xml parser
      *
-     * @var \YolfTypo3\SavCharts\XmlParser\XmlParser
+     * @var XmlParser
      */
     protected $xmlParser;
 
@@ -99,6 +99,7 @@ class GraphViewHelper extends AbstractViewHelper
 
             // Processes the tags
             foreach ($tags as $tag) {
+                $match = [];
                 if (preg_match('/^([0-9A-Za-z_]+)#([0-9A-Za-z_]+)\s*=\s*(.*)$/', trim($tag), $match)) {
 
                     $name = $match[1];
@@ -110,8 +111,7 @@ class GraphViewHelper extends AbstractViewHelper
                     if (strtolower($value) == 'notempty[]') {
                         FlashMessages::addError('error.graphFieldIsEmpty', [
                             $match[3]
-                        ]
-                            );
+                        ]);
                         $this->doNotProcessTemplate = true;
                         continue;
                     } else {
@@ -120,7 +120,7 @@ class GraphViewHelper extends AbstractViewHelper
 
                     // Processes the tag if it has been replaced.
                     if (preg_match('/^###[0-9A-Za-z_]+###$/', $value) == 0) {
-                        $xml = '<' .$name. ' id ="' . $id . '">' . $value . '</' .$name. '>';
+                        $xml = '<' . $name . ' id ="' . $id . '">' . $value . '</' . $name . '>';
 
                         $this->xmlParser->loadXmlString($xml);
                         $this->xmlParser->parseXml();
@@ -149,7 +149,7 @@ class GraphViewHelper extends AbstractViewHelper
         if (empty($graphTemplate)) {
             FlashMessages::addError('error.graphTemplateNotSet');
         } else {
-            if (file_exists(PATH_site . $graphTemplate)) {
+            if (file_exists(AbstractController::getSitePath() . $graphTemplate)) {
                 $this->xmlParser->loadXmlFile($graphTemplate);
                 $this->xmlParser->parseXml();
                 // Post-processing to get the javascript
@@ -164,22 +164,12 @@ class GraphViewHelper extends AbstractViewHelper
 
                 // Prepares the content
                 $canvases = $result['canvases'];
-                if (!empty($canvases)) {
+                if (! empty($canvases)) {
                     foreach ($canvases as $canvas) {
-                        $chartId = str_replace(
-                            '###contentObjectUid###',
-                            $contentUid,
-                            $canvas['chartId']
-                            );
-                        $javaScriptFooterInlineCode = str_replace(
-                            '###contentObjectUid###',
-                            $contentUid,
-                            $result['javaScriptFooterInlineCode']
-                            );
+                        $chartId = str_replace('###contentObjectUid###', $contentUid, $canvas['chartId']);
+                        $javaScriptFooterInlineCode = str_replace('###contentObjectUid###', $contentUid, $result['javaScriptFooterInlineCode']);
 
-                        $content .= '<div class="charts chart' . $chartId . '">' .
-                            '<canvas id="canvas' . $chartId . '" width="'. $canvas['width'] .'" height="'. $canvas['height'] . '"></canvas>' .
-                            '</div>';
+                        $content .= '<div class="charts chart' . $chartId . '">' . '<canvas id="canvas' . $chartId . '" width="' . $canvas['width'] . '" height="' . $canvas['height'] . '"></canvas>' . '</div>';
 
                         // Adds the javacript
                         AdditionalHeaderManager::addJavaScriptFooterInlineCode($chartId, $javaScriptFooterInlineCode);
@@ -188,14 +178,12 @@ class GraphViewHelper extends AbstractViewHelper
             } else {
                 FlashMessages::addError('error.graphTemplateUnknown', [
                     $graphTemplate
-                ]
-                    );
+                ]);
             }
         }
 
         return $content;
     }
-
 }
 
 ?>

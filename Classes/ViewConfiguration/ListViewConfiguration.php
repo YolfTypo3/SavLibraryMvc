@@ -13,7 +13,6 @@ namespace YolfTypo3\SavLibraryMvc\ViewConfiguration;
  *
  * The TYPO3 project - inspiring people to share!
  */
-
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 
@@ -26,6 +25,7 @@ use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
  */
 class ListViewConfiguration extends AbstractViewConfiguration
 {
+
     /**
      * Gets the view configuration
      *
@@ -48,6 +48,7 @@ class ListViewConfiguration extends AbstractViewConfiguration
 
         // Defines the pages
         $page = (int) $uncompressedParameters['page'];
+        $pages = [];
         for ($i = min($page, max(0, $lastPage - $maxItems)); $i <= min($lastPage, $page + $maxItems); $i ++) {
             $pages[$i] = $i + 1;
         }
@@ -107,13 +108,10 @@ class ListViewConfiguration extends AbstractViewConfiguration
             $this->fieldConfigurationManager->addDynamicFieldsConfiguration($this->object);
 
             // Parses the fluid template
-            $template = $this->templateParser->parse(
-                $fluidItemTemplate,
-                [
-                    'fields' => $this->fieldConfigurationManager::getFieldsConfiguration(),
-                    'general' => $itemConfiguration
-                ]
-            );
+            $template = $this->templateParser->parse($fluidItemTemplate, [
+                'fields' => $this->fieldConfigurationManager::getFieldsConfiguration(),
+                'general' => $itemConfiguration
+            ]);
 
             $itemsConfiguration[] = [
                 'template' => $template,
@@ -125,13 +123,10 @@ class ListViewConfiguration extends AbstractViewConfiguration
         $viewIdentifier = $this->getViewIdentifier();
 
         // Adds the title
-        $title = $this->parseTitle(
-            $viewIdentifier,
-            [
-                'general' => $this->getGeneralViewConfiguration(),
-                'fields' => $this->fieldConfigurationManager::getFieldsConfiguration()
-            ]
-        );
+        $title = $this->parseTitle($viewIdentifier, [
+            'general' => $this->getGeneralViewConfiguration(),
+            'fields' => $this->fieldConfigurationManager::getFieldsConfiguration()
+        ]);
         $this->addGeneralViewConfiguration('title', $title);
 
         // Returns the view configuration
@@ -193,6 +188,7 @@ class ListViewConfiguration extends AbstractViewConfiguration
         $itemTemplate = $this->controller->getViewItemTemplate($viewType);
 
         // Searches the tags in the template
+        $matches = [];
         preg_match_all('/###([^\.#]+)\.?([^#]*)###/', $itemTemplate, $matches);
 
         foreach ($matches[0] as $keyMatch => $match) {

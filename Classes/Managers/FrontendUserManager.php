@@ -13,7 +13,6 @@ namespace YolfTypo3\SavLibraryMvc\Managers;
  *
  * The TYPO3 project - inspiring people to share!
  */
-
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 use YolfTypo3\SavLibraryMvc\Controller\DefaultController;
@@ -34,18 +33,19 @@ class FrontendUserManager
     const ALL_EXCLUDING_SUPER_ADMIN = 3;
 
     /**
+     * Controller
      *
-     * @var \YolfTypo3\SavLibraryMvc\Controller\DefaultController
+     * @var DefaultController
      */
     protected $controller = null;
 
     /**
      * Sets the controller
      *
-     * @param \YolfTypo3\SavLibraryMvc\Controller\DefaultController $controller
+     * @param DefaultController $controller
      * @return void
      */
-    public function setController(\YolfTypo3\SavLibraryMvc\Controller\DefaultController $controller)
+    public function setController(DefaultController $controller)
     {
         $this->controller = $controller;
     }
@@ -101,7 +101,7 @@ class FrontendUserManager
     /**
      * Checks if the user is allowed to change data in the form
      *
-     * @param  \TYPO3\CMS\Extbase\Persistence\ObjectStorage $object
+     * @param \TYPO3\CMS\Extbase\Persistence\ObjectStorage $object
      * @param string $additionalString
      *            (default '') String which will be added to the field value
      *

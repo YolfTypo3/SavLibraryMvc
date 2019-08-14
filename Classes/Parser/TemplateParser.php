@@ -13,29 +13,30 @@ namespace YolfTypo3\SavLibraryMvc\Parser;
  *
  * The TYPO3 project - inspiring people to share!
  */
-
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Fluid\View\StandaloneView;
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
+use YolfTypo3\SavLibraryMvc\Controller\DefaultController;
 
 /**
  * Template Parser
  *
- *  @package SavLibraryMvc
+ * @package SavLibraryMvc
  */
 class TemplateParser
 {
+
     /**
      *
-     * @var \YolfTypo3\SavLibraryMvc\Controller\DefaultController
+     * @var DefaultController
      */
     protected $controller = null;
 
     /**
      * Sets the controller
      *
-     * @param \YolfTypo3\SavLibraryMvc\Controller\DefaultController $controller
+     * @param DefaultController $controller
      * @return void
      */
     public function setController($controller)
@@ -83,7 +84,7 @@ class TemplateParser
         //
         $partialRootPaths = AbstractController::getPartialRootPaths();
         $convertedPartialRootPaths = [];
-        foreach($partialRootPaths as $partialRootPathKey => $partialRootPath) {
+        foreach ($partialRootPaths as $partialRootPathKey => $partialRootPath) {
             $convertedPartialRootPaths[$partialRootPathKey] = GeneralUtility::getFileAbsFileName($partialRootPath);
         }
 

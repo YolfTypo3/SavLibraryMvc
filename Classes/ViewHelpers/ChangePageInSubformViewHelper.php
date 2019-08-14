@@ -13,8 +13,7 @@ namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
  *
  * The TYPO3 project - inspiring people to share!
  */
-
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 
 /**
@@ -24,6 +23,7 @@ use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
  */
 class ChangePageInSubformViewHelper extends AbstractViewHelper
 {
+
     /**
      * Initializes arguments.
      */
@@ -43,8 +43,7 @@ class ChangePageInSubformViewHelper extends AbstractViewHelper
         $arguments = $this->arguments['arguments'];
 
         // Gets the special parameter from the controller arguments
-        $controllerArguments = $this->renderingContext
-            ->getControllerContext()
+        $controllerArguments = $this->renderingContext->getControllerContext()
             ->getRequest()
             ->getArguments();
         $special = $controllerArguments['special'];
@@ -78,19 +77,15 @@ class ChangePageInSubformViewHelper extends AbstractViewHelper
         $compressedSubformActivePages = '';
         foreach ($uncompressedSubformActivePages as $subformKey => $subformPage) {
             $compressedSubformActivePages .= AbstractController::compressParameters([
-                    'subformKey' => $subformKey,
-                    'subformPage' => $subformPage
-                ]
-            );
+                'subformKey' => $subformKey,
+                'subformPage' => $subformPage
+            ]);
         }
 
         // Modifies the special parameter with the new value
-        $special = AbstractController::changeCompressedParameters(
-            $special,
-            [
-                'subformActivePages' => $compressedSubformActivePages
-            ]
-        );
+        $special = AbstractController::changeCompressedParameters($special, [
+            'subformActivePages' => $compressedSubformActivePages
+        ]);
 
         return $special;
     }

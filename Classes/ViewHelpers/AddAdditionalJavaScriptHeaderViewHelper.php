@@ -13,8 +13,7 @@ namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
  *
  * The TYPO3 project - inspiring people to share!
  */
-
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use YolfTypo3\SavLibraryMvc\Managers\AdditionalHeaderManager;
 
 /**
@@ -33,6 +32,7 @@ use YolfTypo3\SavLibraryMvc\Managers\AdditionalHeaderManager;
  */
 class AddAdditionalJavaScriptHeaderViewHelper extends AbstractViewHelper
 {
+
     /**
      * Renders the viewhelper
      *

@@ -13,8 +13,7 @@ namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
  *
  * The TYPO3 project - inspiring people to share!
  */
-
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * Removes empty lines
@@ -23,6 +22,7 @@ use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
  */
 class RemoveEmptyLinesViewHelper extends AbstractViewHelper
 {
+
     /**
      * Initializes arguments.
      */
@@ -48,9 +48,5 @@ class RemoveEmptyLinesViewHelper extends AbstractViewHelper
         $value = preg_replace('/([ \t]*[\r\n]){2,}/', chr(10), $value);
         return $value;
     }
-
-
-
-
 }
 ?>

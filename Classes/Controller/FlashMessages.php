@@ -13,7 +13,6 @@ namespace YolfTypo3\SavLibraryMvc\Controller;
  *
  * The TYPO3 project - inspiring people to share!
  */
-
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
@@ -24,6 +23,7 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
  */
 class FlashMessages
 {
+
     /**
      *
      * @var array
@@ -57,7 +57,7 @@ class FlashMessages
      *            The message key
      * @param array $arguments
      *            Arguments associated with the translation of the message key
-     * @param const $severity
+     * @param int $severity
      *            The message severity
      *
      * @return array object

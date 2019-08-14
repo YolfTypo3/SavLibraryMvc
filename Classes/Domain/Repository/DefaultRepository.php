@@ -13,7 +13,6 @@ namespace YolfTypo3\SavLibraryMvc\Domain\Repository;
  *
  * The TYPO3 project - inspiring people to share!
  */
-
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 
 /**
@@ -21,6 +20,7 @@ use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
  */
 class DefaultRepository extends AbstractRepository
 {
+
     /**
      * Returns the number objects of this repository
      *
@@ -103,7 +103,6 @@ class DefaultRepository extends AbstractRepository
      *
      * @param object $object
      * @return mixed The identifier for the object if it is known, or null
-     *         @api
      */
     public function getIdentifierByObject($object)
     {

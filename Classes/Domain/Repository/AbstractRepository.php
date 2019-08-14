@@ -13,9 +13,11 @@ namespace YolfTypo3\SavLibraryMvc\Domain\Repository;
  *
  * The TYPO3 project - inspiring people to share!
  */
-
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
+use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
+use YolfTypo3\SavLibraryMvc\Controller\DefaultController;
 use YolfTypo3\SavLibraryMvc\Persistence\Mapper\DataMapFactory;
 
 /**
@@ -23,22 +25,23 @@ use YolfTypo3\SavLibraryMvc\Persistence\Mapper\DataMapFactory;
  */
 abstract class AbstractRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
 {
+
     /**
      *
-     * @var \YolfTypo3\SavLibraryMvc\Controller\DefaultController
+     * @var DefaultController
      */
     protected $controller = null;
 
     /**
      *
-     * @var \YolfTypo3\SavLibraryMvc\Persistence\Mapper\DataMapFactory
+     * @var DataMapFactory
      */
     protected $dataMapFactory = null;
 
     /**
      * Sets the controller
      *
-     * @param \YolfTypo3\SavLibraryMvc\Controller\DefaultController $controller
+     * @param DefaultController $controller
      * @return void
      */
     public function setController($controller)
@@ -49,7 +52,7 @@ abstract class AbstractRepository extends \TYPO3\CMS\Extbase\Persistence\Reposit
     /**
      * Gets the controller
      *
-     * @return \YolfTypo3\SavLibraryMvc\Controller\DefaultController $controller
+     * @return DefaultController $controller
      */
     public function getController()
     {
@@ -93,7 +96,7 @@ abstract class AbstractRepository extends \TYPO3\CMS\Extbase\Persistence\Reposit
     /**
      * Gets the Data map factory.
      *
-     * return \YolfTypo3\SavLibraryMvc\Persistence\Mapper\DataMapFactory
+     * @return DataMapFactory
      */
     public function getDataMapFactory()
     {
@@ -108,7 +111,7 @@ abstract class AbstractRepository extends \TYPO3\CMS\Extbase\Persistence\Reposit
     /**
      * Creates a model object.
      *
-     * return \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
+     * @return AbstractEntity
      */
     public function createModelObject()
     {
@@ -121,14 +124,15 @@ abstract class AbstractRepository extends \TYPO3\CMS\Extbase\Persistence\Reposit
     /**
      * Gets the filter constraints if any.
      *
-     * @param \TYPO3\CMS\Extbase\Persistence\QueryInterface $query
-     * return \TYPO3\CMS\Extbase\Persistence\QueryInterface
+     * @param QueryInterface $query
+     * @return QueryInterface
      */
-    protected function getFilterConstraints($query) {
+    protected function getFilterConstraints($query)
+    {
         // Gets the session variables
         $sessionFilters = $GLOBALS['TSFE']->fe_user->getKey('ses', 'filters');
         $sessionSelectedFilter = $GLOBALS['TSFE']->fe_user->getKey('ses', 'selectedFilter');
-        if (!empty($sessionFilters) && !empty($sessionSelectedFilter) && !empty($sessionFilters[$sessionSelectedFilter]) && $sessionFilters[$sessionSelectedFilter]['pageId'] == $this->getPageId()) {
+        if (! empty($sessionFilters) && ! empty($sessionSelectedFilter) && ! empty($sessionFilters[$sessionSelectedFilter]) && $sessionFilters[$sessionSelectedFilter]['pageId'] == $this->getPageId()) {
             return $sessionSelectedFilter::getFilterWhereClause($query);
         } else {
             return null;
@@ -138,13 +142,14 @@ abstract class AbstractRepository extends \TYPO3\CMS\Extbase\Persistence\Reposit
     /**
      * Gets the filter constraints if any.
      *
-     * return boolean
+     * @return boolean
      */
-    protected function keepWhereClause() {
+    protected function keepWhereClause()
+    {
         // Gets the session variables
         $sessionFilters = $GLOBALS['TSFE']->fe_user->getKey('ses', 'filters');
         $sessionSelectedFilter = $GLOBALS['TSFE']->fe_user->getKey('ses', 'selectedFilter');
-        if (!empty($sessionFilters) && !empty($sessionSelectedFilter) && !empty($sessionFilters[$sessionSelectedFilter]) && $sessionFilters[$sessionSelectedFilter]['pageId'] == $this->getPageId()) {
+        if (! empty($sessionFilters) && ! empty($sessionSelectedFilter) && ! empty($sessionFilters[$sessionSelectedFilter]) && $sessionFilters[$sessionSelectedFilter]['pageId'] == $this->getPageId()) {
             return $sessionSelectedFilter::keepWhereClause();
         } else {
             return null;
@@ -154,8 +159,8 @@ abstract class AbstractRepository extends \TYPO3\CMS\Extbase\Persistence\Reposit
     /**
      * Adds constraints to the query
      *
-     * @param \TYPO3\CMS\Extbase\Persistence\QueryInterface $query
-     * @return \TYPO3\CMS\Extbase\Persistence\QueryInterface
+     * @param QueryInterface $query
+     * @return QueryInterface
      */
     protected function addConstraints($query)
     {
@@ -168,7 +173,7 @@ abstract class AbstractRepository extends \TYPO3\CMS\Extbase\Persistence\Reposit
         $finalConstraints = [];
         if ($filterConstraints === null) {
             // Applies the where clause
-            if($whereClauseConstraints !== null) {
+            if ($whereClauseConstraints !== null) {
                 $finalConstraints[] = $whereClauseConstraints;
             }
         } else {
@@ -180,7 +185,7 @@ abstract class AbstractRepository extends \TYPO3\CMS\Extbase\Persistence\Reposit
             }
         }
 
-        if (!empty($finalConstraints)) {
+        if (! empty($finalConstraints)) {
             $query = $query->matching($query->logicalAnd($finalConstraints));
         }
 
@@ -190,7 +195,7 @@ abstract class AbstractRepository extends \TYPO3\CMS\Extbase\Persistence\Reposit
     /**
      * Defines the order by clause
      *
-     * @param \TYPO3\CMS\Extbase\Persistence\QueryInterface $query
+     * @param QueryInterface $query
      * @return void
      */
     protected function orderByClause($query)
@@ -199,7 +204,7 @@ abstract class AbstractRepository extends \TYPO3\CMS\Extbase\Persistence\Reposit
         $queryIdentifier = $this->dataMapFactory->getSavLibraryMvcControllerQueryIdentifier($controllerName);
         if ($queryIdentifier !== null) {
             $orderByClauseMethod = 'orderByClause' . $queryIdentifier;
-            if(method_exists($this, $orderByClauseMethod)) {
+            if (method_exists($this, $orderByClauseMethod)) {
                 return $this->$orderByClauseMethod($query);
             }
         }
@@ -210,7 +215,7 @@ abstract class AbstractRepository extends \TYPO3\CMS\Extbase\Persistence\Reposit
     /**
      * Defines the where clause
      *
-     * @param \TYPO3\CMS\Extbase\Persistence\QueryInterface $query
+     * @param QueryInterface $query
      * @return void
      */
     protected function whereClause($query)
@@ -219,7 +224,7 @@ abstract class AbstractRepository extends \TYPO3\CMS\Extbase\Persistence\Reposit
         $queryIdentifier = $this->dataMapFactory->getSavLibraryMvcControllerQueryIdentifier($controllerName);
         if ($queryIdentifier !== null) {
             $whereClauseMethod = 'whereClause' . $queryIdentifier;
-            if(method_exists($this, $whereClauseMethod)) {
+            if (method_exists($this, $whereClauseMethod)) {
                 return $this->$whereClauseMethod($query);
             }
         }
@@ -231,7 +236,8 @@ abstract class AbstractRepository extends \TYPO3\CMS\Extbase\Persistence\Reposit
      *
      * @return integer
      */
-    protected function getPageId() {
+    protected function getPageId()
+    {
         return $GLOBALS['TSFE']->id;
     }
 }

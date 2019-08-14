@@ -13,15 +13,21 @@ namespace YolfTypo3\SavLibraryMvc\Controller;
  *
  * The TYPO3 project - inspiring people to share!
  */
-
+use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Configuration\FrontendConfigurationManager;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+use TYPO3\CMS\Extbase\Mvc\Request;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
+use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
+use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
+use YolfTypo3\SavLibraryMvc\Domain\Repository\DefaultRepository;
 use YolfTypo3\SavLibraryMvc\Managers\AdditionalHeaderManager;
+use YolfTypo3\SavLibraryMvc\Managers\FrontendUserManager;
+use YolfTypo3\SavLibraryMvc\ViewConfiguration\AbstractViewConfiguration;
 
 /**
  * Abstract controller for the SAV Library MVC
@@ -30,6 +36,7 @@ use YolfTypo3\SavLibraryMvc\Managers\AdditionalHeaderManager;
  */
 abstract class AbstractController extends ActionController
 {
+
     // Constants
     const LIBRARY_NAME = 'sav_library_mvc';
 
@@ -82,25 +89,24 @@ abstract class AbstractController extends ActionController
 
     // Variable to encode/decode the special parameters
     protected static $specialParameters = [
-        'page',                 // 0
-        'formKey',              // 1
-        'mode',                 // 2
-        'folder',               // 3
-        'orderLink',            // 4
-        'uid',                  // 5
-        'subformKey',           // 6
-        'subformUidForeign',    // 7
-        'subformUidLocal',      // 8
-        'subformPage',          // 9
-        'subformActivePages',   // 10
-        'fileUid',              // 11
+        'page', // 0
+        'formKey', // 1
+        'mode', // 2
+        'folder', // 3
+        'orderLink', // 4
+        'uid', // 5
+        'subformKey', // 6
+        'subformUidForeign', // 7
+        'subformUidLocal', // 8
+        'subformPage', // 9
+        'subformActivePages', // 10
+        'fileUid' // 11
     ];
 
     // Variable to encode/decode the special parameters
     protected static $specialParametersToRemoveIfNotSet = [
         'subformUidForeign'
     ];
-
 
     /**
      * Controller object name
@@ -147,24 +153,24 @@ abstract class AbstractController extends ActionController
     /**
      * Front end user manager
      *
-     * @var \YolfTypo3\SavLibraryMvc\Managers\FrontendUserManager
+     * @var FrontendUserManager
      */
     protected $frontendUserManager;
 
     /**
      * Viewer configuration
      *
-     * @var \YolfTypo3\SavLibraryMvc\ViewConfiguration\AbstractViewConfiguration
+     * @var AbstractViewConfiguration
      */
     protected $viewerConfiguration = null;
 
     /**
      * Injects the frontend user manager
      *
-     * @param \YolfTypo3\SavLibraryMvc\Controller\DefaultController $controller
+     * @param FrontendUserManager $frontendUserManager
      * @return void
      */
-    public function injectFrontendUserManager(\YolfTypo3\SavLibraryMvc\Managers\FrontendUserManager $frontendUserManager)
+    public function injectFrontendUserManager(FrontendUserManager $frontendUserManager)
     {
         $this->frontendUserManager = $frontendUserManager;
     }
@@ -172,7 +178,7 @@ abstract class AbstractController extends ActionController
     /**
      * Gets the configuration manager.
      *
-     * return \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface
+     * @return ConfigurationManagerInterface
      */
     public function getConfigurationManager()
     {
@@ -182,7 +188,7 @@ abstract class AbstractController extends ActionController
     /**
      * Gets the request.
      *
-     * return \TYPO3\CMS\Extbase\Mvc\Request
+     * @return Request
      */
     public function getRequest()
     {
@@ -192,7 +198,7 @@ abstract class AbstractController extends ActionController
     /**
      * Gets the object manager
      *
-     * @return \TYPO3\CMS\Extbase\Object\ObjectManagerInterface
+     * @return ObjectManagerInterface
      */
     public function getObjectManager()
     {
@@ -202,7 +208,7 @@ abstract class AbstractController extends ActionController
     /**
      * Gets the frontend user manager
      *
-     * @return \TYPO3\CMS\Extbase\Object\ObjectManagerInterface
+     * @return FrontendUserManager
      */
     public function getFrontendUserManager()
     {
@@ -237,7 +243,7 @@ abstract class AbstractController extends ActionController
     /**
      * Gets the main repository
      *
-     * @return \YolfTypo3\SavLibraryMvc\Repository\DefaultRepository
+     * @return DefaultRepository
      */
     public function getMainRepository()
     {
@@ -327,7 +333,7 @@ abstract class AbstractController extends ActionController
         $frontendConfigurationManager = GeneralUtility::makeInstance(FrontendConfigurationManager::class);
         $typoScriptSetup = $frontendConfigurationManager->getTypoScriptSetup();
         $pluginSetupName = 'tx_' . strtolower($this->request->getControllerExtensionName()) . '.';
-        if (!@is_array($typoScriptSetup['plugin.'][$pluginSetupName]['view.'])) {
+        if (! @is_array($typoScriptSetup['plugin.'][$pluginSetupName]['view.'])) {
             die('Fatal error: You have to include the static template of the extension ' . $this->request->getControllerExtensionKey() . '.');
         }
 
@@ -338,7 +344,7 @@ abstract class AbstractController extends ActionController
         $this->request->setControllerName(self::$controllerName);
 
         // Gets the extension framework configuration
-         self::$extbaseFrameworkConfiguration = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
+        self::$extbaseFrameworkConfiguration = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
 
         // Sets the controller where required
         $this->frontendUserManager->setController($this);
@@ -371,7 +377,7 @@ abstract class AbstractController extends ActionController
     /**
      * Gets the controller name.
      *
-     * return string The controller name
+     * @return string The controller name
      */
     public static function getControllerName()
     {
@@ -381,7 +387,7 @@ abstract class AbstractController extends ActionController
     /**
      * Gets the arguments.
      *
-     * return string The arguments
+     * @return string The arguments
      */
     public static function getOriginalArguments()
     {
@@ -391,7 +397,7 @@ abstract class AbstractController extends ActionController
     /**
      * Gets the plugin name space.
      *
-     * return string The plugin spacename
+     * @return string The plugin spacename
      */
     public static function getPluginNameSpace()
     {
@@ -401,7 +407,7 @@ abstract class AbstractController extends ActionController
     /**
      * Gets the template root paths.
      *
-     * return string The template root paths
+     * @return string The template root paths
      */
     public static function getTemplateRootPaths()
     {
@@ -412,7 +418,7 @@ abstract class AbstractController extends ActionController
     /**
      * Gets the partial root paths.
      *
-     * return string The partial root paths
+     * @return string The partial root paths
      */
     public static function getPartialRootPaths()
     {
@@ -435,7 +441,7 @@ abstract class AbstractController extends ActionController
     /**
      * Gets the content object
      *
-     * @return \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer
+     * @return ContentObjectRenderer
      */
     public function getContentObjectRenderer()
     {
@@ -481,19 +487,19 @@ abstract class AbstractController extends ActionController
         // Checks if the file name is in the iconRootPath defined by the form configuration in TS
         $fileNameWithExtension = self::getFileNameWithExtension($formTypoScriptConfiguration['iconRootPath'] . '/', $fileName);
         if (! empty($fileNameWithExtension)) {
-            return substr(GeneralUtility::getFileAbsFileName($formTypoScriptConfiguration['iconRootPath']), strlen(PATH_site)) . '/' . $fileNameWithExtension;
+            return substr(GeneralUtility::getFileAbsFileName($formTypoScriptConfiguration['iconRootPath']), strlen(self::getSitePath())) . '/' . $fileNameWithExtension;
         }
 
         // If not found, checks if the file name is in the iconRootPath defined by the extension configuration in TS
         $fileNameWithExtension = self::getFileNameWithExtension($extensionTypoScriptConfiguration['iconRootPath'] . '/', $fileName);
         if (! empty($fileNameWithExtension)) {
-            return substr(GeneralUtility::getFileAbsFileName($extensionTypoScriptConfiguration['iconRootPath']), strlen(PATH_site)) . '/' . $fileNameWithExtension;
+            return substr(GeneralUtility::getFileAbsFileName($extensionTypoScriptConfiguration['iconRootPath']), strlen(self::getSitePath())) . '/' . $fileNameWithExtension;
         }
 
         // If not found, checks if the file name is in the iconRootPath defined by the library configuration in TS
         $fileNameWithExtension = self::getFileNameWithExtension($libraryTypoScriptConfiguration['iconRootPath'] . '/', $fileName);
         if (! empty($fileNameWithExtension)) {
-            return substr(GeneralUtility::getFileAbsFileName($libraryTypoScriptConfiguration['iconRootPath']), strlen(PATH_site)) . '/' . $fileNameWithExtension;
+            return substr(GeneralUtility::getFileAbsFileName($libraryTypoScriptConfiguration['iconRootPath']), strlen(self::getSitePath())) . '/' . $fileNameWithExtension;
         }
 
         // If not found, checks if the file name is in Resources/Icons folder of the extension
@@ -529,16 +535,16 @@ abstract class AbstractController extends ActionController
         $extensionWebPath = self::getExtensionWebPath(self::getControllerExtensionKey());
 
         if (is_file(GeneralUtility::getFileAbsFileName($formTypoScriptConfiguration['imageRootPath'] . '/' . $fileName))) {
-            return substr(GeneralUtility::getFileAbsFileName($formTypoScriptConfiguration['imageRootPath']), strlen(PATH_site)) . '/';
+            return substr(GeneralUtility::getFileAbsFileName($formTypoScriptConfiguration['imageRootPath']), strlen(self::getSitePath())) . '/';
         } elseif (is_file(GeneralUtility::getFileAbsFileName($extensionTypoScriptConfiguration['imageRootPath'] . '/' . $fileName))) {
-            return substr(GeneralUtility::getFileAbsFileName($extensionTypoScriptConfiguration['imageRootPath']), strlen(PATH_site)) . '/';
+            return substr(GeneralUtility::getFileAbsFileName($extensionTypoScriptConfiguration['imageRootPath']), strlen(self::getSitePath())) . '/';
         } elseif (is_file(GeneralUtility::getFileAbsFileName($libraryTypoScriptConfiguration['imageRootPath'] . '/' . $fileName))) {
-            return substr(GeneralUtility::getFileAbsFileName($libraryTypoScriptConfiguration['imageRootPath']), strlen(PATH_site)) . '/';
+            return substr(GeneralUtility::getFileAbsFileName($libraryTypoScriptConfiguration['imageRootPath']), strlen(self::getSitePath())) . '/';
         } elseif (is_file($extensionWebPath . self::$imageRootPath . '/' . $fileName)) {
             return $extensionWebPath . self::$imageRootPath . '/';
         } else {
             $extensionWebPath = self::getExtensionWebPath(self::LIBRARY_NAME);
-            return $extensionWebPath . self::$imageRootPath. '/';
+            return $extensionWebPath . self::$imageRootPath . '/';
         }
     }
 
@@ -550,7 +556,8 @@ abstract class AbstractController extends ActionController
      *
      * @return string The relative web path
      */
-    public static function getExtensionWebPath($extension) {
+    public static function getExtensionWebPath($extension)
+    {
         $extensionWebPath = PathUtility::getAbsoluteWebPath(ExtensionManagementUtility::extPath($extension));
         if ($extensionWebPath[0] === '/') {
             // Makes the path relative
@@ -603,7 +610,7 @@ abstract class AbstractController extends ActionController
         $viewFunctionName = 'setTemplatePathAndFilename';
         if (method_exists($view, $viewFunctionName)) {
             $templateRootPaths = self::getTemplateRootPaths();
-            foreach($templateRootPaths as $templateRootPathKey => $templateRootPath) {
+            foreach ($templateRootPaths as $templateRootPathKey => $templateRootPath) {
                 $parameter = GeneralUtility::getFileAbsFileName($templateRootPath) . '/Default/' . ucfirst(str_replace('Action', '', $this->actionMethodName)) . '.html';
                 // no need to bother if there is nothing to set
                 if ($parameter) {
@@ -786,10 +793,9 @@ abstract class AbstractController extends ActionController
         // Compresses the subform active pages
         foreach ($uncompressedSubformActivePages as $subformKey => $subformPage) {
             $compressedParameters .= self::compressParameters([
-                    'subformKey' => $subformKey,
-                    'subformPage' => $subformPage
-                ]
-            );
+                'subformKey' => $subformKey,
+                'subformPage' => $subformPage
+            ]);
         }
 
         return $compressedParameters;
@@ -847,6 +853,16 @@ abstract class AbstractController extends ActionController
         }
         $this->generalManager->setGeneralConfigurationValue('activeFolder', $activeFolder);
         return $viewFolders;
+    }
+
+    /**
+     * Gets the site path
+     *
+     * @return string
+     */
+    public static function getSitePath()
+    {
+        return Environment::getPublicPath() . '/';
     }
 }
 ?>
