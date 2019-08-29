@@ -13,7 +13,6 @@ namespace YolfTypo3\SavLibraryMvc\ViewConfiguration;
  *
  * The TYPO3 project - inspiring people to share!
  */
-
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 
 /**
@@ -21,6 +20,7 @@ use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
  */
 class SingleViewConfiguration extends AbstractViewConfiguration
 {
+
     /**
      * Gets the view configuration
      *
@@ -65,13 +65,10 @@ class SingleViewConfiguration extends AbstractViewConfiguration
         $viewIdentifier = $this->getViewIdentifier();
 
         // Adds the title
-        $title = $this->parseTitle(
-            $viewIdentifier,
-            [
-                'general' => $this->getGeneralViewConfiguration(),
-                'fields' => $this->fieldConfigurationManager::getFieldsConfiguration()
-            ]
-        );
+        $title = $this->parseTitle($viewIdentifier, [
+            'general' => $this->getGeneralViewConfiguration(),
+            'fields' => $this->fieldConfigurationManager::getFieldsConfiguration()
+        ]);
         $this->addGeneralViewConfiguration('title', $title);
 
         // Gets the folders

@@ -131,9 +131,10 @@ abstract class AbstractRepository extends \TYPO3\CMS\Extbase\Persistence\Reposit
     {
         // Gets the session variables
         $sessionFilters = $GLOBALS['TSFE']->fe_user->getKey('ses', 'filters');
-        $sessionSelectedFilter = $GLOBALS['TSFE']->fe_user->getKey('ses', 'selectedFilter');
-        if (! empty($sessionFilters) && ! empty($sessionSelectedFilter) && ! empty($sessionFilters[$sessionSelectedFilter]) && $sessionFilters[$sessionSelectedFilter]['pageId'] == $this->getPageId()) {
-            return $sessionSelectedFilter::getFilterWhereClause($query);
+        $selectedFilterKey = $GLOBALS['TSFE']->fe_user->getKey('ses', 'selectedFilterKey');
+        if (! empty($sessionFilters) && ! empty($selectedFilterKey) && ! empty($sessionFilters[$selectedFilterKey]) && $sessionFilters[$selectedFilterKey]['Mvc']['pageId'] == $this->getPageId()) {
+            $filterClassName = $sessionFilters[$selectedFilterKey]['Mvc']['filterClassName'];
+            return $filterClassName::getFilterWhereClause($query);
         } else {
             return null;
         }

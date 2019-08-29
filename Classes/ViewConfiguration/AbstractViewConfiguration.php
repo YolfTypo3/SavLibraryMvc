@@ -15,10 +15,8 @@ namespace YolfTypo3\SavLibraryMvc\ViewConfiguration;
  */
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
-use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 use YolfTypo3\SavLibraryMvc\Controller\DefaultController;
-use YolfTypo3\SavLibraryMvc\Controller\FlashMessages;
 use YolfTypo3\SavLibraryMvc\Managers\FieldConfigurationManager;
 use YolfTypo3\SavLibraryMvc\Parser\TemplateParser;
 
@@ -68,12 +66,14 @@ abstract class AbstractViewConfiguration
     protected $viewIdentifier = null;
 
     /**
+     * Field configuration manager
      *
      * @var FieldConfigurationManager
      */
     protected $fieldConfigurationManager;
 
     /**
+     * Storage object
      *
      * @var ObjectStorage $object
      */
@@ -83,6 +83,7 @@ abstract class AbstractViewConfiguration
      * Constructor
      *
      * @param DefaultController $controller
+     *
      * @return void
      */
     public function __construct($controller)
@@ -93,10 +94,11 @@ abstract class AbstractViewConfiguration
     /**
      * Injects the template parser
      *
-     * @param \YolfTypo3\SavLibraryMvc\Parser\TemplateParser $templateParser
+     * @param TemplateParser $templateParser
+     *
      * @return void
      */
-    public function injectTemplateParser(\YolfTypo3\SavLibraryMvc\Parser\TemplateParser $templateParser)
+    public function injectTemplateParser(TemplateParser $templateParser)
     {
         $this->templateParser = $templateParser;
         $this->templateParser->setController($this->controller);
@@ -117,7 +119,7 @@ abstract class AbstractViewConfiguration
     /**
      * Gets the view type.
      *
-     * return string
+     * @return string
      */
     protected function getViewType()
     {
@@ -128,9 +130,11 @@ abstract class AbstractViewConfiguration
     /**
      * Gets the view identifer.
      *
-     * return int
+     * @param boolean $checkViewsWithCondition
+     *
+     * @return int
      */
-    public function getViewIdentifier(): int
+    public function getViewIdentifier($checkViewsWithCondition = true): int
     {
         if ($this->viewIdentifier !== null) {
             return $this->viewIdentifier;
@@ -144,7 +148,8 @@ abstract class AbstractViewConfiguration
 
         // Gets the views with condition if any
         $viewsWithCondition = $viewIdentifiers['viewsWithCondition'][$viewType];
-        if (empty($viewsWithCondition)) {
+
+        if ($checkViewsWithCondition === false || empty($viewsWithCondition)) {
             return $viewIdentifiers[$viewType];
         } else {
             foreach ($viewsWithCondition as $viewWithConditionKey => $viewWithCondition) {
@@ -179,7 +184,7 @@ abstract class AbstractViewConfiguration
      *            The key
      * @param mixed $value
      *            The value
-     *            return none
+     * @return void
      */
     public function addGeneralViewConfiguration($key, $value)
     {
@@ -191,7 +196,8 @@ abstract class AbstractViewConfiguration
      *
      * @param string $key
      *            The key
-     *            return mixed
+     *
+     * @return mixed
      */
     public function getGeneralViewConfiguration($key = null)
     {

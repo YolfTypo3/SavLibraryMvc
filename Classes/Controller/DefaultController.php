@@ -16,6 +16,7 @@ namespace YolfTypo3\SavLibraryMvc\Controller;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
+use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use YolfTypo3\SavLibraryMvc\Persistence\ObjectStorage;
 
 /**
@@ -91,7 +92,7 @@ class DefaultController extends AbstractController
     /**
      * Save method called by saveAction in the controller class
      *
-     * @param \TYPO3\CMS\Extbase\DomainObject\AbstractEntity $data
+     * @param AbstractEntity $data
      * @return void
      */
     public function save($data)
@@ -127,7 +128,9 @@ class DefaultController extends AbstractController
 
             $this->getMainRepository()->add($data);
             $this->getMainRepository()->persistAll();
-            $object = $this->getMainRepository()->findByIdentifier($data);
+            $identifier = $this->getMainRepository()->getIdentifierByObject($data);
+            $object = $this->getMainRepository()->findByIdentifier($identifier);
+
             $uid = $object->getUid();
         } elseif ($isNewItemInSubform) {
             // New record in subform.
@@ -144,7 +147,8 @@ class DefaultController extends AbstractController
             $objectToInsert = $subformForeignRepository->createModelObject();
             $subformForeignRepository->add($objectToInsert);
             $subformForeignRepository->persistAll();
-            $objectToInsert = $subformForeignRepository->findByIdentifier($objectToInsert);
+            $identifier = $this->getMainRepository()->getIdentifierByObject($objectToInsert);
+            $objectToInsert = $subformForeignRepository->findByIdentifier($identifier);
             $uid = $objectToInsert->getUid();
 
             // Finds the new object in the saved data from its path and
@@ -239,6 +243,10 @@ class DefaultController extends AbstractController
 
         // Removes the object
         $this->getMainRepository()->remove($object);
+
+        // Clears the cache
+        $pageUid = $GLOBALS['TSFE']->id;
+        $this->cacheService->clearPageCache($pageUid);
 
         // Redirects to the list in edit mode action
         $this->redirect('list', null, null, [

@@ -103,7 +103,7 @@ class SessionManager
             // Removes filters in the same page which are not active,
             // that is not selected or with the same contentID
             foreach (self::$filtersData as $filterKey => $filter) {
-                if ($filterKey != self::$selectedFilterKey && $filter['pageID'] == $GLOBALS['TSFE']->id && $filter['contentID'] != self::$filtersData[self::$selectedFilterKey]['contentID']) {
+                if ($filterKey != self::$selectedFilterKey && $filter['pageId'] == $GLOBALS['TSFE']->id && $filter['contentUid'] != self::$filtersData[self::$selectedFilterKey]['contentUid']) {
                     unset(self::$filtersData[$filterKey]);
                 }
             }

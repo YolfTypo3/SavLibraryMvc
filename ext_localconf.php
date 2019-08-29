@@ -12,8 +12,6 @@ $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauthgroup.php']
 // Registers type converters
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerTypeConverter(\YolfTypo3\SavLibraryMvc\Property\TypeConverter\IntegerConverter::class);
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerTypeConverter(\YolfTypo3\SavLibraryMvc\Property\TypeConverter\StringConverter::class);
-\TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerTypeConverter(\YolfTypo3\SavLibraryMvc\Property\TypeConverter\UploadedFileReferenceConverter::class);
-\TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerTypeConverter(\YolfTypo3\SavLibraryMvc\Property\TypeConverter\ObjectStorageConverter::class);
 
 // Registers the help node
 $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['nodeRegistry'][1565023070] = [

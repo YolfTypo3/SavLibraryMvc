@@ -218,7 +218,7 @@ abstract class AbstractController extends ActionController
     /**
      * Gets the viewer configuration
      *
-     * @return \YolfTypo3\SavLibraryMvc\ViewConfiguration\AbstractViewConfiguration
+     * @return AbstractViewConfiguration
      */
     public function getViewerConfiguration($actionMethodName = null)
     {
@@ -610,7 +610,7 @@ abstract class AbstractController extends ActionController
         $viewFunctionName = 'setTemplatePathAndFilename';
         if (method_exists($view, $viewFunctionName)) {
             $templateRootPaths = self::getTemplateRootPaths();
-            foreach ($templateRootPaths as $templateRootPathKey => $templateRootPath) {
+            foreach ($templateRootPaths as $templateRootPath) {
                 $parameter = GeneralUtility::getFileAbsFileName($templateRootPath) . '/Default/' . ucfirst(str_replace('Action', '', $this->actionMethodName)) . '.html';
                 // no need to bother if there is nothing to set
                 if ($parameter) {

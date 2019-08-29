@@ -13,6 +13,9 @@ namespace YolfTypo3\SavLibraryMvc\Domain\Repository;
  *
  * The TYPO3 project - inspiring people to share!
  */
+use TYPO3\CMS\Core\Database\Query\QueryBuilder;
+use TYPO3\CMS\Extbase\Persistence\QueryInterface;
+use TYPO3\CMS\Extbase\Persistence\Generic\Storage\Typo3DbQueryParser;
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 
 /**
@@ -31,7 +34,7 @@ class DefaultRepository extends AbstractRepository
         // Creates the query
         $query = $this->createQuery();
 
-        // Adds the cosntraints
+        // Adds the constraints
         $query = $this->addConstraints($query);
 
         return $query->execute()->count();
@@ -52,7 +55,7 @@ class DefaultRepository extends AbstractRepository
         // Creates the query
         $query = $this->createQuery();
 
-        // Adds the cosntraints
+        // Adds the constraints
         $query = $this->addConstraints($query);
 
         // Applies the order by clause
@@ -73,18 +76,30 @@ class DefaultRepository extends AbstractRepository
             $this->orderByClause($query);
         }
 
-        // Gets the result
-        $result = $query->setOffset($offset)
-            ->setLimit($limit ? $limit : 1)
-            ->execute();
+        // Adds the limit the result
+        $query = $query->setOffset($offset)->setLimit($limit ? $limit : 1);
 
-        return $result;
+        return $query->execute();
     }
 
     /**
-     * Returns all objects of this repository
+     * Gets the query builder for the query
      *
-     * @return array An array of objects, empty if no objects found
+     * @param QueryInterface $query
+     * @return QueryBuilder
+     */
+    protected function getQueryBuilder($query)
+    {
+        $typo3DbQueryParser = $this->objectManager->get(Typo3DbQueryParser::class);
+        $queryBuilder = $typo3DbQueryParser->convertQueryToDoctrineQueryBuilder($query);
+
+        return $queryBuilder;
+    }
+
+    /**
+     * Commits new objects and changes
+     *
+     * @return void
      */
     public function persistAll()
     {

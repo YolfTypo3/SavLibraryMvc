@@ -15,6 +15,7 @@ namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
  */
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
+use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 use YolfTypo3\SavLibraryMvc\Domain\Repository\AbstractRepository;
@@ -76,12 +77,12 @@ class RenderRelationManyToManyAsSubformViewHelper extends AbstractViewHelper
         $controllerActionName = $this->renderingContext->getControllerContext()
             ->getRequest()
             ->getControllerActionName();
-        $viewType = lcfirst($controllerActionName) . 'View';
 
         // Gets the view identifier
-        $viewIdentifier = $controller->getViewerConfiguration($controllerActionName)->getViewIdentifier($viewType);
+        $viewIdentifier = $controller->getViewerConfiguration($controllerActionName)->getViewIdentifier(false);
 
         // Gets the field configuration manager
+        /** @var FieldConfigurationManager $fieldConfigurationManager */
         $fieldConfigurationManager = $objectManager->get(FieldConfigurationManager::class);
         $fieldConfigurationManager::storeFieldsConfiguration();
 
@@ -98,7 +99,7 @@ class RenderRelationManyToManyAsSubformViewHelper extends AbstractViewHelper
         $general['subformKey'] = $field['subformKey'];
 
         // Checks if the maximum number of relations is reached
-        if (($field['value'] instanceof \TYPO3\CMS\Extbase\Persistence\ObjectStorage) && $field['value']->count() < $field['maxitems']) {
+        if (($field['value'] instanceof ObjectStorage) && $field['value']->count() < $field['maxitems']) {
             $newButtonIsAllowed = true;
         } else {
             $newButtonIsAllowed = false;
@@ -107,9 +108,6 @@ class RenderRelationManyToManyAsSubformViewHelper extends AbstractViewHelper
         $general['newButtonIsAllowed'] = $newButtonIsAllowed;
         $general['upDownButtonIsAllowed'] = $field['addUpDown'];
         $general['deleteButtonIsAllowed'] = $field['addDelete'];
-
-        // TODO check this
-        // 'saveButtonIsAllowed' => ($isNewInSubform === false) && $saveButtonIsAllowed,
 
         // Processes the items
         $start = min($general['pageInSubform'], $general['lastPageInSubform']) * $field['maxSubformItems'];
@@ -180,7 +178,7 @@ class RenderRelationManyToManyAsSubformViewHelper extends AbstractViewHelper
         } else {
             // Processes localization tags
             $subformTitle = $fieldConfigurationManager->parseLocalizationTags($subformTitle);
-            // @TODO Parse field tags
+            $subformTitle = $fieldConfigurationManager->parseFieldTags($subformTitle);
         }
         $general['title'] = $subformTitle;
 
@@ -194,4 +192,3 @@ class RenderRelationManyToManyAsSubformViewHelper extends AbstractViewHelper
     }
 }
 ?>
-

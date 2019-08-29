@@ -19,6 +19,7 @@ namespace YolfTypo3\SavLibraryMvc\Persistence\Mapper;
  */
 class DataMapFactory extends \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapFactory
 {
+
     /**
      *
      * @var array
@@ -73,7 +74,7 @@ class DataMapFactory extends \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataM
         $dataMap = $this->buildDataMap($domainObjectName);
         $this->controlSection = $this->getControlSection($dataMap->getTableName());
         $this->columnsDefinition = $this->getColumnsDefinition($dataMap->getTableName());
-        $this->viewIdentifier = $viewIdentifier;
+        // $this->viewIdentifier = $viewIdentifier;
         $this->setSavLibraryMvcConfiguration();
     }
 
@@ -132,10 +133,9 @@ class DataMapFactory extends \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataM
     public function getControllerNameFromIndex($index)
     {
         $controllerNames = array_keys($this->savLibraryMvcControllers);
-        $controllerName = $controllerNames[$index-1];
+        $controllerName = $controllerNames[$index - 1];
         return $controllerName;
     }
-
 
     /**
      * Gets the SAV Library Mvc Controller view identifiers.

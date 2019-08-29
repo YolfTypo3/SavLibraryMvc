@@ -15,6 +15,7 @@ namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
  */
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 use YolfTypo3\SavLibraryMvc\Controller\FlashMessages;
@@ -97,6 +98,34 @@ class GraphViewHelper extends AbstractViewHelper
         if (! empty($tags)) {
             $tags = explode(',', $tags);
 
+            // Gets the special parameter
+            $controllerArguments = $this->renderingContext->getControllerContext()
+                ->getRequest()
+                ->getArguments();
+            $parameters = $controllerArguments['special'];
+
+            // Gets the uid
+            $uncompressedParameters = AbstractController::uncompressParameters($parameters);
+            $uid = $uncompressedParameters['uid'];
+
+            // Creates the object manager
+            $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+
+            // Gets the controller
+            $controller = $objectManager->get(AbstractController::getControllerObjectName());
+
+            // Gets the main repository
+            $mainRepository = $controller->getMainRepository();
+
+            // Gets the object from the uid
+            $object = $mainRepository->findByUid($uid);
+
+            // Builds a field configuration manager
+            $fieldConfigurationManager = GeneralUtility::makeInstance(FieldConfigurationManager::class);
+            $fieldConfigurationManager::storeFieldsConfiguration();
+            $fieldConfigurationManager->addDynamicFieldsConfiguration($object);
+            $fieldConfigurationManager::restoreFieldsConfiguration();
+
             // Processes the tags
             foreach ($tags as $tag) {
                 $match = [];
@@ -105,13 +134,10 @@ class GraphViewHelper extends AbstractViewHelper
                     $name = $match[1];
                     $id = $match[2];
                     $value = $match[3];
-                    $value = FieldConfigurationManager::parseFieldTags($value);
+                    $value = $fieldConfigurationManager->parseFieldTags($value);
 
                     // Checks if the not empty condition is satisfied
                     if (strtolower($value) == 'notempty[]') {
-                        FlashMessages::addError('error.graphFieldIsEmpty', [
-                            $match[3]
-                        ]);
                         $this->doNotProcessTemplate = true;
                         continue;
                     } else {

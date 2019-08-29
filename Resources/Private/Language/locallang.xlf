@@ -118,7 +118,7 @@
                 <source>The graph template &quot;%s&quot; is unknown.</source>
             </trans-unit>				
 			<trans-unit id="error.unknownGetMethod" xml:space="preserve">
-				<source>Error in the configuration. The getter associated with the following field is unknown: %s.</source>
+				<source>The getter associated with the following field is unknown: %s.</source>
 			</trans-unit>
 			<trans-unit id="error.unknownParameterInSpecial" xml:space="preserve">
 				<source>Unknown parameter in &quot;special&quot; argument.</source>

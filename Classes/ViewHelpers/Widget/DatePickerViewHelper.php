@@ -98,7 +98,7 @@ class DatePickerViewHelper extends AbstractFormFieldViewHelper
         // Sets the value
         if ($this->getValueAttribute() === null || empty($this->getValueAttribute())) {
             $value = $fieldConfiguration['noDefault'] ? '' : date();
-        } elseif ($fieldConfiguration['noDefault'] && $configuration['newRecord']) {
+        } elseif ($fieldConfiguration['noDefault'] && $fieldConfiguration['newRecord']) {
             $value = '';
         } else {
             $value = strftime($datePickerConfiguration['format'], $this->getValueAttribute()->format('U'));
@@ -156,7 +156,7 @@ class DatePickerViewHelper extends AbstractFormFieldViewHelper
 
         $matches = [];
         if (preg_match_all('/\%([a-zA-Z\%])/', $format, $matches) > 0) {
-            foreach ($matches[1] as $matchKey => $match) {
+            foreach ($matches[1] as $match) {
                 if (array_key_exists($match, $conversionArray)) {
                     $format = str_replace('%' . $match, $conversionArray[$match], $format);
                 } else {
