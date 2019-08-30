@@ -55,5 +55,3 @@ Table of Contents
    Introduction/Index
    Configuration/Index
    Changelog/Index
-
-

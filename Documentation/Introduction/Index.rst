@@ -32,15 +32,19 @@ available on GitHub ( `SAV Library Mvc
 
 .. important::
 
-    The SAV Library Mvc is in beta state because many configuration features available in SAV Library Plus are not yet implemented. However
+    The SAV Library Mvc is in beta state because many configuration features available in SAV Library Plus 
+    are not yet implemented. However
     simple extensions, that is extensions which do not require complex configuration, can be already generated.
     
-    A test extension `SAV Library Mvc Example0 <https://typo3.org/extensions/repository/view/sav_librarymvc_example0>`_ is available in 
-    the TER. It implements the same feature as `SAV Library Example0 <https://typo3.org/extensions/repository/view/sav_library_example0>`_ which 
+    A test extension `SAV Library Mvc Example0 <https://typo3.org/extensions/repository/view/sav_librarymvc_example0>`_ 
+    is available in the TER. It implements the same feature as `SAV Library Example0 
+    <https://typo3.org/extensions/repository/view/sav_library_example0>`_ which 
     is the test extension for SAV Library Plus.
     
-    If you are not familiar with SAV Library, please read first the tutorial in the :ref:`SAV Library Kickstarter manual <savlibrarykickstarter:tutorial>`. It
+    If you are not familiar with SAV Library, please read first the tutorial in the :ref:`SAV Library Kickstarter 
+    manual <savlibrarykickstarter:tutorial>`. It
     shows the basic steps for creating and installing an extension.
     
-    You can also read the tutorial sections in `SAV Library Plus manual <https://docs.typo3.org/typo3cms/extensions/sav_library_plus/>`_.
+    You can also read the tutorial sections in `SAV Library Plus manual 
+    <https://docs.typo3.org/typo3cms/extensions/sav_library_plus/>`_.
 
