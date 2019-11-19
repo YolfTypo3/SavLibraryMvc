@@ -26,7 +26,7 @@ coding**, thanks to simple configuration parameters. It includes:
 - Many other features.
 
 The latest developments of the SAV Library Mvc extension are
-available on GitHub ( `SAV Library Mvc
+available in GitHub ( `SAV Library Mvc
 <https://github.com/YolfTypo3/SavLibraryMvc>`_ ).
 
 
