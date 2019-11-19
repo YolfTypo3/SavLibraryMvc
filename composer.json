@@ -7,7 +7,7 @@
         "SAV Library",
         "Extension generator"
     ],
-    "homepage": "https://github.com/YolfTypo3/SavLibraryKickstarterProject",      
+    "homepage": "https://github.com/YolfTypo3/SavLibraryMvc",      
     "type": "typo3-cms-extension",
     "license": "GPL-2.0+",
     "authors": [
