@@ -18,18 +18,11 @@
         }
     ],
     "require": {
-        "typo3/cms-core": ">=7.6,<10.0"
+        "typo3/cms-core": "^9.5.17"
     },
     "autoload": {
         "psr-4": {
             "YolfTypo3\\SavLibraryMvc\\": "Classes/"
         }
-    },
-    "extra": {
-        "typo3/class-alias-loader": {
-            "class-alias-maps": [
-                "Migrations/Code/ClassAliasMap.php"
-            ]
-        }
-    } 
+    }
 }
