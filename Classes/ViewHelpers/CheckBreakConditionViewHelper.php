@@ -1,5 +1,4 @@
 <?php
-namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -13,7 +12,12 @@ namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
  *
  * The TYPO3 project - inspiring people to share!
  */
+
+namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
+
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 
 /**
  * A view helper for building the options for the field selector.
@@ -28,6 +32,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
  */
 class CheckBreakConditionViewHelper extends AbstractViewHelper
 {
+    use CompileWithRenderStatic;
 
     /**
      * Initializes arguments.
@@ -41,16 +46,20 @@ class CheckBreakConditionViewHelper extends AbstractViewHelper
     /**
      * Renders the viewhelper
      *
-     * @return boolean the break condition
+     * @param array $arguments
+     * @param \Closure $renderChildrenClosure
+     * @param RenderingContextInterface $renderingContext
+     *
+     * @return array the options array
      */
-    public function render()
+    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
     {
         // Gets the arguments
-        $counter = $this->arguments['counter'];
-        $breakCount = $this->arguments['breakCount'];
+        $counter = $arguments['counter'];
+        $breakCount = $arguments['breakCount'];
 
         if ($counter === null) {
-            $counter = $this->renderChildren();
+            $counter = $renderChildrenClosure();
         }
         if ($breakCount != 0) {
             return (($counter % $breakCount) == 0);
@@ -59,5 +68,3 @@ class CheckBreakConditionViewHelper extends AbstractViewHelper
         }
     }
 }
-?>
-

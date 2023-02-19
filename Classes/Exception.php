@@ -1,5 +1,4 @@
 <?php
-namespace YolfTypo3\SavLibraryMvc;
 
 /*
  * This script is part of the TYPO3 project - inspiring people to share! *
@@ -14,9 +13,9 @@ namespace YolfTypo3\SavLibraryMvc;
  * Public License for more details. *
  */
 
-/**
- */
+namespace YolfTypo3\SavLibraryMvc;
+
 class Exception extends \Exception
 {
 }
-?>
+

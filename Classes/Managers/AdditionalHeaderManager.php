@@ -1,5 +1,6 @@
 <?php
-namespace YolfTypo3\SavLibraryMvc\Managers;
+
+declare(strict_types=1);
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -13,10 +14,14 @@ namespace YolfTypo3\SavLibraryMvc\Managers;
  *
  * The TYPO3 project - inspiring people to share!
  */
+
+namespace YolfTypo3\SavLibraryMvc\Managers;
+
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
+use YolfTypo3\SavLibraryMvc\Controller\DefaultController;
 use YolfTypo3\SavLibraryMvc\Controller\FlashMessages;
 use YolfTypo3\SavLibraryMvc\Exception;
 
@@ -27,11 +32,29 @@ class AdditionalHeaderManager
 {
 
     /**
+     * Controller
+     *
+     * @var DefaultController
+     */
+    protected static $controller = null;
+
+    /**
      * Array of javaScript code used for the view
      *
      * @var array
      */
     protected static $javaScript = [];
+
+    /**
+     * Sets the controller
+     *
+     * @param DefaultController $controller
+     * @return void
+     */
+    public static function setController(DefaultController $controller)
+    {
+        self::$controller = $controller;
+    }
 
     /**
      * Adds the css files
@@ -84,7 +107,7 @@ class AdditionalHeaderManager
      */
     protected static function addExtensionCascadingStyleSheet()
     {
-        $extensionKey = AbstractController::getControllerExtensionKey();
+        $extensionKey = self::$controller->getControllerExtensionKey();
         $typoScriptConfiguration = AbstractController::getTypoScriptConfiguration($extensionKey);
         if (empty($typoScriptConfiguration['stylesheet']) === false) {
             $cascadingStyleSheetAbsoluteFileName = GeneralUtility::getFileAbsFileName($typoScriptConfiguration['stylesheet']);
@@ -99,10 +122,6 @@ class AdditionalHeaderManager
         } elseif (is_file(ExtensionManagementUtility::extPath($extensionKey) . AbstractController::$cssRootPath . '/' . $extensionKey . '.css')) {
             $extensionWebPath = AbstractController::getExtensionWebPath($extensionKey);
             $cascadingStyleSheet = $extensionWebPath . AbstractController::$cssRootPath . '/' . $extensionKey . '.css';
-            self::addCascadingStyleSheet($cascadingStyleSheet);
-        } elseif (is_file(ExtensionManagementUtility::extPath($extensionKey) . AbstractController::$stylesRootPath . '/' . $extensionKey . '.css')) {
-            $extensionWebPath = AbstractController::getExtensionWebPath($extensionKey);
-            $cascadingStyleSheet = $extensionWebPath . AbstractController::$stylesRootPath . '/' . $extensionKey . '.css';
             self::addCascadingStyleSheet($cascadingStyleSheet);
         }
     }
@@ -239,7 +258,7 @@ class AdditionalHeaderManager
      *            The key
      * @return string the javaScript
      */
-    protected static function getJavaScript($key)
+    protected static function getJavaScript(string $key): string
     {
         if (! empty(self::$javaScript[$key]) && is_array(self::$javaScript[$key])) {
             return implode(chr(10) . '    ', self::$javaScript[$key]);
@@ -270,6 +289,7 @@ class AdditionalHeaderManager
         $javaScript[] = '    if (document.changed) {';
         $javaScript[] = '      if (confirm("' . FlashMessages::translate('warning.save') . '"))	{';
         $javaScript[] = '        update(x);';
+        $javaScript[] = '        document.getElementById(\'id_\' + x).submit();';
         $javaScript[] = '        return false;';
         $javaScript[] = '      }';
         $javaScript[] = '      return true;';
@@ -286,5 +306,28 @@ class AdditionalHeaderManager
         $javaScript[] = '  }';
         return implode(chr(10), $javaScript);
     }
+
+    /**
+     * Adds the javaScript to confirm delete action
+     *
+     * @param string $className
+     *
+     * @return void
+     */
+    public static function addConfirmDeleteJavaScript($className)
+    {
+        $javaScript = [];
+
+        $javaScript[] = '  function confirmDelete() {';
+        $javaScript[] = '    document.activeElement.closest(".' . $className . '").classList.add("deleteWarning");';
+        $javaScript[] = '    if (confirm("' . FlashMessages::translate('warning.delete') . '"))	{';
+        $javaScript[] = '      return true;';
+        $javaScript[] = '    }';
+        $javaScript[] = '    document.activeElement.closest(".' . $className . '").classList.remove("deleteWarning");';
+        $javaScript[] = '    return false;';
+        $javaScript[] = '  }';
+
+        self::addJavaScriptFooterInlineCode('confirmDelete',implode(chr(10), $javaScript));
+    }
+
 }
-?>

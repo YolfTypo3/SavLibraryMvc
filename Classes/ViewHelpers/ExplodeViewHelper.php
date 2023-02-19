@@ -1,5 +1,4 @@
 <?php
-namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -13,7 +12,12 @@ namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
  *
  * The TYPO3 project - inspiring people to share!
  */
+
+namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
+
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 
 /**
  * Explodes a string
@@ -22,7 +26,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
  */
 class ExplodeViewHelper extends AbstractViewHelper
 {
-
+    use CompileWithRenderStatic;
     /**
      * Initializes arguments.
      */
@@ -33,21 +37,24 @@ class ExplodeViewHelper extends AbstractViewHelper
     }
 
     /**
-     * Explode viewhelper.
+     * Renders the viewhelper
      *
-     * @return array The array of strings
+     * @param array $arguments
+     * @param \Closure $renderChildrenClosure
+     * @param RenderingContextInterface $renderingContext
+     *
+     * @return array the options array
      */
-    public function render()
+    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
     {
         // Gets the arguments
-        $delimiter = $this->arguments['delimiter'];
-        $string = $this->arguments['string'];
+        $delimiter = $arguments['delimiter'];
+        $string = $arguments['string'];
 
         if ($string === null) {
-            $string = $this->renderChildren();
+            $string = $renderChildrenClosure();
         }
 
         return explode($delimiter, $string);
     }
 }
-?>

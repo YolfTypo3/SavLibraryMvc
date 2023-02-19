@@ -1,1 +1,0 @@
-<sav:form.rte property="{field.name}" configuration="{field}" value="{field.value}" rows="{field.rows}" cols="{field.cols}" />

@@ -29,7 +29,7 @@ General Folder
 
 #. **Select form**: use this selector to select the form name. Let use
    recall that the `sav_library_plus
-   <https://extensions.typo3.org/extension/sav_library_plus>`_ makes it possible 
+   <https://extensions.typo3.org/extension/sav_library_mvc>`_ makes it possible 
    to build several forms associated with the same extension, thus providing
    different views of your tables.
 
@@ -49,7 +49,7 @@ General Folder
 Input Controls Folder
 =====================  
 
-.. figure:: ../../Images/ConfigurationFlexformControlInputsFolder.png
+.. figure:: ../../Images/ConfigurationFlexformControlInputsFolder1.png
 
 #. **Help**: click on the word **Help** to access to this section 
    of the documentation.
@@ -61,8 +61,7 @@ Input Controls Folder
    one of these groups to be allowed to input data in the frontend.
 
 #. **Input Admin field**: put here a field under the form
-   **tableName.fieldName** (if you use only **fieldName**, the main table is
-   taken as **tableName**). This will restrict the input to users that have
+   **fieldName**. This will restrict the input to users that have
    **Admin** right for this field in their TSConfig. For example, if one
    user has **extKey_Admin=value1,value2** in his TSConfig, he/she will
    be allowed to edit or delete items for which **fieldName** is equal to
@@ -76,18 +75,14 @@ Input Controls Folder
    
    .. note::
    
-      Two special entries are also allowed:
-      
-      - **fe_users.uid**: it may be used if the main table is **fe_users**.
-        In this case, access is granted if the authenticated frontend 
-        user **uid** is the same as the main table **uid** 
-        (see :ref:`Tutorial 8 <tutorial8>` for an example).
+      A special entry is also allowed:
         
-      - **cruser_id** or **your_main_table.cruserd_id**: in this case, the access
+      - **cruser_id**: in this case, the access
         is granted if the authenticated frontend user has created the current 
         record, i.e. its **uid** is equal to the **cruser_id** field in the
         current record.
         
+.. figure:: ../../Images/ConfigurationFlexformControlInputsFolder2.png
 
 #. **No “new” button**: no new button is added to the form. It means
    that you can modify existing records but you cannot create new record.
@@ -143,24 +138,4 @@ Advanced Folder
    exec function is allowed in export which makes the execution of text
    processors possible, for example.
 
-.. _flexformAssociatedWithThePlugin.helpPagesFolder:  
 
-Help Pages Folder
-=================
-
-.. figure:: ../../Images/ConfigurationFlexformHelpPagesFolder.png
-
-#. **Help**: click on the word **Help** to access to this section of 
-   the documentation.
-
-#. **Help page for the List view**: use this selector to choose a page
-   of your site which will be use as a help page for the **List** view. In
-   this case, an icon is displayed in the title bar of your extension.
-
-#. **Help page for the Single view**: use this selector to choose a page
-   of your site which will be use as a help page for the single view. In
-   this case, an icon is displayed in the title bar of your extension.
-
-#. **Help page for the Edit view**: use this selector to choose a page
-   of your site which will be use as a help page for the edit view. In
-   this case, an icon is displayed in the title bar of your extension.

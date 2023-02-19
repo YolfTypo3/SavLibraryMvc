@@ -1,5 +1,4 @@
 <?php
-namespace YolfTypo3\SavLibraryMvc\Persistence\Mapper;
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -14,11 +13,32 @@ namespace YolfTypo3\SavLibraryMvc\Persistence\Mapper;
  * The TYPO3 project - inspiring people to share!
  */
 
+namespace YolfTypo3\SavLibraryMvc\Persistence\Mapper;
+
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
+use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMap;
+use YolfTypo3\SavLibraryMvc\Controller\DefaultController;
+
 /**
  * Extends the generic DataMapFactory.
  */
 class DataMapFactory extends \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapFactory
 {
+
+    /**
+     * Controller
+     *
+     * @var DefaultController
+     */
+    protected $controller = null;
+
+    /**
+     * The data map
+     *
+     * @var DataMap
+     */
+    protected $dataMap;
 
     /**
      *
@@ -34,7 +54,7 @@ class DataMapFactory extends \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataM
 
     /**
      *
-     * @var integer
+     * @var int
      */
     protected $viewIdentifier = null;
 
@@ -64,6 +84,17 @@ class DataMapFactory extends \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataM
     protected $savLibraryMvcControllers;
 
     /**
+     * Sets the controller
+     *
+     * @param DefaultController $controller
+     * @return void
+     */
+    public function setController(DefaultController $controller)
+    {
+        $this->controller = $controller;
+    }
+
+    /**
      * Initializes the data map factory
      *
      * @param string $domainObjectName
@@ -71,10 +102,9 @@ class DataMapFactory extends \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataM
      */
     public function initialize($domainObjectName)
     {
-        $dataMap = $this->buildDataMap($domainObjectName);
-        $this->controlSection = $this->getControlSection($dataMap->getTableName());
-        $this->columnsDefinition = $this->getColumnsDefinition($dataMap->getTableName());
-        // $this->viewIdentifier = $viewIdentifier;
+        $this->dataMap = $this->buildDataMap($domainObjectName);
+        $this->controlSection = $this->getControlSection($this->dataMap->getTableName());
+        $this->columnsDefinition = $this->getColumnsDefinition($this->dataMap->getTableName());
         $this->setSavLibraryMvcConfiguration();
     }
 
@@ -85,10 +115,10 @@ class DataMapFactory extends \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataM
      */
     protected function setSavLibraryMvcConfiguration()
     {
-        $this->savLibraryMvcConfiguration = is_array($this->controlSection['EXT']['sav_library_mvc']) ? $this->controlSection['EXT']['sav_library_mvc'] : [];
+        $extensionKey = $this->controller->getControllerExtensionKey();
+        $this->savLibraryMvcConfiguration = is_array($this->controlSection['EXT'][$extensionKey]) ? $this->controlSection['EXT'][$extensionKey] : [];
         $this->savLibraryMvcColumns = is_array($this->savLibraryMvcConfiguration['columns']) ? $this->savLibraryMvcConfiguration['columns'] : [];
         $this->savLibraryMvcCtrl = is_array($this->savLibraryMvcConfiguration['ctrl']) ? $this->savLibraryMvcConfiguration['ctrl'] : [];
-        $this->savLibraryMvcControllers = is_array($this->savLibraryMvcConfiguration['controllers']) ? $this->savLibraryMvcConfiguration['controllers'] : [];
     }
 
     /**
@@ -124,104 +154,6 @@ class DataMapFactory extends \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataM
     }
 
     /**
-     * Gets the controller name from an index.
-     *
-     * @param integer $index
-     *
-     * @return string
-     */
-    public function getControllerNameFromIndex($index)
-    {
-        $controllerNames = array_keys($this->savLibraryMvcControllers);
-        $controllerName = $controllerNames[$index - 1];
-        return $controllerName;
-    }
-
-    /**
-     * Gets the SAV Library Mvc Controller view identifiers.
-     *
-     * @param string $controllerName
-     *
-     * @return array
-     */
-    public function getSavLibraryMvcControllerViewIdentifiers($controllerName)
-    {
-        if (is_array($this->savLibraryMvcControllers[$controllerName]) && is_array($this->savLibraryMvcControllers[$controllerName]['viewIdentifiers'])) {
-            return $this->savLibraryMvcControllers[$controllerName]['viewIdentifiers'];
-        } else {
-            return [];
-        }
-    }
-
-    /**
-     * Gets the SAV Library Mvc Controller view title bar.
-     *
-     * @param string $controllerName
-     * @param string $viewType
-     *
-     * @return array
-     */
-    public function getSavLibraryMvcControllerViewTitleBar($controllerName, $viewType)
-    {
-        if (is_array($this->savLibraryMvcControllers[$controllerName]) && is_array($this->savLibraryMvcControllers[$controllerName]['viewTileBars'])) {
-            return $this->savLibraryMvcControllers[$controllerName]['viewTileBars'][$viewType];
-        } else {
-            return '';
-        }
-    }
-
-    /**
-     * Gets the SAV Library Mvc Controller view item template.
-     *
-     * @param string $controllerName
-     * @param string $viewType
-     *
-     * @return array
-     */
-    public function getSavLibraryMvcControllerViewItemTemplate($controllerName, $viewType)
-    {
-        if (is_array($this->savLibraryMvcControllers[$controllerName]) && is_array($this->savLibraryMvcControllers[$controllerName]['viewItemTemplates'])) {
-            return $this->savLibraryMvcControllers[$controllerName]['viewItemTemplates'][$viewType];
-        } else {
-            return '';
-        }
-    }
-
-    /**
-     * Gets the SAV Library Mvc Controller folders.
-     *
-     * @param string $controllerName
-     * @param string $viewType
-     *
-     * @return array
-     */
-    public function getSavLibraryMvcControllerFolders($controllerName, $viewType)
-    {
-        if (is_array($this->savLibraryMvcControllers[$controllerName]) && is_array($this->savLibraryMvcControllers[$controllerName]['folders'])) {
-            return $this->savLibraryMvcControllers[$controllerName]['folders'][$viewType];
-        } else {
-            return [];
-        }
-    }
-
-    /**
-     * Gets the SAV Library Mvc Controller query identifier.
-     *
-     * @param string $controllerName
-     * @param string $viewType
-     *
-     * @return array
-     */
-    public function getSavLibraryMvcControllerQueryIdentifier($controllerName)
-    {
-        if (is_array($this->savLibraryMvcControllers[$controllerName]) && isset($this->savLibraryMvcControllers[$controllerName]['queryIdentifier'])) {
-            return $this->savLibraryMvcControllers[$controllerName]['queryIdentifier'];
-        } else {
-            return null;
-        }
-    }
-
-    /**
      * Gets the TCAFieldConfiguration.
      *
      * @param string $fieldName
@@ -240,7 +172,18 @@ class DataMapFactory extends \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataM
      */
     public function getTCAFieldLabel($fieldName)
     {
-        return $GLOBALS['TSFE']->sl($this->columnsDefinition[$fieldName]['label']);
+        $propertyName = GeneralUtility::underscoredToLowerCamelCase($fieldName);
+        $columnMap = $this->dataMap->getColumnMap($propertyName);
+        if ($columnMap === null) {
+            throw new \Exception(sprintf(
+                'Unknown columnMap for property "%s".',
+                $propertyName
+                )
+            );
+        }
+        $columnName = $columnMap->getColumnName();
+
+        return $GLOBALS['TSFE']->sl($this->columnsDefinition[$columnName]['label']);
     }
 
     /**
@@ -262,6 +205,28 @@ class DataMapFactory extends \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataM
     public function getFieldType($fieldName)
     {
         return $this->savLibraryMvcColumns[$fieldName]['fieldType'];
+    }
+
+    /**
+     * Gets the foreign model.
+     *
+     * @param string $fieldName
+     * @return string
+     */
+    public function getForeignModel($fieldName)
+    {
+        return $this->savLibraryMvcColumns[$fieldName]['foreignModel'];
+    }
+
+    /**
+     * Gets the render type of the field.
+     *
+     * @param string $fieldName
+     * @return string
+     */
+    public function getRenderType($fieldName)
+    {
+        return $this->savLibraryMvcColumns[$fieldName]['renderType'];
     }
 
     /**

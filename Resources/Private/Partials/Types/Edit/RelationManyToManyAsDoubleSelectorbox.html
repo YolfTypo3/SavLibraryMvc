@@ -1,23 +1,12 @@
-{namespace sav=YolfTypo3\SavLibraryMvc\ViewHelpers}
-<f:if condition="{field.MM}">
-	<f:then>
-		<f:form.select multiple="1" property="{field.propertyName}"
-			options="{field->sav:RenderRelationManyToManyAsDoubleSelectorbox(action:'options')}"
-			value="{field.value}" size="{field.size}" class="multiple"
-			additionalAttributes="{onchange:'document.changed=1;', ondblclick:'{field->sav:RenderRelationManyToManyAsDoubleSelectorbox(action:\'moveToSource\')}'}" />
-		<f:form.select multiple="1" name="source[{field.fieldName}]"
-			options="{field->sav:RenderRelationManyToManyAsDoubleSelectorbox(action:'optionsSource')}"
-			value="{field.value}" size="{field.size}" class="multiple"
-			additionalAttributes="{onchange:'document.changed=1;', ondblclick:'{field->sav:RenderRelationManyToManyAsDoubleSelectorbox(action:\'moveFromSource\')}'}" />
-	</f:then>
-	<f:else>
-		<f:form.select multiple="1" property="{field.propertyName}"
-			options="{field->sav:RenderRelationManyToManyAsDoubleSelectorbox(action:'options')}"
-			value="{field.value}" size="{field.size}" class="multiple"
-			additionalAttributes="{onchange:'document.changed=1;', ondblclick:'{field->sav:RenderRelationManyToManyAsDoubleSelectorbox(action:\'moveToSource\')}'}" />
-		<f:form.select multiple="1" name="source[{field.fieldName}]"
-			options="{field->sav:RenderRelationManyToManyAsDoubleSelectorbox(action:'optionsSource')}"
-			value="{field.value}" size="{field.size}" class="multiple"
-			additionalAttributes="{onchange:'document.changed=1;', ondblclick:'{field->sav:RenderRelationManyToManyAsDoubleSelectorbox(action:\'moveFromSource\')}'}" />
-	</f:else>
-</f:if>
+<f:form.select multiple="1" property="{field.propertyName}"
+	options="{field.selectedOptions}"
+	value="" size="{field.size}" class="multiple"
+	additionalAttributes="{onchange:'document.changed=1;', ondblclick:'{field.moveToSource}'}" 
+	/>
+
+<f:form.select multiple="1" name="{field.sourceName}"
+    options="{field.unselectedOptions}"
+    value="" size="{field.size}" class="multiple"
+    additionalAttributes="{onchange:'document.changed=1;', ondblclick:'{field.moveFromSource}'}" 
+    />
+	

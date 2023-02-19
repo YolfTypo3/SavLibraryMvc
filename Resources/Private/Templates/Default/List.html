@@ -3,48 +3,47 @@
 
 <f:section name="content">
 <f:format.raw>
-	<div class="listView view">
-		<div class="titleBar">
-			<f:render partial="TitleBars/ListView/Default.html"
-				arguments="{general:general}" />
-		</div>
-		<div class="items">
-			<f:if condition="{general.message}">
-				<span class="message">{general.message}</span>
-			</f:if>
-			<f:for each="{items}" as="item">
-				<div
-					class="item {f:if(condition:item.general.isInDraftWorkspace,then:'draftWorkspace')}">
-					<div
-						class="itemIconLeft {f:if(condition:general.hideIconLeft,then:'listHidden')}">
-						<f:if condition="{item.general.editButtonIsAllowed}">
-							<f:link.action action="edit"
-								arguments="{special:item.general.special}">
-								<f:image src="{sav:getIconSrc(fileName:'edit.gif')}"
-									alt="{f:translate(key:'button.edit', extensionName:'SavLibraryMvc')}"
-									title="{f:translate(key:'button.edit', extensionName:'SavLibraryMvc')}" />
-							</f:link.action>
-						</f:if>
-						<f:if condition="{item.general.deleteButtonIsAllowed}">
-							<f:link.action action="delete"
-								arguments="{special:item.general.special}">
-								<f:image src="{sav:getIconSrc(fileName:'delete.gif')}"
-									alt="{f:translate(key:'button.delete', extensionName:'SavLibraryMvc')}"
-									title="{f:translate(key:'button.delete', extensionName:'SavLibraryMvc')}" />
-							</f:link.action>
-						</f:if>
-					</div>
-					<div class="value">
-						<f:format.raw>{item.template}</f:format.raw>
-					</div>
-					<div class="right"></div>
-				</div>
-			</f:for>
-		</div>
-		<div class="extensionFooter">
-			<f:render partial="Footers/ListView/Default.html"
-				arguments="{general:general}" />
-		</div>
-	</div>
-</f:format.raw>	
+    <div class="listView view">
+        <div class="titleBar">
+            <f:render partial="TitleBars/ListView/Default.html"
+                arguments="{general:general}" />
+        </div> 
+        <div class="items">
+            <f:if condition="{general.message}">
+                <span class="message">{general.message}</span>
+            </f:if>
+            <f:for each="{items}" as="item">
+                <div
+                    class="{item.classItem} {f:if(condition:item.general.isInDraftWorkspace,then:'draftWorkspace')}">
+                    <div
+                        class="itemIconLeft {f:if(condition:general.hideIconLeft,then:'listHidden')}">
+                        <f:if condition="{item.general.editButtonIsAllowed}">
+                            <f:link.action action="edit"
+                                arguments="{special:item.general.special}"
+                                title="{f:translate(key:'button.edit', extensionName:'SavLibraryMvc')}">
+                                <core:icon identifier="actions-open" />
+                            </f:link.action>
+                        </f:if>
+                        <f:if condition="{item.general.deleteButtonIsAllowed}">
+                            <f:link.action action="delete"
+                                arguments="{special:item.general.special}"
+                                title="{f:translate(key:'button.delete', extensionName:'SavLibraryMvc')}"
+                                onclick="return confirmDelete()">
+                                <core:icon identifier="actions-delete" />
+                            </f:link.action>
+                        </f:if>
+                    </div>
+                    <div class="value">
+                        <f:format.raw>{item.template}</f:format.raw>
+                    </div>
+                    <div class="right"></div>
+                </div>
+            </f:for>
+        </div>
+        <div class="extensionFooter">
+            <f:render partial="Footers/ListView/Default.html"
+                arguments="{general:general}" />
+        </div>
+    </div>
+</f:format.raw>    
 </f:section>

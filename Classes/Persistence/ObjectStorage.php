@@ -1,5 +1,4 @@
 <?php
-namespace YolfTypo3\SavLibraryMvc\Persistence;
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -13,6 +12,9 @@ namespace YolfTypo3\SavLibraryMvc\Persistence;
  *
  * The TYPO3 project - inspiring people to share!
  */
+
+namespace YolfTypo3\SavLibraryMvc\Persistence;
+
 class ObjectStorage extends \TYPO3\CMS\Extbase\Persistence\ObjectStorage
 {
 

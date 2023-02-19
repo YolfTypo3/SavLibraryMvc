@@ -1,5 +1,6 @@
 <?php
-namespace YolfTypo3\SavLibraryMvc\ViewConfiguration;
+
+declare(strict_types=1);
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -13,15 +14,19 @@ namespace YolfTypo3\SavLibraryMvc\ViewConfiguration;
  *
  * The TYPO3 project - inspiring people to share!
  */
+
+namespace YolfTypo3\SavLibraryMvc\ViewConfiguration;
+
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
+use YolfTypo3\SavLibraryMvc\Managers\AdditionalHeaderManager;
 
 /**
  * List view configuration for the SAV Library MVC
  *
  * @package SavLibraryMvc
  * @author Laurent Foulloy <yolf.typo3@orange.fr>
- * @version $ID:$
+ *
  */
 class ListViewConfiguration extends AbstractViewConfiguration
 {
@@ -33,7 +38,7 @@ class ListViewConfiguration extends AbstractViewConfiguration
      *            Arguments from the action
      * @return array The view configuration
      */
-    public function getConfiguration($arguments)
+    public function getConfiguration(array $arguments): array
     {
         // Gets the special parameters from arguments, uncompresses it and modifies it if needed
         $special = $arguments['special'];
@@ -42,9 +47,12 @@ class ListViewConfiguration extends AbstractViewConfiguration
         // Gets the main repository
         $mainRepository = $this->controller->getMainRepository();
 
+        // Gets the number of items to display
+        $count = $mainRepository->countAllForListView();
+
         // Defines the last available page in the list
-        $maxItems = (integer) AbstractController::getSetting('maxItems');
-        $lastPage = ($maxItems ? floor(($mainRepository->countAllForListView() - 1) / $maxItems) : 0);
+        $maxItems = (int) $this->controller->getSetting('maxItems');
+        $lastPage = ($maxItems ? floor(($count - 1) / $maxItems) : 0);
 
         // Defines the pages
         $page = (int) $uncompressedParameters['page'];
@@ -54,8 +62,8 @@ class ListViewConfiguration extends AbstractViewConfiguration
         }
 
         // Sets the general configuration for the view
-        $this->addGeneralViewConfiguration('extensionKey', AbstractController::getControllerExtensionKey());
-        $this->addGeneralViewConfiguration('controllerName', AbstractController::getControllerName());
+        $this->addGeneralViewConfiguration('extensionKey', $this->controller->getControllerExtensionKey());
+        $this->addGeneralViewConfiguration('controllerName', $this->controller->getControllerName());
         $this->addGeneralViewConfiguration('special', $special);
         $this->addGeneralViewConfiguration('contentUid', $this->controller->getContentObjectRenderer()->data['uid']);
         $this->addGeneralViewConfiguration('orderLink', $uncompressedParameters['orderLink']);
@@ -65,22 +73,21 @@ class ListViewConfiguration extends AbstractViewConfiguration
         $this->addGeneralViewConfiguration('lastPage', $lastPage);
         $this->addGeneralViewConfiguration('userIsAllowedToInputData', $this->controller->getFrontendUserManager()
             ->userIsAllowedToInputData());
-        $this->addGeneralViewConfiguration('hideIconLeft', ! ($uncompressedParameters['mode'] == AbstractController::EDIT_MODE) || (AbstractController::getSetting('noEditButton') && AbstractController::getSetting('noDeleteButton')));
+        $this->addGeneralViewConfiguration('userIsAllowedToExportData', $this->controller->getFrontendUserManager()
+            ->userIsAllowedToExportData());
+        $this->addGeneralViewConfiguration('hideIconLeft', ! ($uncompressedParameters['mode'] == AbstractController::EDIT_MODE) || ($this->controller->getSetting('noEditButton') && AbstractController::getSetting('noDeleteButton')));
         $this->addGeneralViewConfiguration('newButtonIsAllowed', ($uncompressedParameters['mode'] == AbstractController::EDIT_MODE) && $this->controller->getFrontendUserManager()
-            ->userIsAllowedToInputData() && ! AbstractController::getSetting('noNewButton'));
-
-        // Gets the number of items to display
-        $count = $mainRepository->countAllForListView();
+            ->userIsAllowedToInputData() && ! $this->controller->getSetting('noNewButton'));
 
         // Processes the case where the count is equal to zero
         if ($count == 0) {
-            switch (AbstractController::getSetting('showNoAvailableInformation')) {
+            switch ($this->controller->getSetting('showNoAvailableInformation')) {
                 case self::SHOW_MESSAGE:
                     $this->addGeneralViewConfiguration('message', LocalizationUtility::translate('message.noAvailableInformation', 'sav_library_mvc'));
                     break;
                 case self::DO_NOT_SHOW_MESSAGE:
                     break;
-                case self::HIDE_EXTENSION:
+                case self::DO_NOT_SHOW_EXTENSION:
                     $this->addGeneralViewConfiguration('hideExtension', true);
                     break;
             }
@@ -93,27 +100,39 @@ class ListViewConfiguration extends AbstractViewConfiguration
         // Generates the fluid template
         $fluidItemTemplate = $this->generateFluidItemTemplate();
 
+        // Gets the field configuration manager
+        $fieldConfigurationManager = $this->controller->getFieldConfigurationManager();
+
         // Gets the fields configuration
-        $this->fieldConfigurationManager->setStaticFieldsConfiguration($this->getViewIdentifier(), $mainRepository);
+        $fieldConfigurationManager->setStaticFieldsConfiguration($this->getViewIdentifier(), $mainRepository);
 
         // Gets the query result from the main repository
         $itemsConfiguration = [];
         $objects = $mainRepository->findAllForListView();
 
         foreach ($objects as $this->object) {
-
             // Gets the item configuration
             $itemConfiguration = $this->getItemConfiguration();
-            $this->fieldConfigurationManager->addGeneralConfiguration($itemConfiguration);
-            $this->fieldConfigurationManager->addDynamicFieldsConfiguration($this->object);
+            $fieldConfigurationManager->setGeneralConfiguration($itemConfiguration);
+            $fieldConfigurationManager->addDynamicFieldsConfiguration($this->object);
+
+            // Attribute-based post-processing
+            $fieldsConfiguration = $fieldConfigurationManager->getFieldsConfiguration();
+            $classItem = 'item';
+            foreach($fieldsConfiguration as $fieldConfiguration) {
+                if ($fieldConfiguration['classItem'] != 'item') {
+                    $classItem = $fieldConfiguration['classItem'];
+                }
+            }
 
             // Parses the fluid template
             $template = $this->templateParser->parse($fluidItemTemplate, [
-                'fields' => $this->fieldConfigurationManager::getFieldsConfiguration(),
+                'field' => $fieldConfigurationManager->getFieldsConfiguration(),
                 'general' => $itemConfiguration
             ]);
 
             $itemsConfiguration[] = [
+                'classItem' => $classItem,
                 'template' => $template,
                 'general' => $itemConfiguration
             ];
@@ -125,9 +144,14 @@ class ListViewConfiguration extends AbstractViewConfiguration
         // Adds the title
         $title = $this->parseTitle($viewIdentifier, [
             'general' => $this->getGeneralViewConfiguration(),
-            'fields' => $this->fieldConfigurationManager::getFieldsConfiguration()
+            'field' => $fieldConfigurationManager->getFieldsConfiguration()
         ]);
         $this->addGeneralViewConfiguration('title', $title);
+
+        // Adds the javascript to confirm the delete action
+        if ($uncompressedParameters['mode'] == AbstractController::EDIT_MODE) {
+            AdditionalHeaderManager::addConfirmDeleteJavaScript('item');
+        }
 
         // Returns the view configuration
         $viewConfiguration = [
@@ -143,7 +167,7 @@ class ListViewConfiguration extends AbstractViewConfiguration
      *
      * @return array
      */
-    protected function getItemConfiguration()
+    protected function getItemConfiguration(): array
     {
         // Uncompresses the special parameter
         $special = $this->getGeneralViewConfiguration('special');
@@ -159,8 +183,8 @@ class ListViewConfiguration extends AbstractViewConfiguration
         $generalCondition = $isInEditMode && $userIsAllowedToInputData && $userIsAllowedToChangeData && ! $isInDraftWorkspace;
 
         // Sets the button conditions
-        $editButtonIsAllowed = $generalCondition && ! AbstractController::getSetting('noEditButton');
-        $deleteButtonIsAllowed = $generalCondition && ! AbstractController::getSetting('noDeleteButton');
+        $editButtonIsAllowed = $generalCondition && ! $this->controller->getSetting('noEditButton');
+        $deleteButtonIsAllowed = $generalCondition && ! $this->controller->getSetting('noDeleteButton');
 
         // Sets the special parameters for the item
         $uncompressedParameters['uid'] = $this->object->getUid();
@@ -180,12 +204,13 @@ class ListViewConfiguration extends AbstractViewConfiguration
      * Generates fluid item template
      *
      * @return string The view configuration
+     * @throws \Exception
      */
-    public function generateFluidItemTemplate()
+    public function generateFluidItemTemplate(): string
     {
         // Gets the item templates
-        $viewType = $this->getViewType();
-        $itemTemplate = $this->controller->getViewItemTemplate($viewType);
+        $viewIdentifier = $this->getViewIdentifier();
+        $itemTemplate = $this->controller->getViewItemTemplate($viewIdentifier);
 
         // Searches the tags in the template
         $matches = [];
@@ -197,12 +222,36 @@ class ListViewConfiguration extends AbstractViewConfiguration
             } else {
                 // Main model is assumed
                 $repository = $this->controller->getMainRepository();
+
+                // Gets the type
                 $fieldName = $matches[1][$keyMatch];
-                $itemTemplate = str_replace($match, '<f:if condition="{field.cutDivItemInner}!=1">            <f:render partial="Types/Default/' . $repository->getDataMapFactory()->getFieldType($fieldName) . '.html' . '" arguments="{general:general, field:fields.' . $fieldName . '}" />          </f:if>', $itemTemplate);
+                $dataMapFactory = $repository->getDataMapFactory();
+                $type = $dataMapFactory->getFieldType($fieldName);
+
+                // If the type is empty, tries to use the table field name
+                // Useful for compatiblity with SAV Library Plus
+                if (empty($type)) {
+                    $tableFieldNames = array_column($dataMapFactory->getSavLibraryMvcColumns(), 'tableFieldName');
+                    foreach ($tableFieldNames as $tableFieldName) {
+                        if (key($tableFieldName) == $fieldName) {
+                            $fieldName = current($tableFieldName);
+                            $type = $dataMapFactory->getFieldType($fieldName);
+                            break;
+                        }
+                    }
+                }
+
+                if ($type === null) {
+                    throw new \Exception(sprintf(
+                        'Undefined type for field "%s".',
+                        $fieldName
+                        )
+                    );
+                }
+                $itemTemplate = str_replace($match, '<f:if condition="{field.' . $fieldName . '.cutDivItemInner}!=1">            <sav:render partial="Types/Default/' . $type . '.html' . '" arguments="{general:general, field:field.' . $fieldName . '}" />          </f:if>', $itemTemplate);
             }
         }
 
         return $itemTemplate;
     }
 }
-?>

@@ -1,38 +1,24 @@
-{namespace sav=YolfTypo3\SavLibraryMvc\ViewHelpers}
-
-<f:for each="{field.files}" as="file">
-	<div class="file">
-		<f:comment>Image</f:comment>
-		<f:if condition="{file.fileUnknown}">
-			<f:then>
-			</f:then>
-			<f:else>
-				<f:if condition="{file.isImage}">
-					<f:then>
-						<f:if condition="{field.func} == 'makeNewWindowLink'">
-							<f:then>
-								<f:link.typolink parameter="{file.fileName} 400x300:resizable=1">
-									<f:image image="{file.value}" alt="{field.alt}"
-										width="{field.width}" height="{field.height}" />
-								</f:link.typolink>
-							</f:then>
-							<f:else>
-								<f:image image="{file.value}" />
-							</f:else>
-						</f:if>
-					</f:then>
-					<f:else>
-						<f:comment>General file : a link is displayed</f:comment>
-						<f:if condition="{field.addIcon}">
-							<div class="fileIcon">
-								<f:format.raw>{file.icon}</f:format.raw>
-							</div>
-						</f:if>
-						<f:link.typolink parameter="{file.value}">{file.message}</f:link.typolink>
-					</f:else>
+<f:for each="{field.files}" key="fileKey" as="file">
+	<div class="file item{fileKey}">
+		<f:switch expression="{file.renderAs}">
+			<f:comment>File as Object</f:comment>
+			<f:case value="1">
+				<f:image image="{file.value}" />
+			</f:case>
+			<f:comment>File as Resource</f:comment>
+			<f:case value="2">
+				<f:image src="{file.fileName}" alt="{field.alt}"
+					width="{field.width}" height="{field.height}" />
+			</f:case>
+			<f:comment>File as link</f:comment>
+			<f:case value="3">
+				<f:if condition="{field.addIcon}">
+					<div class="fileIcon">
+						<f:format.raw>{file.icon}</f:format.raw>
+					</div>
 				</f:if>
-			</f:else>
-		</f:if>
+				<f:link.typolink parameter="{file.value}">{file.message}</f:link.typolink>
+			</f:case>
+		</f:switch>
 	</div>
 </f:for>
-

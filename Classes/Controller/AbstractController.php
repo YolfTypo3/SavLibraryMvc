@@ -1,5 +1,4 @@
 <?php
-namespace YolfTypo3\SavLibraryMvc\Controller;
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -13,6 +12,9 @@ namespace YolfTypo3\SavLibraryMvc\Controller;
  *
  * The TYPO3 project - inspiring people to share!
  */
+
+namespace YolfTypo3\SavLibraryMvc\Controller;
+
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -21,11 +23,13 @@ use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Configuration\FrontendConfigurationManager;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Request;
-use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
-use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
+use TYPO3\CMS\Extbase\Service\CacheService;
+use TYPO3Fluid\Fluid\View\ViewInterface;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use YolfTypo3\SavLibraryMvc\Domain\Repository\DefaultRepository;
+use YolfTypo3\SavLibraryMvc\Domain\Repository\ExportRepository;
 use YolfTypo3\SavLibraryMvc\Managers\AdditionalHeaderManager;
+use YolfTypo3\SavLibraryMvc\Managers\FieldConfigurationManager;
 use YolfTypo3\SavLibraryMvc\Managers\FrontendUserManager;
 use YolfTypo3\SavLibraryMvc\ViewConfiguration\AbstractViewConfiguration;
 
@@ -42,22 +46,12 @@ abstract class AbstractController extends ActionController
 
     // Constants for the mode
     const DEFAULT_MODE = 0;
-
     const EDIT_MODE = 1;
 
     /**
-     * Icons root path
-     *
-     * @var string
+     * @var CacheService
      */
-    public static $iconRootPath = 'Resources/Public/Icons';
-
-    /**
-     * Images root path
-     *
-     * @var string
-     */
-    public static $imageRootPath = 'Resources/Public/Images';
+    protected $cacheService;
 
     /**
      * Css root path
@@ -65,13 +59,6 @@ abstract class AbstractController extends ActionController
      * @var string
      */
     public static $cssRootPath = 'Resources/Public/Css';
-
-    /**
-     * Styles root path (for compatibility with previously generated extensions)
-     *
-     * @var string
-     */
-    public static $stylesRootPath = 'Resources/Public/Styles';
 
     /**
      * JavaScript root path
@@ -100,7 +87,8 @@ abstract class AbstractController extends ActionController
         'subformUidLocal', // 8
         'subformPage', // 9
         'subformActivePages', // 10
-        'fileUid' // 11
+        'fileUid', // 11
+        'exportUid' //12
     ];
 
     // Variable to encode/decode the special parameters
@@ -109,46 +97,11 @@ abstract class AbstractController extends ActionController
     ];
 
     /**
-     * Controller object name
-     *
-     * @var string
-     */
-    protected static $controllerObjectName;
-
-    /**
-     * Controller extension key
-     *
-     * @var string
-     */
-    protected static $controllerExtensionKey;
-
-    /**
-     * Controller name
-     *
-     * @var string
-     */
-    protected static $controllerName;
-
-    /**
-     * Original arguments
-     *
-     * @var array
-     */
-    protected static $originalArguments;
-
-    /**
      * Extension settings
      *
      * @var array
      */
-    protected static $extensionSettings;
-
-    /**
-     * Extbase framework configuration
-     *
-     * @var array
-     */
-    protected static $extbaseFrameworkConfiguration;
+    protected $extensionSettings = null;
 
     /**
      * Front end user manager
@@ -158,11 +111,36 @@ abstract class AbstractController extends ActionController
     protected $frontendUserManager;
 
     /**
+     * Field configuration manager
+     *
+     * @var FieldConfigurationManager
+     */
+    protected $fieldConfigurationManager;
+
+    /**
      * Viewer configuration
      *
      * @var AbstractViewConfiguration
      */
     protected $viewerConfiguration = null;
+
+    /**
+     * ExportRepository
+     *
+     * @var ExportRepository
+     */
+    protected $exportRepository = null;
+
+    /**
+     * Injects the cache service
+     *
+     * @param CacheService $cacheService
+     * @return void
+     */
+    public function injectCacheService(CacheService $cacheService)
+    {
+        $this->cacheService = $cacheService;
+    }
 
     /**
      * Injects the frontend user manager
@@ -176,13 +154,101 @@ abstract class AbstractController extends ActionController
     }
 
     /**
+     * Injects the field configuration manager
+     *
+     * @param FieldConfigurationManager $fieldConfigurationManager
+     *
+     * @return void
+     */
+    public function injectFieldConfigurationManager(FieldConfigurationManager $fieldConfigurationManager)
+    {
+        $this->fieldConfigurationManager = $fieldConfigurationManager;
+    }
+
+    /**
+     * @param ExportRepository $exportRepository
+     */
+    public function injectExportRepository(ExportRepository $exportRepository)
+    {
+        $this->exportRepository = $exportRepository;
+    }
+
+    /**
+     * Initializes the controller for the save action method.
+     *
+     * @return void
+     */
+    protected function initializeSaveAction()
+    {
+        $propertyMappingConfiguration = $this->arguments['data']->getPropertyMappingConfiguration();
+        $fields = $this->request->getArgument('data');
+        foreach($fields as $propertyName => $field) {
+            $dataMapFactory = $this->mainRepository->getDataMapFactory();
+            $fieldName = GeneralUtility::camelCaseToLowerCaseUnderscored($propertyName);
+            $tcaFieldConfiguration = $dataMapFactory->getTCAFieldConfiguration($fieldName);
+            $fieldType = $dataMapFactory->getFieldType($fieldName);
+            if ($fieldType == 'RelationManyToManyAsSubform') {
+                $propertyMapping = $propertyMappingConfiguration->forProperty($propertyName);
+                $this->processPropertyMapping($tcaFieldConfiguration, $field, $propertyMapping);
+            } elseif (($fieldType == 'RelationManyToManyAsDoubleSelectorbox' &&
+                !empty($tcaFieldConfiguration['MM'])) || $tcaFieldConfiguration['renderType'] == 'selectMultipleSideBySide') {
+                if (is_array($field)) {
+                    foreach ($field as $itemKey => $item) {
+                        $propertyMappingConfiguration->forProperty($propertyName)->allowProperties($itemKey);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Processes the property mapping for RelationManyToManyAsDoubleSelectorbox.
+     *
+     * @return void
+     */
+    protected function processPropertyMapping($tcaFieldConfigurationFields, $fields, $propertyMapping)
+     {
+         foreach($fields as $itemsKey => $items) {
+             $repositoryClassName = $this->resolveRepositoryClassNameFromTableName($tcaFieldConfigurationFields['foreign_table']);
+             $repository = GeneralUtility::makeInstance($repositoryClassName);
+             $repository->setController($this);
+             $dataMapFactory = $repository->getDataMapFactory();
+             foreach($items as $propertyName => $field) {
+                 $fieldName = GeneralUtility::camelCaseToLowerCaseUnderscored($propertyName);
+                 $tcaFieldConfiguration = $dataMapFactory->getTCAFieldConfiguration($fieldName);
+                 $fieldType = $dataMapFactory->getFieldType($fieldName);
+                 if ($fieldType == 'RelationManyToManyAsSubform') {
+                     $this->processPropertyMapping($tcaFieldConfiguration, $field, $propertyMapping->forProperty($itemsKey)->forProperty($propertyName));
+                 } elseif (($fieldType == 'RelationManyToManyAsDoubleSelectorbox' &&
+                     !empty($tcaFieldConfiguration['MM'])) || $tcaFieldConfiguration['renderType'] == 'selectMultipleSideBySide') {
+                     if (is_array($field)) {
+                         foreach ($field as $itemKey => $item) {
+                             $propertyMapping->forProperty($itemsKey)->forProperty($propertyName)->allowProperties($itemKey);
+                         }
+                     }
+                 }
+             }
+         }
+     }
+
+    /**
      * Gets the configuration manager.
      *
      * @return ConfigurationManagerInterface
      */
-    public function getConfigurationManager()
+    public function getConfigurationManager(): ConfigurationManagerInterface
     {
         return $this->configurationManager;
+    }
+
+    /**
+     * Gets the field configuration manager.
+     *
+     * @return FieldConfigurationManager
+     */
+    public function getFieldConfigurationManager(): FieldConfigurationManager
+    {
+        return $this->fieldConfigurationManager;
     }
 
     /**
@@ -190,19 +256,9 @@ abstract class AbstractController extends ActionController
      *
      * @return Request
      */
-    public function getRequest()
+    public function getRequest(): Request
     {
         return $this->request;
-    }
-
-    /**
-     * Gets the object manager
-     *
-     * @return ObjectManagerInterface
-     */
-    public function getObjectManager()
-    {
-        return $this->objectManager;
     }
 
     /**
@@ -210,17 +266,100 @@ abstract class AbstractController extends ActionController
      *
      * @return FrontendUserManager
      */
-    public function getFrontendUserManager()
+    public function getFrontendUserManager(): FrontendUserManager
     {
         return $this->frontendUserManager;
     }
 
     /**
+     * Gets the cache service
+     *
+     * @return CacheService
+     */
+    public function getCacheService(): CacheService
+    {
+        return $this->cacheService;
+    }
+
+    /**
+     * Gets the controller object name
+     *
+     * @return string The controller object name
+     */
+    public function getControllerObjectName(): string
+    {
+        return $this->request->getControllerObjectName();
+    }
+
+    /**
+     * Gets the plugin name
+     *
+     * @return string The plugin name
+     */
+    public function getPluginName(): string
+    {
+        return $this->request->getPluginName();
+    }
+
+    /**
+     * Gets the extension name
+     *
+     * @return string The extension key
+     */
+    public function getControllerExtensionName(): string
+    {
+        return $this->request->getControllerExtensionName();
+    }
+
+    /**
+     * Gets the extension key
+     *
+     * @return string The extension key
+     */
+    public function getControllerExtensionKey(): string
+    {
+        return $this->request->getControllerExtensionKey();
+    }
+
+    /**
+     * Gets the controller action name.
+     *
+     * @return string The controller action name
+     */
+    public function getControllerActionName(): string
+    {
+        return  $this->request->getControllerActionName();
+    }
+
+
+    /**
+     * Gets the controller name.
+     *
+     * @return string The controller name
+     */
+    public function getControllerName(): string
+    {
+        return  $this->request->getControllerName();
+    }
+
+    /**
+     * Gets the controller arguments.
+     *
+     * @return array The controller arguments
+     */
+    public function getArguments(): array
+    {
+        return  $this->request->getArguments();
+    }
+
+    /**
      * Gets the viewer configuration
      *
+     * @param string|null $actionMethodName
      * @return AbstractViewConfiguration
+     * @throws \Exception
      */
-    public function getViewerConfiguration($actionMethodName = null)
+    public function getViewerConfiguration(?string $actionMethodName = null)
     {
         if ($actionMethodName === null) {
             $actionMethodName = $this->actionMethodName;
@@ -230,13 +369,19 @@ abstract class AbstractController extends ActionController
 
             $action = str_replace('Action', '', ucfirst($actionMethodName));
             $viewerConfigurationClass = 'YolfTypo3\\SavLibraryMvc\\ViewConfiguration\\' . $action . 'ViewConfiguration';
-            if (! $this->objectManager->isRegistered($viewerConfigurationClass)) {
-                // TODO Adds an error message
-                return null;
-            }
+
             // Gets the viewer configuration object
-            $this->viewerConfiguration = $this->objectManager->get($viewerConfigurationClass, $this);
+            if (! class_exists($viewerConfigurationClass)) {
+                throw new \Exception(sprintf(
+                    'The viewer configuration class "%s" does not exist.',
+                    $viewerConfigurationClass
+                    )
+                );
+            }
+            $this->viewerConfiguration = GeneralUtility::makeInstance($viewerConfigurationClass);
+            $this->viewerConfiguration->setController($this);
         }
+
         return $this->viewerConfiguration;
     }
 
@@ -251,66 +396,173 @@ abstract class AbstractController extends ActionController
     }
 
     /**
+     * Gets the export repository
+     *
+     * @return ExportRepository
+     */
+    public function getExportRepository(): ExportRepository
+    {
+        return $this->exportRepository;
+    }
+
+    /**
      * Gets the view identifiers
      *
      * @return array
      */
-    public function getViewIdentifiers()
+    public function getViewIdentifiers(): array
     {
-        $dataMapFactory = $this->mainRepository->getDataMapFactory();
-        return $dataMapFactory->getSavLibraryMvcControllerViewIdentifiers(self::$controllerName);
+        if (is_array($this->controllerConfiguration['viewIdentifiers'])) {
+            return $this->controllerConfiguration['viewIdentifiers'];
+        } else {
+            return [];
+        }
     }
 
     /**
      * Gets the view title bar
      *
-     * @param string $viewType
-     *            The view type
-     * @return integer
+     * @param int $viewIdentifier
+     *            The view identifier
+     * @return string
      */
-    public function getViewTitleBar($viewType)
+    public function getViewTitleBar(int $viewIdentifier): string
     {
-        $dataMapFactory = $this->mainRepository->getDataMapFactory();
-        return $dataMapFactory->getSavLibraryMvcControllerViewTitleBar(self::$controllerName, $viewType);
+        if (is_array($this->controllerConfiguration['viewTitleBars'])) {
+            return $this->controllerConfiguration['viewTitleBars'][$viewIdentifier];
+        } else {
+            return '';
+        }
     }
 
     /**
      * Gets the view item template
      *
-     * @param string $viewType
-     *            The view type
-     * @return integer
+     * @param int $viewIdentifier
+     *            The view identifier
+     * @return string
      */
-    public function getViewItemTemplate($viewType)
+    public function getViewItemTemplate(int $viewIdentifier): string
     {
-        $dataMapFactory = $this->mainRepository->getDataMapFactory();
-        return $dataMapFactory->getSavLibraryMvcControllerViewItemTemplate(self::$controllerName, $viewType);
+        if (is_array($this->controllerConfiguration['viewItemTemplates'])) {
+            return $this->controllerConfiguration['viewItemTemplates'][$viewIdentifier];
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * Gets the view active folder
+     *
+     * @param int $viewIdentifier
+     * @param string|null $folderIdentifier
+     * @return string
+     */
+    public function getActiveFolder(int $viewIdentifier, ?string $folderIdentifier)
+    {
+        if (is_array($this->controllerConfiguration['folders'])) {
+            $folders = $this->controllerConfiguration['folders'][$viewIdentifier];
+
+            if (is_array($folders)) {
+                // Sorts the folder by the order field
+                uasort (
+                    $folders ,
+                    function ($a, $b) {
+                        return $a['order'] < $b['order'] ? -1 : 1;
+                    }
+                );
+
+                // Checks if the folder exists otherwise return the first folder
+                if ($folderIdentifier > 0) {
+                    if (empty($folders[$folderIdentifier])) {
+                        return key($folders);
+                    } else {
+                        return (int) $folderIdentifier;
+                    }
+                } else {
+                    return key($folders);
+                }
+            } else {
+                return 0;
+            }
+        } else {
+            return 0;
+        }
     }
 
     /**
      * Gets the folder
      *
-     * @param string $viewType
-     *            The view type
-     * @return integer
+     * @param string $viewIdentifier
+     *            The view identifier
+     * @return array
      */
-    public function getFolders($viewType)
+    public function getFolders(string $viewIdentifier): array
     {
-        $dataMapFactory = $this->mainRepository->getDataMapFactory();
-        return $dataMapFactory->getSavLibraryMvcControllerFolders(self::$controllerName, $viewType);
+        if (is_array($this->controllerConfiguration['folders'])) {
+            $folders = $this->controllerConfiguration['folders'][$viewIdentifier];
+
+            // Processes the folder configuration
+            foreach ($folders as $folderKey => $folder) {
+                if (! empty($folder['configuration'])) {
+                    if (!empty ($folder['configuration']['cutIf'])) {
+                        $cutFolder = $this->fieldConfigurationManager->processFieldCondition($folder['configuration']['cutIf']);
+                        if ($cutFolder === true) {
+                            unset ($folders[$folderKey]);
+                        }
+                    }
+                }
+            }
+            uasort (
+                $folders ,
+                function ($a, $b) {
+                    return $a['order'] < $b['order'] ? -1 : 1;
+                }
+            );
+            return $folders;
+        } else {
+            return [];
+        }
+    }
+
+    /**
+     * Gets the query identifier.
+     *
+     * @return int|null
+     */
+    public function getQueryIdentifier(): ?int
+    {
+        if (is_array($this->controllerConfiguration)) {
+            return $this->controllerConfiguration['queryIdentifier'];
+        } else {
+            return null;
+        }
     }
 
     /**
      * Gets the subform information from its key
      *
-     * @param integer $subformKey
+     * @param int $subformKey
      *            The subform key
      * @return array
      */
-    public function getSubform($subformKey)
+    public function getSubform(int $subformKey): array
     {
         $subform = $this->subforms[$subformKey];
         return $subform;
+    }
+
+    /**
+     * Gets the subform information from the field name
+     *
+     * @param string $fieldName
+     *
+     * @return array
+     */
+    public function getSubformFromFieldName(string $fieldName): array
+    {
+        $subformKey = array_search($fieldName, array_column($this->subforms, 'fieldName'));
+        return $this->getSubform($subformKey);
     }
 
     /**
@@ -320,78 +572,47 @@ abstract class AbstractController extends ActionController
      */
     protected function initializeAction()
     {
-        // Gets the extension settings
-        self::$extensionSettings = $this->settings;
+        // Gets the controller identifier
+        $controllerIdentifier = $this->getSetting('formId');
+        $configuration = $GLOBALS['TCA']['tx_savlibrarymvc_domain_model_configuration']['ctrl']['EXT'][$this->getControllerExtensionKey()];
+        $this->controllerConfiguration = $configuration['controllers'][$controllerIdentifier];
 
-        // Keeps the controller information
-        self::$controllerObjectName = $this->request->getControllerObjectName();
-        self::$controllerExtensionKey = $this->request->getControllerExtensionKey();
-        self::$originalArguments = $this->request->getArguments();
+        // Redirects to the required controller if not the defaut one
+        $controllerName = $this->controllerConfiguration['name'];
+        if ($this->getControllerName() != $controllerName) {
+            $this->redirect($this->getControllerActionName(),
+                $controllerName,
+                $this->getControllerExtensionName(),
+                $this->getArguments());
+        }
 
         // Checks if the static extension template is included
         /** @var FrontendConfigurationManager $frontendConfigurationManager */
         $frontendConfigurationManager = GeneralUtility::makeInstance(FrontendConfigurationManager::class);
         $typoScriptSetup = $frontendConfigurationManager->getTypoScriptSetup();
-        $pluginSetupName = 'tx_' . strtolower($this->request->getControllerExtensionName()) . '.';
+        $pluginSetupName = 'tx_' . strtolower($this->getControllerExtensionName()) . '.';
         if (! @is_array($typoScriptSetup['plugin.'][$pluginSetupName]['view.'])) {
-            die('Fatal error: You have to include the static template of the extension ' . $this->request->getControllerExtensionKey() . '.');
+            die('Fatal error: You have to include the static template of the extension ' . $this->getControllerExtensionKey() . '.');
         }
-
-        // Sets the controller index from the settings
-        $controllerIndex = self::getSetting('formId');
-        $dataMapFactory = $this->mainRepository->getDataMapFactory();
-        self::$controllerName = $dataMapFactory->getControllerNameFromIndex($controllerIndex);
-        $this->request->setControllerName(self::$controllerName);
-
-        // Gets the extension framework configuration
-        self::$extbaseFrameworkConfiguration = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
 
         // Sets the controller where required
         $this->frontendUserManager->setController($this);
         $this->mainRepository->setController($this);
+        $this->fieldConfigurationManager->setController($this);
+        AdditionalHeaderManager::setController($this);
 
         // Adds the style sheets
         AdditionalHeaderManager::addCascadingStyleSheets();
     }
 
     /**
-     * Gets the controller object name
+     * Gets the controller identifier.
      *
-     * @return string The controller object name
+     * @return int The controller identifier
      */
-    public static function getControllerObjectName()
+    public function getControllerIdentifier(): int
     {
-        return self::$controllerObjectName;
-    }
-
-    /**
-     * Gets the extension key
-     *
-     * @return string The extension key
-     */
-    public static function getControllerExtensionKey()
-    {
-        return self::$controllerExtensionKey;
-    }
-
-    /**
-     * Gets the controller name.
-     *
-     * @return string The controller name
-     */
-    public static function getControllerName()
-    {
-        return self::$controllerName;
-    }
-
-    /**
-     * Gets the arguments.
-     *
-     * @return string The arguments
-     */
-    public static function getOriginalArguments()
-    {
-        return self::$originalArguments;
+        return $this->getSetting('formId');
     }
 
     /**
@@ -399,30 +620,34 @@ abstract class AbstractController extends ActionController
      *
      * @return string The plugin spacename
      */
-    public static function getPluginNameSpace()
+    public function getPluginNameSpace(): string
     {
-        return 'tx_' . str_replace('_', '', self::getControllerExtensionKey()) . '_pi1';
+        return 'tx_' . str_replace('_', '', $this->getControllerExtensionKey()) . '_' . strtolower($this->getPluginName());
     }
 
     /**
      * Gets the template root paths.
      *
-     * @return string The template root paths
+     * @return array The template root paths
      */
-    public static function getTemplateRootPaths()
+    public function getTemplateRootPaths(): array
     {
-        $templateRootPaths = self::$extbaseFrameworkConfiguration['view']['templateRootPaths'];
+        $extbaseFrameworkConfiguration = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
+        $templateRootPaths = $extbaseFrameworkConfiguration['view']['templateRootPaths'];
+
         return $templateRootPaths;
     }
 
     /**
      * Gets the partial root paths.
      *
-     * @return string The partial root paths
+     * @return array The partial root paths
      */
-    public static function getPartialRootPaths()
+    public function getPartialRootPaths(): array
     {
-        $partialRootPaths = self::$extbaseFrameworkConfiguration['view']['partialRootPaths'];
+        $extbaseFrameworkConfiguration = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
+        $partialRootPaths = $extbaseFrameworkConfiguration['view']['partialRootPaths'];
+
         return $partialRootPaths;
     }
 
@@ -433,17 +658,46 @@ abstract class AbstractController extends ActionController
      *            The setting name
      * @return mixed
      */
-    public static function getSetting($settingName)
+    public function getSetting(string $settingName)
     {
-        return self::$extensionSettings[$settingName];
+        if ($this->extensionSettings === null) {
+            $this->extensionSettings = $this->settings;
+        }
+        return $this->extensionSettings[$settingName];
     }
+
+    /**
+     * Resolves the repository class name from the table name
+     *
+     * @var string $tableName
+     * @return string
+     */
+    public function resolveRepositoryClassNameFromTableName(string $tableName): string
+    {
+        if ($tableName == 'fe_groups') {
+            return \YolfTypo3\SavLibraryMvc\Domain\Repository\FrontendUserGroupRepository::class;
+        }
+        if ($tableName == 'fe_users') {
+            return \YolfTypo3\SavLibraryMvc\Domain\Repository\FrontendUserRepository::class;
+        }
+
+        // Gets the repository name
+        $repositoryName = preg_replace('/^tx_[^_]+_domain_model_(.+)$/', '$1', $tableName);
+        $repositoryName = GeneralUtility::underscoredToUpperCamelCase($repositoryName);
+
+        // Gets the repository class name
+        $repositoryClassName = preg_replace('/^(.+?)\\\\Controller\\\\.+$/', '$1\\\\Domain\\\\Repository\\\\' . $repositoryName . 'Repository', $this->getControllerObjectName());
+
+        return $repositoryClassName;
+    }
+
 
     /**
      * Gets the content object
      *
      * @return ContentObjectRenderer
      */
-    public function getContentObjectRenderer()
+    public function getContentObjectRenderer(): ContentObjectRenderer
     {
         return $this->configurationManager->getContentObject();
     }
@@ -453,9 +707,9 @@ abstract class AbstractController extends ActionController
      *
      * @param string $extensionKey
      *
-     * @return string
+     * @return array|null
      */
-    public static function getTypoScriptConfiguration($extensionKey)
+    public static function getTypoScriptConfiguration(string $extensionKey): ?array
     {
         $prefixId = 'tx_' . str_replace('_', '', $extensionKey) . '.';
         $typoScriptConfiguration = $GLOBALS['TSFE']->tmpl->setup['plugin.'][$prefixId];
@@ -467,98 +721,16 @@ abstract class AbstractController extends ActionController
     }
 
     /**
-     * Gets the icon path
+     * Gets the relative web path of a given extension.
      *
-     * @param string $fileName
-     *            The file name without extension
-     *
-     * @return string
-     */
-    public static function getIconPath($fileName)
-    {
-        // The icon directory is taken from the configuration in TS if set,
-        // else from the Resources/Icons folder in the extension if it exists,
-        // else from the default Resources/Icons in the SAV Library Plus extension if it exists
-        // File name extension is added from allowed files name extensions.
-        $libraryTypoScriptConfiguration = self::getTypoScriptConfiguration(self::LIBRARY_NAME);
-        $extensionTypoScriptConfiguration = self::getTypoScriptConfiguration(self::getControllerExtensionKey());
-        $formTypoScriptConfiguration = $extensionTypoScriptConfiguration[self::getControllerName() . '.'];
-
-        // Checks if the file name is in the iconRootPath defined by the form configuration in TS
-        $fileNameWithExtension = self::getFileNameWithExtension($formTypoScriptConfiguration['iconRootPath'] . '/', $fileName);
-        if (! empty($fileNameWithExtension)) {
-            return substr(GeneralUtility::getFileAbsFileName($formTypoScriptConfiguration['iconRootPath']), strlen(self::getSitePath())) . '/' . $fileNameWithExtension;
-        }
-
-        // If not found, checks if the file name is in the iconRootPath defined by the extension configuration in TS
-        $fileNameWithExtension = self::getFileNameWithExtension($extensionTypoScriptConfiguration['iconRootPath'] . '/', $fileName);
-        if (! empty($fileNameWithExtension)) {
-            return substr(GeneralUtility::getFileAbsFileName($extensionTypoScriptConfiguration['iconRootPath']), strlen(self::getSitePath())) . '/' . $fileNameWithExtension;
-        }
-
-        // If not found, checks if the file name is in the iconRootPath defined by the library configuration in TS
-        $fileNameWithExtension = self::getFileNameWithExtension($libraryTypoScriptConfiguration['iconRootPath'] . '/', $fileName);
-        if (! empty($fileNameWithExtension)) {
-            return substr(GeneralUtility::getFileAbsFileName($libraryTypoScriptConfiguration['iconRootPath']), strlen(self::getSitePath())) . '/' . $fileNameWithExtension;
-        }
-
-        // If not found, checks if the file name is in Resources/Icons folder of the extension
-        $extensionWebPath = self::getExtensionWebPath(self::getControllerExtensionKey());
-        $fileNameWithExtension = self::getFileNameWithExtension($extensionWebPath . self::$iconRootPath . '/', $fileName);
-        if (! empty($fileNameWithExtension)) {
-            return $extensionWebPath . self::$iconRootPath . '/' . $fileNameWithExtension;
-        }
-
-        // If not found, checks if the file name is in Resources/Icons folder of the SAV Library Mvc extension
-        $extensionWebPath = self::getExtensionWebPath(self::LIBRARY_NAME);
-        $fileNameWithExtension = self::getFileNameWithExtension($extensionWebPath . self::$iconRootPath . '/', $fileName);
-        if (! empty($fileNameWithExtension)) {
-            return $extensionWebPath . self::$iconRootPath . '/' . $fileNameWithExtension;
-        }
-
-        return '';
-    }
-
-    /**
-     * Gets the images directory
-     *
-     * @return boolean
-     */
-    public static function getImageRootPath($fileName)
-    {
-        // The images directory is taken from the configuration in TS if set,
-        // else from the Resources/Images folder in the extension if it exists,
-        // else from the default Resources/Images in the library.
-        $libraryTypoScriptConfiguration = self::getTypoScriptConfiguration(self::LIBRARY_NAME);
-        $extensionTypoScriptConfiguration = self::getTypoScriptConfiguration(self::getControllerExtensionKey());
-        $formTypoScriptConfiguration = $extensionTypoScriptConfiguration[self::getControllerName() . '.'];
-        $extensionWebPath = self::getExtensionWebPath(self::getControllerExtensionKey());
-
-        if (is_file(GeneralUtility::getFileAbsFileName($formTypoScriptConfiguration['imageRootPath'] . '/' . $fileName))) {
-            return substr(GeneralUtility::getFileAbsFileName($formTypoScriptConfiguration['imageRootPath']), strlen(self::getSitePath())) . '/';
-        } elseif (is_file(GeneralUtility::getFileAbsFileName($extensionTypoScriptConfiguration['imageRootPath'] . '/' . $fileName))) {
-            return substr(GeneralUtility::getFileAbsFileName($extensionTypoScriptConfiguration['imageRootPath']), strlen(self::getSitePath())) . '/';
-        } elseif (is_file(GeneralUtility::getFileAbsFileName($libraryTypoScriptConfiguration['imageRootPath'] . '/' . $fileName))) {
-            return substr(GeneralUtility::getFileAbsFileName($libraryTypoScriptConfiguration['imageRootPath']), strlen(self::getSitePath())) . '/';
-        } elseif (is_file($extensionWebPath . self::$imageRootPath . '/' . $fileName)) {
-            return $extensionWebPath . self::$imageRootPath . '/';
-        } else {
-            $extensionWebPath = self::getExtensionWebPath(self::LIBRARY_NAME);
-            return $extensionWebPath . self::$imageRootPath . '/';
-        }
-    }
-
-    /**
-     * Gets the relative web path of a give extension.
-     *
-     * @param string $extension
-     *            The extension
+     * @param string $extensionKey
+     *            The extension key
      *
      * @return string The relative web path
      */
-    public static function getExtensionWebPath($extension)
+    public static function getExtensionWebPath(string $extensionKey): string
     {
-        $extensionWebPath = PathUtility::getAbsoluteWebPath(ExtensionManagementUtility::extPath($extension));
+        $extensionWebPath = PathUtility::getAbsoluteWebPath(ExtensionManagementUtility::extPath($extensionKey));
         if ($extensionWebPath[0] === '/') {
             // Makes the path relative
             $extensionWebPath = substr($extensionWebPath, 1);
@@ -576,7 +748,7 @@ abstract class AbstractController extends ActionController
      *
      * @return string The file name with extension
      */
-    protected static function getFileNameWithExtension($path, $fileName)
+    protected static function getFileNameWithExtension(string $path, string $fileName): string
     {
         if (preg_match('/^[^\.]+\.\w+$/', $fileName) > 0) {
             // The file name has an extension
@@ -603,13 +775,15 @@ abstract class AbstractController extends ActionController
      *
      * @return void
      */
-    protected function setViewConfiguration(ViewInterface $view)
+    protected function setViewConfiguration($view)
     {
+        // Calls the parent function.
+        // @TODO in V12, type ViewInterface could be added in th eparameter declaration.
         parent::setViewConfiguration($view);
         // Sets the template path and file name
         $viewFunctionName = 'setTemplatePathAndFilename';
         if (method_exists($view, $viewFunctionName)) {
-            $templateRootPaths = self::getTemplateRootPaths();
+            $templateRootPaths = $this->getTemplateRootPaths();
             foreach ($templateRootPaths as $templateRootPath) {
                 $parameter = GeneralUtility::getFileAbsFileName($templateRootPath) . '/Default/' . ucfirst(str_replace('Action', '', $this->actionMethodName)) . '.html';
                 // no need to bother if there is nothing to set
@@ -628,7 +802,7 @@ abstract class AbstractController extends ActionController
      *            Arguments from the action
      * @return array
      */
-    public function getViewConfiguration($arguments = [])
+    public function getViewConfiguration(array $arguments = []): array
     {
         $viewConfiguration = $this->getViewerConfiguration()->getConfiguration($arguments);
 
@@ -638,12 +812,17 @@ abstract class AbstractController extends ActionController
     /**
      * Uncompresses a parameter string into an array
      *
-     * @param string $compressedParameters
+     * @param string|null $compressedParameters
      *            The compressed parameter
      * @return array The uncompressed parameter array
      */
-    public static function uncompressParameters($compressedParameters)
+    public static function uncompressParameters(?string $compressedParameters): array
     {
+        if ($compressedParameters === null) {
+            return [
+                'mode' => self::DEFAULT_MODE
+            ];
+        }
         $parameters = [];
         while (! empty($compressedParameters)) {
             // Reads the index
@@ -675,7 +854,7 @@ abstract class AbstractController extends ActionController
      *            The parameter array to compress
      * @return string The compressed parameter string
      */
-    public static function compressParameters($parameters)
+    public static function compressParameters(array $parameters): string
     {
         $compressedParameters = '';
 
@@ -694,11 +873,11 @@ abstract class AbstractController extends ActionController
     /**
      * Uncompresses a parameter string into an array
      *
-     * @param string $compressedParameters
+     * @param string|null $compressedParameters
      *            The compressed parameter
      * @return array The uncompressed parameter array
      */
-    public static function uncompressSubformActivePages($compressedParameters)
+    public static function uncompressSubformActivePages(?string $compressedParameters): array
     {
         $parameters = [];
         while (! empty($compressedParameters)) {
@@ -748,14 +927,14 @@ abstract class AbstractController extends ActionController
     /**
      * Changes a parameter in the compressed parameters string
      *
-     * @param string $compressedParameters
+     * @param string|null $compressedParameters
      *            The compressed parameters string
      * @param array $newParameters
      *            Array of (key => value) to change
      *
      * @return string The modified compressed parameter string
      */
-    public static function changeCompressedParameters($compressedParameters, $newParameters)
+    public static function changeCompressedParameters(?string $compressedParameters, array $newParameters): string
     {
         $uncompressParameters = self::uncompressParameters($compressedParameters);
 
@@ -802,57 +981,13 @@ abstract class AbstractController extends ActionController
     }
 
     /**
-     * Gets the versioning workspace id
-     *
-     * @return integer The versioning workspace id
-     */
-    public function getVersioningWorkspaceId()
-    {
-        return (isset($GLOBALS['TSFE']->sys_page->versioningWorkspaceId) ? $GLOBALS['TSFE']->sys_page->versioningWorkspaceId : null);
-    }
-
-    /**
-     * Gets the table name
-     *
-     * @return string
-     */
-    protected function getTableName($modelName)
-    {
-        $tableName = 'tx_' . str_replace('_', '', self::getExtensionKey()) . '_domain_model_' . GeneralUtility::camelCaseToLowerCaseUnderscored($modelName);
-        return $tableName;
-    }
-
-    /**
      * Gets the action method name
      *
      * @return string
      */
-    public function getActionMethodName()
+    public function getActionMethodName(): string
     {
         return $this->actionMethodName;
-    }
-
-    /**
-     * Generates the edit view configuration
-     *
-     * @param string $viewType
-     *            The view type
-     * @return array The folder configuration
-     */
-    protected function getViewFolders($viewType)
-    {
-        $viewFolders = $this->getFolders($viewType);
-
-        // Sets the folder key
-        $special = $this->generalManager->getGeneralConfigurationValue('special');
-        $uncompressedParameters = $this->generalManager->uncompressParameters($special);
-        if ($uncompressedParameters['folder']) {
-            $activeFolder = (empty($viewFolders) ? 0 : $uncompressedParameters['folder']);
-        } else {
-            $activeFolder = (empty($viewFolders) ? 0 : key($viewFolders));
-        }
-        $this->generalManager->setGeneralConfigurationValue('activeFolder', $activeFolder);
-        return $viewFolders;
     }
 
     /**
@@ -860,9 +995,20 @@ abstract class AbstractController extends ActionController
      *
      * @return string
      */
-    public static function getSitePath()
+    public static function getSitePath(): string
     {
         return Environment::getPublicPath() . '/';
     }
+
+    /**
+     * Gets the page id
+     *
+     * @return int
+     */
+    protected function getPageId(): int
+    {
+        // @extensionScannerIgnoreLine
+        return (int) $GLOBALS['TSFE']->id;
+    }
+
 }
-?>

@@ -53,5 +53,7 @@ Table of Contents
    :titlesonly:
 
    Introduction/Index
+   UsersManual/Index
    Configuration/Index
+   ExportingData/Index   
    Changelog/Index

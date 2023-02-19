@@ -1,5 +1,6 @@
 <?php
-namespace YolfTypo3\SavLibraryMvc\Parser;
+
+declare(strict_types=1);
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -13,10 +14,11 @@ namespace YolfTypo3\SavLibraryMvc\Parser;
  *
  * The TYPO3 project - inspiring people to share!
  */
+
+namespace YolfTypo3\SavLibraryMvc\Parser;
+
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Fluid\View\StandaloneView;
-use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 use YolfTypo3\SavLibraryMvc\Controller\DefaultController;
 
 /**
@@ -39,7 +41,7 @@ class TemplateParser
      * @param DefaultController $controller
      * @return void
      */
-    public function setController($controller)
+    public function setController(DefaultController $controller)
     {
         $this->controller = $controller;
     }
@@ -55,40 +57,30 @@ class TemplateParser
      *            The name space.
      * @return string The parsed content
      */
-    public function parse($content, $arguments = [], $nameSpace = '{namespace sav=YolfTypo3\\SavLibraryMvc\\ViewHelpers}')
+    public function parse(string $content, array $arguments = [], string $nameSpace = '{namespace sav=YolfTypo3\\SavLibraryMvc\\ViewHelpers}'): string
     {
-        // Creates the object manager
-        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+        // Do not parse if the content is empty
+        if (empty($content)) {
+            return '';
+        }
 
         // Gets a standalone view
-        $standaloneView = $objectManager->get(StandaloneView::class);
+        /** @var StandaloneView $standaloneView */
+        $standaloneView = GeneralUtility::makeInstance(StandaloneView::class);
+        $standaloneView->getRequest()->setOriginalRequest($this->controller->getRequest());
+        $standaloneView->getRequest()->setControllerExtensionName($this->controller->getControllerExtensionName());
+        $standaloneView->getRequest()->setControllerName($this->controller->getControllerName());
+        $standaloneView->getRequest()->setControllerActionName($this->controller->getControllerActionName());
 
         // Sets the template source
         $standaloneView->setTemplateSource($nameSpace . '<f:format.raw>' . $content . '</f:format.raw>');
 
-        // Sets the controller extension name
-        $standaloneView->getRequest()->setControllerExtensionName($this->controller->getRequest()
-            ->getControllerExtensionName());
-
-        // Sets the controller name
-        $standaloneView->getRequest()->setControllerName($this->controller->getRequest()
-            ->getControllerName());
-
-        // Sets the controller name
-        $standaloneView->getRequest()->setPluginName($this->controller->getRequest()
-            ->getPluginName());
-
-        // Transfers the special argument to the controller argument
-        $standaloneView->getRequest()->setArgument('special', $arguments['general']['special']);
-
-        //
-        $partialRootPaths = AbstractController::getPartialRootPaths();
+        // Sets the partial root paths
+        $partialRootPaths = $this->controller->getPartialRootPaths();
         $convertedPartialRootPaths = [];
         foreach ($partialRootPaths as $partialRootPathKey => $partialRootPath) {
             $convertedPartialRootPaths[$partialRootPathKey] = GeneralUtility::getFileAbsFileName($partialRootPath);
         }
-
-        // Sets the partial root paths
         $standaloneView->setPartialRootPaths($convertedPartialRootPaths);
 
         // Assigns the arguments
@@ -100,4 +92,3 @@ class TemplateParser
         return $standaloneView->render();
     }
 }
-?>

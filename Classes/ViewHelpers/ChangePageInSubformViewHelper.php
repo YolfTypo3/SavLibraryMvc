@@ -1,5 +1,4 @@
 <?php
-namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -13,6 +12,9 @@ namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
  *
  * The TYPO3 project - inspiring people to share!
  */
+
+namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
+
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 
@@ -42,11 +44,8 @@ class ChangePageInSubformViewHelper extends AbstractViewHelper
         // Gets the arguments
         $arguments = $this->arguments['arguments'];
 
-        // Gets the special parameter from the controller arguments
-        $controllerArguments = $this->renderingContext->getControllerContext()
-            ->getRequest()
-            ->getArguments();
-        $special = $controllerArguments['special'];
+        // Gets the special parameter
+        $special = $this->templateVariableContainer->get('general')['special'];
 
         // Gets the uncompressed subform active pages
         $uncompressedParameters = AbstractController::uncompressParameters($special);
@@ -90,4 +89,3 @@ class ChangePageInSubformViewHelper extends AbstractViewHelper
         return $special;
     }
 }
-?>

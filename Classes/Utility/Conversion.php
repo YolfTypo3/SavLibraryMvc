@@ -1,5 +1,6 @@
 <?php
-namespace YolfTypo3\SavLibraryMvc\Utility;
+
+declare(strict_types=1);
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -14,6 +15,8 @@ namespace YolfTypo3\SavLibraryMvc\Utility;
  * The TYPO3 project - inspiring people to share!
  */
 
+namespace YolfTypo3\SavLibraryMvc\Utility;
+
 /**
  * Utilities for converting variables
  */
@@ -24,9 +27,9 @@ class Conversion
      *
      * @param array $booleanArray
      *            Array of booleans
-     * @return integer Integer representing the array of booleans
+     * @return int Integer representing the array of booleans
      */
-    static public function booleanArrayToInteger($booleanArray)
+    static public function booleanArrayToInteger(array $booleanArray): int
     {
         $result = 0;
         foreach ($booleanArray as $key => $value) {
@@ -40,15 +43,15 @@ class Conversion
     /**
      * Transforms an integer to an array of booleans
      *
-     * @param integer $integer
+     * @param int $integer
      *            Integer to convert
      * @return array Array of booleans
      */
-    static public function integerToBooleanArray($integer)
+    static public function integerToBooleanArray(int $integer): array
     {
         $result = [];
         while ($integer) {
-            $result[] = $integer % 2;
+            $result[] = (bool) ($integer % 2);
             $integer = (int) ($integer / 2);
         }
         return $result;
@@ -61,7 +64,7 @@ class Conversion
      *            Array of string
      * @return string The comma_separaated string
      */
-    static public function stringArrayToCommaSeparatedString($stringArray)
+    static public function stringArrayToCommaSeparatedString(array $stringArray): string
     {
         return implode(',', $stringArray);
     }
@@ -69,11 +72,10 @@ class Conversion
     /**
      * Transforms a comma-separated string into an array of string
      *
-     * @param array $integer
-     *            Integer to convert
-     * @return array Array of booleans
+     * @param string $commaSeparatedString
+     * @return array Array of string
      */
-    static public function commaSeparatedStringToStringArray($commaSeparatedString)
+    static public function commaSeparatedStringToStringArray(string $commaSeparatedString): array
     {
         return explode(',', $commaSeparatedString);
     }
@@ -85,7 +87,7 @@ class Conversion
      *            The string to convert
      * @return string The string in upper Camel case
      */
-    static public function upperCamel($string)
+    static public function upperCamel(string $string): string
     {
         $string = str_replace(' ', '_', $string);
         $parts = explode('_', $string);
@@ -102,16 +104,9 @@ class Conversion
      *            The string to convert
      * @return string The string in lower Camel case
      */
-    static public function lowerCamel($string)
+    static public function lowerCamel(string $string): string
     {
         $output = self::upperCamel($string);
-        if (function_exists('lcfirst')) {
-            return lcfirst($output);
-        } else {
-            $output[0] = strtolower($output[0]);
-            return $output;
-        }
+        return lcfirst($output);
     }
 }
-
-?>

@@ -1,5 +1,4 @@
 <?php
-namespace YolfTypo3\SavLibraryMvc\ViewHelpers\Form;
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -13,6 +12,8 @@ namespace YolfTypo3\SavLibraryMvc\ViewHelpers\Form;
  *
  * The TYPO3 project - inspiring people to share!
  */
+
+namespace YolfTypo3\SavLibraryMvc\ViewHelpers\Form;
 
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -47,9 +48,7 @@ class RteViewHelper extends TextareaViewHelper
         $this->registerFieldNameForFormTokenGeneration($name);
         $this->setRespectSubmittedDataValue(true);
 
-        $GLOBALS['TSFE']->beUserLogin = true;
         $GLOBALS['BE_USER'] = GeneralUtility::makeInstance(BackendUserAuthentication::class);
-        $GLOBALS['BE_USER']->frontendEdit = 1;
         $GLOBALS['BE_USER']->uc['edit_RTE'] = true;
 
         $richTextEditorRenderer = RichTextEditorCompatibility::getRichTextEditorRenderer();
@@ -60,5 +59,3 @@ class RteViewHelper extends TextareaViewHelper
         return  $richTextEditorRenderer->render();
     }
 }
-
-?>

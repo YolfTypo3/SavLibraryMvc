@@ -1,5 +1,4 @@
 <?php
-namespace YolfTypo3\SavLibraryMvc\ViewConfiguration;
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -13,6 +12,9 @@ namespace YolfTypo3\SavLibraryMvc\ViewConfiguration;
  *
  * The TYPO3 project - inspiring people to share!
  */
+
+namespace YolfTypo3\SavLibraryMvc\ViewConfiguration;
+
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 
 /**
@@ -28,7 +30,7 @@ class SingleViewConfiguration extends AbstractViewConfiguration
      *            Arguments from the action
      * @return array The view configuration
      */
-    public function getConfiguration($arguments)
+    public function getConfiguration(array $arguments): array
     {
         // Gets the special parameters from arguments, uncompresses it and modifies it if needed
         $special = $arguments['special'];
@@ -45,43 +47,49 @@ class SingleViewConfiguration extends AbstractViewConfiguration
         // Gets the object from the uid
         $this->object = $mainRepository->findByUid($uid);
 
+        // Gets the view identifier
+        $viewIdentifier = $this->getViewIdentifier();
+
+        // Gets the field configuration manager
+        $fieldConfigurationManager = $this->controller->getFieldConfigurationManager();
+
         // Sets general configuration values
-        $this->addGeneralViewConfiguration('extensionKey', AbstractController::getControllerExtensionKey());
-        $this->addGeneralViewConfiguration('controllerName', AbstractController::getControllerName());
+        $this->addGeneralViewConfiguration('extensionKey', $this->controller->getControllerExtensionKey());
+        $this->addGeneralViewConfiguration('controllerName', $this->controller->getControllerName());
         $this->addGeneralViewConfiguration('special', $special);
         $this->addGeneralViewConfiguration('contentUid', $this->controller->getContentObjectRenderer()->data['uid']);
         $this->addGeneralViewConfiguration('currentMode', $uncompressedParameters['mode']);
         $userIsAllowedToInputData = $this->controller->getFrontendUserManager()->userIsAllowedToInputData() && ! $mainRepository->isInDraftWorkspace($uid);
         $this->addGeneralViewConfiguration('userIsAllowedToInputData', $userIsAllowedToInputData);
         $this->addGeneralViewConfiguration('isInDraftWorkspace', $mainRepository->isInDraftWorkspace($uid));
+        $this->addGeneralViewConfiguration('activeFolder', $this->controller->getActiveFolder($viewIdentifier, $uncompressedParameters['folder']));
 
-        // Gets the fields configuration
-        $this->fieldConfigurationManager->setStaticFieldsConfiguration($this->getViewIdentifier(), $mainRepository);
+        // Sets the fields configuration
+        $fieldConfigurationManager->setStaticFieldsConfiguration($viewIdentifier, $mainRepository);
 
         // Adds the dynamic configuration
-        $this->fieldConfigurationManager->addDynamicFieldsConfiguration($this->object);
-
-        // Gets the view identifier
-        $viewIdentifier = $this->getViewIdentifier();
-
-        // Adds the title
-        $title = $this->parseTitle($viewIdentifier, [
-            'general' => $this->getGeneralViewConfiguration(),
-            'fields' => $this->fieldConfigurationManager::getFieldsConfiguration()
-        ]);
-        $this->addGeneralViewConfiguration('title', $title);
+        $fieldConfigurationManager->addDynamicFieldsConfiguration($this->object);
 
         // Gets the folders
-        $viewFolders = $this->getViewFolders($viewIdentifier);
+        $viewFolders = $this->controller->getFolders($viewIdentifier);
+
+        // Adds the title
+        $title = $this->parseTitle(
+            $viewIdentifier,
+            [
+                'general' => $this->getGeneralViewConfiguration(),
+                'field' => $fieldConfigurationManager->getFieldsConfiguration()
+            ]
+        );
+        $this->addGeneralViewConfiguration('title', $title);
 
         // Sets the view configuration
         $viewConfiguration = [
             'general' => $this->getGeneralViewConfiguration(),
-            'fields' => $this->fieldConfigurationManager::getFieldsConfiguration(),
+            'fields' => $fieldConfigurationManager->getFieldsConfiguration(),
             'folders' => $viewFolders
         ];
 
         return $viewConfiguration;
     }
 }
-?>

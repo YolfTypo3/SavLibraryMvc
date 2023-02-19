@@ -1,1 +1,0 @@
-<f:form.select property="{field.name}"  options="{field.items->sav:BuildOptionsForSelectorbox(extensionName:general.extensionName)}" value="{field.value}" additionalAttributes="{onchange:'document.changed=1;'}"/>

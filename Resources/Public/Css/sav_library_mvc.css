@@ -58,9 +58,13 @@
     padding: 0;
 }
 
-.savLibraryMvc li {
+.savLibraryMvc .label {
+    color: inherit;
+}
+
+.savLibraryMvc .view li {
     float: left;
-    margin: 0;
+    margin: 0 ;
     padding: 0;
 }
 
@@ -95,7 +99,7 @@
     padding: 0;
 }
 
-.savLibraryMvc ul {
+.savLibraryMvc .view ul {
     float: left;
     margin: 0;
     padding: 0;
@@ -105,14 +109,40 @@
 /**
  * Errors or messages
  */
+.savLibraryMvc ul.errors {
+	all: inherit;
+	list-style: inside;
+    color: red;
+}
+
+.savLibraryMvc ul.errors li {
+    list-style: inside;
+    background: none;
+    color: red;
+    font-weight: bold;
+    padding: 0;
+} 
+.savLibraryMvc ul.errors li a {
+    float: none;
+}
+
 .savLibraryMvc div.message {
     margin-bottom: 10px;
 }
 
 .savLibraryMvc div.message li.alert-danger {
+	list-style: none;
+    background: none;
     background-color: inherit;
     clear: left;
     color: red;
+    padding: 0;
+    margin: 0;
+    border:none;
+}
+
+.savLibraryMvc div.message li.alert-danger p.alert-message{
+    color:inherit;
 }
 
 .savLibraryMvc div.message li.message {
@@ -120,23 +150,101 @@
     font-weight: bold;
 }
 
+.savLibraryMvc .view div.item.deleteWarning {
+    background-color: #ffff00 !important;
+}
+
+.savLibraryMvc .view div.subformItem.deleteWarning div.item {
+    background-color: #ffff00 !important;
+}
+
+.savLibraryMvc .view div.file.deleteWarning {
+    background-color: #ffff00 !important;
+}
 /**
  * Icons
  */
+.savLibraryMvc .icon-size-small {
+    width: 18px;
+    height: 18px;
+    padding: 0px 1px 0px 1px;
+    margin: 0px;
+    border-width: 0px;
+} 
+.savLibraryMvc .icon .icon-markup {
+    width: 100%;
+    height: 100%;
+}  
+.savLibraryMvc .icon svg {
+    width: 100%;
+    height: 100%;
+}  
+
+.savLibraryMvc div.titleBar svg {
+    filter: invert(17%) sepia(69%) saturate(3278%) hue-rotate(227deg) brightness(73%) contrast(130%);
+    -webkit-filter: invert(17%) sepia(69%) saturate(3278%) hue-rotate(227deg) brightness(73%) contrast(130%);   
+}
+
+.savLibraryMvc div.titleBar div.orderAsc {
+    margin-top: -3px;
+}
+
+.savLibraryMvc div.titleBar div.orderAsc svg {
+    filter: invert(10%) sepia(50%) saturate(5929%) hue-rotate(354deg) brightness(92%) contrast(116%);
+    -webkit-filter: invert(10%) sepia(50%) saturate(5929%) hue-rotate(354deg) brightness(92%) contrast(116%);   
+}
+
+.savLibraryMvc div.titleBar div.orderDesc {
+	margin-top: -5px;
+}
+
+.savLibraryMvc div.titleBar div.orderDesc svg {
+    filter: invert(10%) sepia(50%) saturate(5929%) hue-rotate(354deg) brightness(92%) contrast(116%);
+    -webkit-filter: invert(10%) sepia(50%) saturate(5929%) hue-rotate(354deg) brightness(92%) contrast(116%);   
+}
+
+.savLibraryMvc div.titleBar div.orderAscSelected {
+    margin-top: -3px;
+}
+
+.savLibraryMvc div.titleBar div.orderAscSelected svg {
+    filter: invert(16%) sepia(92%) saturate(6643%) hue-rotate(358deg) brightness(105%) contrast(110%);
+    -webkit-filter: invert(16%) sepia(92%) saturate(6643%) hue-rotate(358deg) brightness(105%) contrast(110%);
+}
+
+.savLibraryMvc div.titleBar div.orderDescSelected {
+    margin-top: -5px;
+}
+
+.savLibraryMvc div.titleBar div.orderDescSelected svg {
+    filter: invert(16%) sepia(92%) saturate(6643%) hue-rotate(358deg) brightness(105%) contrast(110%);
+    -webkit-filter: invert(16%) sepia(92%) saturate(6643%) hue-rotate(358deg) brightness(105%) contrast(110%);
+}
+
+.savLibraryMvc div.extensionFooter svg {
+    filter: invert(17%) sepia(69%) saturate(3278%) hue-rotate(227deg) brightness(73%) contrast(130%);
+    -webkit-filter: invert(17%) sepia(69%) saturate(3278%) hue-rotate(227deg) brightness(73%) contrast(130%);
+}
+
+.savLibraryMvc .listView .items div.itemIconLeft svg {
+    filter: invert(17%) sepia(69%) saturate(3278%) hue-rotate(227deg) brightness(73%) contrast(130%);
+    -webkit-filter: invert(17%) sepia(69%) saturate(3278%) hue-rotate(227deg) brightness(73%) contrast(130%);
+}
+
+.savLibraryMvc .editView .items div.itemIconLeft svg {
+    filter: invert(17%) sepia(69%) saturate(3278%) hue-rotate(227deg) brightness(73%) contrast(130%);
+    -webkit-filter: invert(17%) sepia(69%) saturate(3278%) hue-rotate(227deg) brightness(73%) contrast(130%);
+}
+
+.savLibraryMvc .editView .items .item div.field div.required {
+    float:right;   
+}
+
 .savLibraryMvc img {
     float: left;
     padding: 0px 1px 0px 1px;
     margin: 0px;
     border-width: 0px;
-}
-
-.savLibraryMvc img.toggleModeButton {
-    width: 18px;
-    height: 16px;
-}
-
-.savLibraryMvc img.edit {
-    margin: 2px 0px 0px 0px;
 }
 
 .savLibraryMvc img.print {
@@ -153,28 +261,6 @@
     padding-right: 5px;
 }
 
-.savLibraryMvc img.new {
-    width: 22px;
-    height: 16px;
-}
-
-.savLibraryMvc img.orderAsc {
-    padding: 3px 5px 0px 5px;
-}
-
-.savLibraryMvc img.orderDesc {
-    padding: 3px 5px 0px 5px;
-}
-
-.savLibraryMvc img.orderAscAbove {
-    padding: 3px 5px 0px 5px;
-}
-
-.savLibraryMvc img.orderDescBelow {
-    clear: left;
-    padding: 3px 5px 0px 5px;
-}
-
 .savLibraryMvc img.checkboxNotSelected {
     padding: 0px;
 }
@@ -184,95 +270,21 @@
     height: 16px;
 }
 
-.savLibraryMvc input.save {
-    background-image: url(../Icons/save.gif);
-    background-position: 0px 0px;
-    background-repeat: no-repeat;
-    width: 21px;
-    height: 16px;
-    border: 0;
-    cursor: pointer;
+.savLibraryMvc button[type=submit] {
+	background: none;
+	border: none;
+	width: 18px;
+	height: 18px;
+	padding: 0px;
+	margin: 0px;	
+	float: left;
+	cursor: pointer;
 }
 
-.savLibraryMvc input.saveAndClose {
-    background-image: url(../Icons/saveAndClose.gif);
-    background-position: 0px 0px;
-    background-repeat: no-repeat;
-    width: 21px;
-    height: 16px;
-    border: 0;
-    cursor: pointer;
+.savLibraryMvc button.exportExecute {
+    background-color: red;   
 }
 
-.savLibraryMvc input.saveAndShow {
-    background-image: url(../Icons/saveAndShow.gif);
-    background-position: 0px 0px;
-    background-repeat: no-repeat;
-    width: 21px;
-    height: 16px;
-    border: 0;
-    cursor: pointer;
-}
-
-.savLibraryMvc input.saveAndNew {
-    background-image: url(../Icons/saveAndNew.gif);
-    background-position: 0px 0px;
-    background-repeat: no-repeat;
-    width: 21px;
-    height: 16px;
-    border: 0;
-    cursor: pointer;
-}
-
-.savLibraryMvc input.exportokButton {
-    float: left;
-    padding-right: 5px;
-}
-
-.savLibraryMvc input.exportQueryMode {
-    float: left;
-    padding-left: 3px;
-}
-
-.savLibraryMvc input.exportToggleMode {
-    float: left;
-    padding-left: 3px;
-}
-
-.savLibraryMvc input.submitButton {
-    font-size: 9px;
-    margin-top: 1px;
-}
-
-.savLibraryMvc img.rightArrowButtonSubForm {
-    float: none;
-    padding-left: 2px;
-    margin: 0px;
-}
-
-.savLibraryMvc img.leftArrowButtonSubForm {
-    float: none;
-    padding-left: 2px;
-    margin: 0px;
-}
-
-.savLibraryMvc div.itemIconLeft img.deleteItemButton {
-    float: left;
-    padding: 1px 0px 1px 0px;
-    margin: 0px;
-}
-
-.savLibraryMvc div.itemIconLeft img.upButton {
-    float: left;
-    padding: 1px 0px 1px 1px;
-    margin: 0px;
-}
-
-.savLibraryMvc div.itemIconLeft img.downButton {
-    float: left;
-    padding: 1px 1px 1px 0px;
-    margin: 0px;
-}
 
 /**
  * Special tags 
@@ -318,6 +330,10 @@
     background-color: #a9699C;
 }
 
+.savLibraryMvc .titleBar div.titleIcons {
+	width: 100%;
+}
+
 .savLibraryMvc .titleBar div.titleIconLeft {
     padding: 2px 4px 2px 0px;
 }
@@ -330,16 +346,22 @@
     float: left;
 }
 
+.savLibraryMvc .titleBar div.titleIconRight {
+    float: right;
+    padding: 2px;
+}
+
+.savLibraryMvc .subform .titleBar div.titleIconRight {
+    float: right;
+    padding: 2px;
+}
+
 .savLibraryMvc .titleBar div.titleLabel {
     color: #ffffff;
     font-size: 115%;
     font-weight: bold;
     vertical-align: middle;
-    padding: 0px 4px 0px 4px;
-}
-
-.savLibraryMvc .titleBar .titleLabel span {
-    
+    padding: 0px 0px 3px 3px;
 }
 
 .savLibraryMvc .titleBar .titleLabel li {
@@ -362,16 +384,6 @@
 
 .savLibraryMvc .titleBar .titleLabel li .orderAscDesc {
     width: 10px;
-}
-
-.savLibraryMvc .titleBar div.titleIconRight {
-    float: right;
-    padding: 2px;
-}
-
-.savLibraryMvc .subform .titleBar div.titleIconRight {
-    float: right;
-    padding: 2px;
 }
 
 /**
@@ -429,53 +441,25 @@
     text-align: center;
 }
 
-.savLibraryMvc .extensionFooter div.extensionFooterIconRight {
-    float: right;
-    padding: 2px;
+.savLibraryMvc div.extensionFooter span {
+	float:none;
+	display:inline-block;
 }
 
 .savLibraryMvc .extensionFooter a {
-    float: none;
+    float: none; 
 }
 
 .savLibraryMvc .extensionFooter a.selected {
-    vertical-align: 4px;
-    color: #EA6900;
+    font-weight: bold;
+    font-size:120%;
+    vertical-align: 4px; 
 }
 
 .savLibraryMvc .extensionFooter a.notSelected {
-    vertical-align: 4px;
+    font-weight: bold;
+    vertical-align: 4px; 
 }
-
-.savLibraryMvc .extensionFooter img {
-    float: none;
-    margin: 0;
-}
-
-.savLibraryMvc .extensionFooter img.previousPage {
-    padding-right: 2px;
-}
-
-.savLibraryMvc .extensionFooter img.nextPage {
-    padding-left: 2px;
-}
-
-.savLibraryMvc .extensionFooter img.backwardFirstPage {
-    padding-right: 2px;
-}
-
-.savLibraryMvc .extensionFooter img.backwardPage {
-    padding-right: 2px;
-}
-
-.savLibraryMvc .extensionFooter img.forwardPage {
-    padding-left: 2px;
-}
-
-.savLibraryMvc .extensionFooter img.forwardLastPage {
-    padding-left: 2px;
-}
-
 /**
  * Views
  */
@@ -483,30 +467,25 @@
     margin: 0 0 15px 0;
     overflow: hidden;
     padding: 1px;
-}
-
-/**
-     * List view, Form view, Form Admin view, Print view
-     */
-.savLibraryMvc div.listHidden {
-    display: none;
-}
-
-.savLibraryMvc div.listView, .savLibraryMvc div.formView, .savLibraryMvc div.formAdminView,
-    .savLibraryMvc div.printView {
     width: 100%;
-    width: calc(100% - 2px);
     border: 1px #000099 solid;
     background-color: #f1fbfd;
 }
 
-.savLibraryMvc .listView div.items, .savLibraryMvc .formView div.items,
+/**
+ * List view, Form view, Form Admin view, Print view
+ */
+.savLibraryMvc div.listHidden {
+    display: none;
+}
+
+.savLibraryMvc div.view div.items, .savLibraryMvc .listView div.items, .savLibraryMvc .formView div.items,
     .savLibraryMvc .formAdminView div.items, .savLibraryMvc .printView div.items {
     width: 100%;
     background-color: #ffffff;
 }
 
-.savLibraryMvc .listView .items div.item, .savLibraryMvc .formView .items div.item,
+.savLibraryMvc .view .items div.item,.savLibraryMvc .listView .items div.item, .savLibraryMvc .formView .items div.item,
     .savLibraryMvc .formAdminView .items div.item, .savLibraryMvc .printView .items div.item {
     width: 100%;
     border-top: 1px #ddeeee solid;
@@ -525,16 +504,10 @@
     width: 18px;
 }
 
-.savLibraryMvc .listView .items .item div.value, .savLibraryMvc .formView .items .item div.value,
-    .savLibraryMvc .formAdminView .items .item div.value, .savLibraryMvc .printView .items .item div.value {
-    
-}
-
 .savLibraryMvc .listView ul, .savLibraryMvc .formView ul, .savLibraryMvc .formAdminView ul,
     .savLibraryMvc .printView ul {
     padding : inherit;
     margin: inherit;
-    
 }
 
 .savLibraryMvc .listView li, .savLibraryMvc .formView li, .savLibraryMvc .formAdminView li,
@@ -585,8 +558,8 @@
 }
 
 /**
-     * Form view specific configuration 
-     */
+ * Form view specific configuration 
+ */
 .savLibraryMvc .formView div.extensionFooter, .savLibraryMvc .formAdminView div.extensionFooter {
     background-color: #9999cc;
 }
@@ -741,16 +714,8 @@
     clear: left;
 }
 
-.savLibraryMvc .singleView .field div.radioButton {
-    
-}
-
 .savLibraryMvc .singleView .field .radioButton span.radioButtonMessage {
     margin: 0 5px 0 5px;
-}
-
-.savLibraryMvc .singleView .field div.checkbox {
-    
 }
 
 .savLibraryMvc .singleView .field .richText {
@@ -781,10 +746,6 @@
 
 .savLibraryMvc .singleView .field .checkbox span.checkboxNotSelected {
     width: 14px;
-}
-
-.savLibraryMvc .singleView .field .checkbox span.checkboxMessage {
-    
 }
 
 .savLibraryMvc .singleView div.block {
@@ -837,8 +798,8 @@
 }
 
 /**
-     * edit view
-     */
+ * edit view
+ */
 .savLibraryMvc div.editView {
     width: 100%;
     width: calc(100% - 2px);
@@ -860,13 +821,10 @@
     margin: 1px 0 0 0;
 }
 
-.savLibraryMvc .editView .items .item div.field {
-    
-}
 
 /**
-     * edit view field
-     */
+ * edit view field
+*/
 .savLibraryMvc .editView .field div.label {
     width: 100px;
     border: 0px #ddeeee solid;
@@ -897,19 +855,17 @@
 
 .savLibraryMvc .editView .field .value input {
     width: inherit;
+    position:relative;
 }
 
 .savLibraryMvc .editView .field .value div.file {
     clear: left;
     width: inherit;
+    padding: 3px 0 3px 0;
 }
 
 .savLibraryMvc .editView .field .value div.file input.fileText {
     margin-right: 3px;
-}
-
-.savLibraryMvc .editView .field .value div.file input.fileInput {
-    
 }
 
 .savLibraryMvc .editView .field .value div.file span.fileLink {
@@ -927,6 +883,7 @@
 
 .savLibraryMvc .editView .field .value div.checkbox {
     width: inherit;
+    margin: 0px;    
 }
 
 .savLibraryMvc .editView .field .value .checkbox input {
@@ -935,14 +892,11 @@
 
 .savLibraryMvc .editView .field .value .checkbox span {
     padding: 0 5px 0 5px;
+    margin: 0px; 
 }
 
 .savLibraryMvc .editView .field .value div.radioButton {
     width: inherit;
-}
-
-.savLibraryMvc .editView .field .value .radioButton input {
-    
 }
 
 .savLibraryMvc .editView .field .value .radioButton span {
@@ -1007,16 +961,16 @@
 }
 
 .savLibraryMvc .editView .items div.itemIconLeft {
-    width: 35px;
+    width: 37px;
     padding: 2px;
+}
+
+.savLibraryMvc .editView .items div.itemIconLeft div.updown{
+    width: 16px;
 }
 
 .savLibraryMvc .editView .subform .items div.item {
     margin-bottom: 1px;
-}
-
-.savLibraryMvc .editView .subform .items .item div.field {
-    
 }
 
 .savLibraryMvc .editView .subform .items .item .field div.label {
@@ -1040,27 +994,8 @@
 }
 
 /**
-     * export view
-     */
-.savLibraryMvc div.exportView {
-    width: 100%;
-    border: 1px #000099 solid;
-    background-color: #f1fbfd;
-}
-
-.savLibraryMvc .exportView div.items {
-    width: 100%;
-    background-color: #ffffff;
-    margin: 2px 0 0 0;
-}
-
-.savLibraryMvc .exportView .items div.item {
-    width: 100%;
-    border-top: 1px #ddeeee solid;
-    border-bottom: 1px #ddeeee solid;
-    background-color: #ffffff;
-    margin: 1px 0 0 0;
-}
+ * export view
+ */
 
 /**
  * Export view general fields  
@@ -1081,16 +1016,21 @@
 }
 
 /** 
-     * Export view special fields 
-     */
+ * Export view special fields 
+ */
 .savLibraryMvc .exportView .generatedFileLink a {
     float: left;
     padding: 5px;
     margin: 0px;
 }
 
-.savLibraryMvc .exportView .field input.xmlFile {
+.savLibraryMvc .exportView .field input.templateFile {
     width: 500px;
+}
+
+.savLibraryMvc .exportView .field textarea.variables {
+    width: 500px;
+    min-height: 100px;
 }
 
 .savLibraryMvc .exportView .field input.xsltFile {
@@ -1184,39 +1124,3 @@
     clear: left;
 }
 
-
-/** 
-* Keeps htmlarea properties 
-*/
-.savLibraryMvc div.htmlarea table {
-    background: inherit !important;
-    width: auto !important;
-    margin: inherit !important;
-    position: inherit !important;
-}
-
-.savLibraryMvc div.htmlarea tr {
-    background: inherit !important;
-    margin: inherit !important;
-    padding: inherit !important;
-}
-
-.savLibraryMvc div.htmlarea td {
-    background: inherit !important;
-    margin: inherit !important;
-    padding: inherit !important;
-}
-
-.savLibraryMvc div.htmlarea label {
-    font: inherit !important;
-    margin: inherit !important;
-}
-
-.savLibraryMvc div.htmlarea select {
-    display: inline-block;
-    float: none;
-}
-
-.savLibraryMvc div.htmlarea .btn-toolbar .btn-group {
-    margin: 1px 1px;
-}

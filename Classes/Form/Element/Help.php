@@ -1,5 +1,6 @@
 <?php
-namespace YolfTypo3\SavLibraryMvc\Form\Element;
+
+declare(strict_types=1);
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -13,9 +14,12 @@ namespace YolfTypo3\SavLibraryMvc\Form\Element;
  *
  * The TYPO3 project - inspiring people to share!
  */
+
+namespace YolfTypo3\SavLibraryMvc\Form\Element;
+
 use TYPO3\CMS\Backend\Form\Element\AbstractFormElement;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Lang\LanguageService;
+use TYPO3\CMS\Core\Localization\LanguageService;
 
 /**
  * Help rendering type
@@ -31,27 +35,26 @@ class Help extends AbstractFormElement
     protected $extensionKey = 'sav_library_mvc';
 
     /**
-     * The TYPO3 documentaion root URL
+     * The TYPO3 documentation root URL
      *
-     * @var string
+     * @var array
      */
-    protected $documentationRootUrl = 'https://docs.typo3.org/typo3cms/extensions/';
+    protected $documentationRootUrl = 'https://docs.typo3.org/p/yolftypo3/sav-library-mvc/master/en-us/';
 
-    public function render()
+    public function render(): array
     {
         $parameters = $this->data['parameterArray']['fieldConf']['config']['parameters'];
         $tag = $parameters['tag'];
         $section = $parameters['section'];
 
-        $documentationUrl = $this->documentationRootUrl . $this->extensionKey . '/stable/' . $section . '/Index.html#' . $tag;
+        $documentationUrl = $this->documentationRootUrl . $section . '/Index.html#' . $tag;
 
         $languageService = GeneralUtility::makeInstance(LanguageService::class);
         $message = '<b>' . $languageService->sL('LLL:EXT:' . $this->extensionKey . '/Resources/Private/Language/locallang.xlf:extensionFlexform.help') . '</b>';
 
         $result = $this->initializeResultArray();
         $result['html'] = '<a target="_blank" href="' . $documentationUrl . '">' . $message . '</a>';
+
         return $result;
     }
 }
-
-?>

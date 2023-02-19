@@ -17,8 +17,13 @@
         "role": "Developer"
         }
     ],
+    "extra": {
+        "typo3/cms": {
+            "extension-key": "sav_library_mvc"
+        }
+    },      
     "require": {
-        "typo3/cms-core": "^9.5.17"
+        "typo3/cms-core": "^10.4.18||^11.5"
     },
     "autoload": {
         "psr-4": {

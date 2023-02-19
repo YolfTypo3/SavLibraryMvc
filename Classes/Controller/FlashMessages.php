@@ -1,5 +1,6 @@
 <?php
-namespace YolfTypo3\SavLibraryMvc\Controller;
+
+declare(strict_types=1);
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -13,6 +14,9 @@ namespace YolfTypo3\SavLibraryMvc\Controller;
  *
  * The TYPO3 project - inspiring people to share!
  */
+
+namespace YolfTypo3\SavLibraryMvc\Controller;
+
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
@@ -60,9 +64,9 @@ class FlashMessages
      * @param int $severity
      *            The message severity
      *
-     * @return array object
+     * @return FlashMessage
      */
-    protected static function createFlashMessage($key, $arguments, $severity)
+    protected static function createFlashMessage($key, $arguments, $severity): FlashMessage
     {
         return GeneralUtility::makeInstance(FlashMessage::class, self::translate($key, $arguments), '', $severity, true);
     }
@@ -75,9 +79,9 @@ class FlashMessages
      * @param array $arguments
      *            The argument array
      *
-     * @return void
+     * @return string|null
      */
-    public static function translate($key, $arguments = null)
+    public static function translate($key, $arguments = null): ?string
     {
         return LocalizationUtility::translate($key, 'sav_library_mvc', $arguments);
     }
@@ -131,7 +135,7 @@ class FlashMessages
      *
      * @return boolean Returns always false so that it can be used in return statements
      */
-    public static function addError($key, $arguments = null)
+    public static function addError($key, $arguments = null): bool
     {
         self::$errorRegisteredKeys[] = $key;
         $flashMessage = self::createFlashMessage($key, $arguments, FlashMessage::ERROR);
@@ -149,12 +153,12 @@ class FlashMessages
      *
      * @return boolean Returns always false so that it can be used in return statements
      */
-    public static function addErrorOnce($key, $arguments = null)
+    public static function addErrorOnce($key, $arguments = null): bool
     {
         // If the message already exists, just return
         foreach (self::$errorRegisteredKeys as $errorRegisteredKey) {
             if ($errorRegisteredKey == $key) {
-                return;
+                return false;
             }
         }
         // If we are here, the key was not found
@@ -162,4 +166,3 @@ class FlashMessages
         return false;
     }
 }
-?>

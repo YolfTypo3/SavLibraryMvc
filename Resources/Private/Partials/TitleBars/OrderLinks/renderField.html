@@ -1,8 +1,8 @@
 {namespace sav=YolfTypo3\SavLibraryMvc\ViewHelpers}
 <f:for each="{field.orderLinkInTitleSetup->sav:explode(delimiter:':')}"
-	as="orderLink">
-	<f:if condition="{orderLink}">
-		<f:render partial="TitleBars/OrderLinks/{orderLink}.html"
-			arguments="{field:field, general:general}" />
-	</f:if>
+    as="orderLink">
+    <f:if condition="{orderLink}">
+        <f:render partial="TitleBars/OrderLinks/{orderLink}.html"
+            arguments="{_all}" />
+    </f:if>
 </f:for>

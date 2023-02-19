@@ -1,5 +1,6 @@
 <?php
-namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
+
+declare(strict_types=1);
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -13,7 +14,12 @@ namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
  *
  * The TYPO3 project - inspiring people to share!
  */
+
+namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
+
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 
 /**
  * Removes empty lines
@@ -22,6 +28,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
  */
 class RemoveEmptyLinesViewHelper extends AbstractViewHelper
 {
+    use CompileWithRenderStatic;
 
     /**
      * Initializes arguments.
@@ -29,24 +36,39 @@ class RemoveEmptyLinesViewHelper extends AbstractViewHelper
     public function initializeArguments()
     {
         $this->registerArgument('value', 'string', 'String', false, null);
+        $this->registerArgument('convertAmpersand', 'bool', '', false, false);
     }
 
     /**
-     * Remove empty lines
+     * Renders the viewhelper
      *
-     * @return string The altered string.
+     * @param array $arguments
+     * @param \Closure $renderChildrenClosure
+     * @param RenderingContextInterface $renderingContext
+     *
+     * @return array The range array
      */
-    public function render()
+    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
     {
         // Gets the arguments
-        $value = $this->arguments['value'];
+        $value = $arguments['value'];
+        $convertAmpersand = $arguments['convertAmpersand'];
 
         if ($value === null) {
-            $value = $this->renderChildren();
+            $value = $renderChildrenClosure();
+        }
+        $parterns = [];
+        $replace = [];
+
+        $parterns[] = '/([ \t]*[\r\n]){2,}/';
+        $replace[] = chr(10);
+        if ($convertAmpersand) {
+            $parterns[] = '/&(?!(?:amp;|quot;|gt;|lt;))/';
+            $replace[] = '&amp;';
         }
 
-        $value = preg_replace('/([ \t]*[\r\n]){2,}/', chr(10), $value);
-        return $value;
+        $value = preg_replace($parterns, $replace, $value);
+
+        return trim($value);
     }
 }
-?>

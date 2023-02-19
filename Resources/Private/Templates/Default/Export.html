@@ -1,0 +1,118 @@
+{namespace sav=YolfTypo3\SavLibraryMvc\ViewHelpers}
+<f:layout name="DefaultSavLibraryMvcLayout.html" />
+
+<f:section name="content">
+	<f:format.raw>
+		<div class="exportView view">
+			<f:form name="data" method="post" object="{general.object}"
+				enctype="multipart/form-data" 
+				controller="{general.controllerName}"
+				action="exportSubmit">
+				<div class="titleBar">
+					<f:render partial="TitleBars/ExportView/Default.html"
+						arguments="{_all}" />
+				</div>
+
+				<div class="items">
+                            <f:comment>Export Uid</f:comment>
+                            <div class="item">
+                                <div class="field">
+                                    <div class="label">
+                                        <f:translate key="tx_savlibrarymvc_domain_model_export.name"
+                                            extensionName="SavLibraryMvc" />
+                                    </div>
+
+                                    <f:form.select name="exportUid" options="{general.options}"
+                                        optionValueField="uid" optionLabelField="name"
+                                        prependOptionLabel="---" prependOptionValue="0"
+                                        value="{general.exportUid}" />
+                                </div>
+
+                                <f:form.button name="exportLoad" class="exportLoad"
+                                    title="{f:translate(key:'button.exportLoad', extensionName:'SavLibraryMvc')}">
+                                    <core:icon identifier="actions-download" />
+                                </f:form.button>
+                            </div>				
+				
+					<f:if condition="{general.exportIsLoaded}">
+						<f:then>
+							<f:comment>Content id</f:comment>
+							<f:form.hidden property="cid" value="{general.cid}" />
+
+
+							<f:comment>Configuration name</f:comment>
+							<div class="item">
+								<div class="field">
+									<div class="label">
+										<f:translate key="tx_savlibrarymvc_domain_model_export.name"
+											extensionName="SavLibraryMvc" />
+									</div>
+									<f:form.textfield property="name" size="50" />
+								</div>
+							</div>
+
+							<f:comment>Template file</f:comment>
+							<div class="item">
+								<div class="field">
+									<div class="label">
+										<f:translate
+											key="tx_savlibrarymvc_domain_model_export.templateFile"
+											extensionName="SavLibraryMvc" />
+									</div>
+									<div class="value">
+										<f:form.textfield class="templateFile" property="templateFile" />
+									</div>
+								</div>
+							</div>
+
+							<f:comment>Variables</f:comment>
+							<div class="item">
+								<div class="field">
+									<div class="label">
+										<f:translate
+											key="tx_savlibrarymvc_domain_model_export.variables"
+											extensionName="SavLibraryMvc" />
+									</div>
+									<div class="value">
+										<f:form.textarea class="variables" property="variables" />
+									</div>
+								</div>
+							</div>
+
+							<f:comment>XSLT File</f:comment>
+							<div class="item">
+								<div class="field">
+									<div class="label">
+										<f:translate
+											key="tx_savlibrarymvc_domain_model_export.xsltFile"
+											extensionName="SavLibraryMvc" />
+									</div>
+									<div class="value">
+										<f:form.textfield class="xsltFile" property="xsltFile" />
+									</div>
+								</div>
+							</div>
+
+							<f:comment>Exec fields</f:comment>
+						    <div class="item">
+							    <div class="field">
+								    <div class="label">
+									    <f:translate key="tx_savlibrarymvc_domain_model_export.exec"
+										    extensionName="SavLibraryMvc" />
+									</div>
+								    <div class="value">
+								        <f:form.textfield class="exec" property="exec" />
+								    </div>
+								</div>
+							</div>
+
+						</f:then>
+						<f:else>
+
+						</f:else>
+					</f:if>
+				</div>
+			</f:form>
+		</div>
+	</f:format.raw>
+</f:section>

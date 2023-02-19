@@ -1,82 +1,0 @@
-10
-
-dir
-36813
-https://svn.typo3.org/TYPO3v4/Extensions/sav_library_kickstarter/sav_library_mvc/trunk/Classes
-https://svn.typo3.org/TYPO3v4/Extensions
-
-
-
-2010-08-15T23:52:02.631830Z
-36802
-yolf
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-735d13b6-9817-0410-8766-e36946ffe9aa
-
-Controller
-dir
-
-Utility
-dir
-
-Persistence
-dir
-
-Property
-dir
-
-Administration
-dir
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-deleted
-
-Domain
-dir
-
-Core
-dir
-
-Validation
-dir
-
-Datepicker
-dir
-
-Parser
-dir
-
-ViewHelpers
-dir
-

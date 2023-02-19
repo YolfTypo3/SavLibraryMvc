@@ -1,5 +1,4 @@
 <?php
-namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -13,6 +12,9 @@ namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
  *
  * The TYPO3 project - inspiring people to share!
  */
+
+namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
+
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 
@@ -46,13 +48,10 @@ class ChangeCompressedParametersViewHelper extends AbstractViewHelper
             $arguments = $this->renderChildren();
         }
 
-        $controllerArguments = $this->renderingContext->getControllerContext()
-            ->getRequest()
-            ->getArguments();
-        $parameters = $controllerArguments['special'];
-        $parameters = AbstractController::changeCompressedParameters($parameters, $arguments);
+        // Gets and changes the special parameter
+        $special = $this->templateVariableContainer->get('general')['special'];
+        $special = AbstractController::changeCompressedParameters($special, $arguments);
 
-        return $parameters;
+        return $special;
     }
 }
-?>

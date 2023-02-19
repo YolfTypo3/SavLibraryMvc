@@ -1,5 +1,4 @@
 <?php
-namespace YolfTypo3\SavLibraryMvc\ViewHelpers\Widget;
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -13,6 +12,11 @@ namespace YolfTypo3\SavLibraryMvc\ViewHelpers\Widget;
  *
  * The TYPO3 project - inspiring people to share!
  */
+
+namespace YolfTypo3\SavLibraryMvc\ViewHelpers\Widget;
+
+use TYPO3\CMS\Core\Imaging\Icon;
+use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\ViewHelpers\Form\AbstractFormFieldViewHelper;
 use YolfTypo3\SavLibraryMvc\Controller\FlashMessages;
@@ -75,8 +79,11 @@ class DatePickerViewHelper extends AbstractFormFieldViewHelper
         // Merges the default values with the field configuration
         $fieldConfiguration = array_merge($default, $arguments['field']);
 
+        // Gets the extension key
+        $extensionKey = $this->getRequest()->getControllerExtensionKey();
+
         // Instanciates the calendar
-        $datePicker = GeneralUtility::makeInstance(DatePicker::class);
+        $datePicker = new DatePicker($extensionKey);
 
         // Registers the field name
         $this->registerFieldNameForFormTokenGeneration($name);
@@ -93,11 +100,14 @@ class DatePickerViewHelper extends AbstractFormFieldViewHelper
         // Adds items to the configuration
         $datePickerConfiguration['format'] = $fieldConfiguration['format'];
         $datePickerConfiguration['showsTime'] = $fieldConfiguration['showsTime'];
-        $datePickerConfiguration['iconPath'] = AbstractController::getIconPath('calendar.gif');
+
+        $iconFactory = GeneralUtility::makeInstance(IconFactory::class);
+        $datePickerConfiguration['icon'] = $iconFactory->getIcon('actions-calendar', Icon::SIZE_SMALL);
 
         // Sets the value
+        $dateTimeFormat = $this->convertToDateTimeFormat($datePickerConfiguration['format']);
         if ($this->getValueAttribute() === null || empty($this->getValueAttribute())) {
-            $value = $fieldConfiguration['noDefault'] ? '' : date();
+            $value = $fieldConfiguration['noDefault'] ? '' : date($dateTimeFormat);
         } elseif ($fieldConfiguration['noDefault'] && $fieldConfiguration['newRecord']) {
             $value = '';
         } else {
@@ -108,7 +118,6 @@ class DatePickerViewHelper extends AbstractFormFieldViewHelper
 
         $this->setErrorClassAttribute();
 
-        $dateTimeFormat = $this->convertToDateTimeFormat($datePickerConfiguration['format']);
         $content = '<input type="hidden" name="' . preg_replace('/\[date\]$/', '[dateFormat]', $name) . '" value="' . $dateTimeFormat . '" />';
         $content .= $this->tag->render() . $datePicker->render($datePickerConfiguration);
 
@@ -173,5 +182,3 @@ class DatePickerViewHelper extends AbstractFormFieldViewHelper
         return $format;
     }
 }
-?>
-

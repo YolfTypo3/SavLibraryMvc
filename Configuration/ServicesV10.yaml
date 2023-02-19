@@ -1,0 +1,27 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  YolfTypo3\SavLibraryMvc\:
+    resource: '../Classes/*'
+    exclude: '../Classes/Domain/Model/*'  
+    
+  YolfTypo3\SavLibraryMvc\Managers\FieldConfigurationManager:  
+    public: true
+    
+  YolfTypo3\SavLibraryMvc\Parser:  
+    public: true   
+    
+  YolfTypo3\SavLibraryMvc\ViewConfiguration\ListViewConfiguration:
+    public: true
+
+  YolfTypo3\SavLibraryMvc\ViewConfiguration\SingleViewConfiguration:
+    public: true 
+
+  YolfTypo3\SavLibraryMvc\ViewConfiguration\EditViewConfiguration:
+    public: true          
+
+  YolfTypo3\SavLibraryMvc\ViewConfiguration\ExportViewConfiguration:
+    public: true      

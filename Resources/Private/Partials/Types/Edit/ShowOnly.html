@@ -1,3 +1,11 @@
+<f:if condition="{field.updateShowOnlyField}">
+<f:then>
+<f:render partial="Types/Edit/{field.renderType}.html"
+    arguments="{field:field, general:general}" />
+</f:then>
+<f:else>
 <f:render partial="Types/Default/{field.renderType}.html"
-	arguments="{field:field, general:general}" />
+    arguments="{field:field, general:general}" />
+</f:else>
+</f:if>
 

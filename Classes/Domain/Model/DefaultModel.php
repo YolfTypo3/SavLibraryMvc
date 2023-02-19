@@ -1,5 +1,6 @@
 <?php
-namespace YolfTypo3\SavLibraryMvc\Domain\Model;
+
+declare(strict_types=1);
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -13,6 +14,12 @@ namespace YolfTypo3\SavLibraryMvc\Domain\Model;
  *
  * The TYPO3 project - inspiring people to share!
  */
+
+namespace YolfTypo3\SavLibraryMvc\Domain\Model;
+
+use TYPO3\CMS\Core\Core\Environment;
+use TYPO3\CMS\Core\Resource\Folder;
+use TYPO3\CMS\Core\Resource\DuplicationBehavior;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use YolfTypo3\SavLibraryMvc\Controller\FlashMessages;
@@ -24,20 +31,6 @@ class DefaultModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
 {
 
     /**
-     * The crdate variable
-     *
-     * @var int
-     */
-    protected $crdate;
-
-    /**
-     * The cruserId variable
-     *
-     * @var int
-     */
-    protected $cruserId;
-
-    /**
      * The cruserIdFrontend variable
      *
      * @var int
@@ -45,21 +38,10 @@ class DefaultModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     protected $cruserIdFrontend;
 
     /**
-     * Last modified time
+     * The cruserIdFrontend variable
      *
      * @var int
      */
-    protected $tstamp;
-
-    /**
-     * Getter for crdate
-     *
-     * @return int
-     */
-    public function getCrdate()
-    {
-        return $this->crdate;
-    }
 
     /**
      * Getter for cruserId
@@ -69,6 +51,11 @@ class DefaultModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     public function getCruserId()
     {
         return $this->cruserId;
+    }
+
+    public function getCrdate()
+    {
+        return $this->crdate;
     }
 
     /**
@@ -92,19 +79,9 @@ class DefaultModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     }
 
     /**
-     * Getter for tstamp
-     *
-     * @return int
-     */
-    public function getTstamp()
-    {
-        return $this->tstamp;
-    }
-
-    /**
      * Setter for uid.
      *
-     * @param integer $uid
+     * @param int $uid
      * @return void
      */
     public function setUid($uid)
@@ -113,49 +90,69 @@ class DefaultModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     }
 
     /**
-     * Updates the file storage with the uploaded files
+     * Updates the file storage with the uploaded file
      *
      * @param ObjectStorage $fileStorage
      * @param ObjectStorage $uploadedFileStorage
+     * @param array $fieldConfiguration
      * @return void
      */
-    protected function updateFileStorage($fileStorage, $uploadedFileStorage)
+    protected function updateFileStorage($fileStorage, $uploadedFileStorage, $fieldConfiguration)
     {
-        $files = [];
-        foreach ($uploadedFileStorage->toArray() as $uploadedFileKey => $uploadedFile) {
-            if ($uploadedFile !== null) {
-                if ($uploadedFile->_getProperty('originalResource') !== null) {
-                    $files[$uploadedFileKey] = $uploadedFile;
-                } else {
-                    $existingFiles = $fileStorage->toArray();
-                    if (count($uploadedFileStorage->toArray()) === 1) {
-                        $files = $existingFiles;
-                    } elseif (isset($existingFiles[$uploadedFileKey])) {
-                        if ($existingFiles[$uploadedFileKey] !== null) {
-                            $files[$uploadedFileKey] = $existingFiles[$uploadedFileKey];
-                        }
-                    } else {
-                        $files[$uploadedFileKey] = $uploadedFile;
-                    }
-                }
-            }
+        // Gets the viewId
+        $viewId = $this->repository->getController()->getArguments()['viewId'];
+
+        // Gets the configuration for the view
+        $configuration = $fieldConfiguration['config'][$viewId];
+        $uploadFolder = $configuration['uploadFolder'] ?? null;
+
+        // Gets the uploaded file
+        $uploadedFile = $uploadedFileStorage->current();
+        if ($uploadedFile === null) {
+            return $fileStorage;
         }
 
-        if (count($files) > 0) {
+        $properties = $uploadedFile->_getProperties();
+        if ($properties['uidLocal'] === null) {
+            return $fileStorage;
+        }
+
+        // Moves the file if an upload folder is set
+        if ($uploadFolder !== null) {
+            // Gets the original file and identifier
+            $originalFile = $uploadedFile->getOriginalResource()->getOriginalFile();
+            $originalFileIdentifier = $originalFile->getPublicUrl();
+
+            // Gets the resource storage
+            $storage = $originalFile->getStorage();
+
+            // Creates the new folder and moves the file
+            if (! $storage->hasFolder($uploadFolder)) {
+                $folder = $storage->createFolder($uploadFolder);
+            } else {
+                $folder = $storage->getFolder($uploadFolder);
+            }
+            $originalFile->moveTo($folder, null, DuplicationBehavior::REPLACE);
+
+            // Deletes the upload folder
+            $originalFileIdentifierPathInfo = pathinfo($originalFileIdentifier);
+            GeneralUtility::rmdir(Environment::getPublicPath() . '/'. $originalFileIdentifierPathInfo['dirname']);
+        }
+
+        if ($uploadedFileStorage->count() > 0 && $uploadedFile->_getProperty('originalResource') !== null) {
             $storage = new ObjectStorage();
+
             // Duplicates existing files
             if ($fileStorage !== null) {
                 foreach ($fileStorage as $file) {
                     $storage->attach($file);
                 }
             }
-            // Adds the uploaded files
-            foreach ($files as $file) {
-                $storage->attach($file);
-            }
+            $storage->attach($uploadedFile);
         } else {
             $storage = null;
         }
+
         return $storage;
     }
 
@@ -167,7 +164,7 @@ class DefaultModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      */
     public function resolveTableNameFromObject()
     {
-        // Gets the repository name
+        // Gets the model class name
         $objectClassName = get_class($this);
         if (preg_match('/^[^\\\\]+\\\\([^\\\\]+)\\\\Domain\\\\Model\\\\(.*)$/', $objectClassName, $match)) {
             $tableName = 'tx_' . strtolower($match[1]) . '_' . GeneralUtility::camelCaseToLowerCaseUnderscored($match[2]);
@@ -178,7 +175,21 @@ class DefaultModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     }
 
     /**
-     * Resolves the table name from an object
+     * Resolves the repository class name
+     *
+     * @var string $repositoryClassName
+     * @return string
+     */
+    public function resolveRepositoryClassName()
+    {
+        $objectClassName = get_class($this);
+        $repositoryClassName = preg_replace('/\\\\Model\\\\(\w+)$/', '\\\\Repository\\\\$1Repository', $objectClassName);
+
+        return $repositoryClassName;
+    }
+
+    /**
+     * Gets the field value from teh field name
      *
      * @var ObjectStorage $object
      * @return string
@@ -210,4 +221,3 @@ class DefaultModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
         }
     }
 }
-?>

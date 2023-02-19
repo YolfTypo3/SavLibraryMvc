@@ -1,5 +1,4 @@
 <?php
-namespace YolfTypo3\SavLibraryMvc\Property\TypeConverter;
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -13,6 +12,9 @@ namespace YolfTypo3\SavLibraryMvc\Property\TypeConverter;
  *
  * The TYPO3 project - inspiring people to share!
  */
+
+namespace YolfTypo3\SavLibraryMvc\Property\TypeConverter;
+
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Extbase\Error\Error;
 use TYPO3\CMS\Extbase\Property\PropertyMappingConfigurationInterface;
@@ -41,7 +43,7 @@ class IntegerConverter extends AbstractTypeConverter implements SingletonInterfa
 
     /**
      *
-     * @var integer
+     * @var int
      */
     protected $priority = 2;
 

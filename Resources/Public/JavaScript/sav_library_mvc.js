@@ -3,8 +3,7 @@
 // PickList II script (aka Menu Swapper)- By Phil Webb (http://www.philwebb.com)
 // Visit JavaScript Kit (http://www.javascriptkit.com) for this JavaScript and 100s more
 // Please keep this notice intact
-// Modified by Laureny Foulloy <yolf.typo3@orange.fr>
-
+// Modified by Laurent Foulloy <yolf.typo3@orange.fr>
 
   // Compare functions
   function sortAlpha(a,b){
@@ -33,18 +32,16 @@
   
   // Moves item function
   function move(form, from, to, sort) {
-    var arrFbox = new Array();
-    var arrTbox = new Array();
-    var fbox=document.forms[form].elements[from];
-    var tbox=document.forms[form].elements[to];
+    var fromBox = document.forms[form].elements[from];
+    var toBox = document.forms[form].elements[to];
     var i;
      
-    // Check if one option is selected
-    for(i=0; i<fbox.options.length; i++) {
-      if(fbox.options[i].selected) {
-    	tboxLength = tbox.length;
-    	tbox.options[tboxLength] = fbox.options[i];   	
-    	tbox.options[tboxLength].selected = false;
+    // Checks if one option is selected
+    for(i=0; i<fromBox.options.length; i++) {
+      if(fromBox.options[i].selected) {
+    	toBoxLength = toBox.length;
+    	toBox.options[toBoxLength] = fromBox.options[i];
+    	toBox.options[toBoxLength].selected = false;   	
       }
     }
   }

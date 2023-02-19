@@ -1,4 +1,0 @@
-<sav:widget.datePicker property="{field.name}" configuration="{field:field,newRecord:configuration.general.newRecord,showsTime:1}" default="{format:'%d-%m-%Y %H:%M'}" value="{field.value}" />
-
-
-

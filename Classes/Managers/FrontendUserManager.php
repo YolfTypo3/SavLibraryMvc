@@ -1,5 +1,4 @@
 <?php
-namespace YolfTypo3\SavLibraryMvc\Managers;
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -13,6 +12,9 @@ namespace YolfTypo3\SavLibraryMvc\Managers;
  *
  * The TYPO3 project - inspiring people to share!
  */
+
+namespace YolfTypo3\SavLibraryMvc\Managers;
+
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 use YolfTypo3\SavLibraryMvc\Controller\DefaultController;
@@ -55,7 +57,7 @@ class FrontendUserManager
      *
      * @return boolean
      */
-    public function userIsAuthenticated()
+    public function userIsAuthenticated(): bool
     {
         return (is_null($GLOBALS['TSFE']->fe_user->user['uid']) ? false : true);
     }
@@ -63,9 +65,9 @@ class FrontendUserManager
     /**
      * Checks if the user is allowed to input data in the form
      *
-     * @return boolean
+     * @return bool
      */
-    public function userIsAllowedToInputData()
+    public function userIsAllowedToInputData(): bool
     {
         // Checks if the user is authenticated
         if ($this->userIsAuthenticated() === false) {
@@ -74,8 +76,11 @@ class FrontendUserManager
 
         // Condition on date
         $time = time();
-        $conditionOnInputDate = (AbstractController::getSetting('inputStartDate') && ($time >= AbstractController::getSetting('inputStartDate')) && AbstractController::getSetting('inputEndDate') && ($time <= AbstractController::getSetting('inputEndDate')));
-        switch (AbstractController::getSetting('dateUserRestriction')) {
+        $conditionOnInputDate = ($this->controller->getSetting('inputStartDate') &&
+            ($time >= $this->controller->getSetting('inputStartDate')) &&
+            $this->controller->getSetting('inputEndDate') &&
+            ($time <= $this->controller->getSetting('inputEndDate')));
+        switch ($this->controller->getSetting('dateUserRestriction')) {
             case self::NOBODY:
                 $conditionOnInputDate = true;
             case self::ALL:
@@ -92,10 +97,10 @@ class FrontendUserManager
         }
 
         // Condition on allowedGroups
-        $result = (count(array_intersect(explode(',', AbstractController::getSetting('allowedGroups')), array_keys($GLOBALS['TSFE']->fe_user->groupData['uid']))) > 0 ? true : false);
-        $conditionOnAllowedGroups = (AbstractController::getSetting('allowedGroups') ? $result : true);
+        $result = (count(array_intersect(explode(',', $this->controller->getSetting('allowedGroups')), array_keys($GLOBALS['TSFE']->fe_user->groupData['uid']))) > 0 ? true : false);
+        $conditionOnAllowedGroups = ($this->controller->getSetting('allowedGroups') ? $result : true);
 
-        return AbstractController::getSetting('inputIsAllowed') && $conditionOnAllowedGroups && $conditionOnInputDate;
+        return $this->controller->getSetting('inputIsAllowed') && $conditionOnAllowedGroups && $conditionOnInputDate;
     }
 
     /**
@@ -118,7 +123,7 @@ class FrontendUserManager
 
         // Condition on the Input Admin Field
         $conditionOnInputAdminField = true;
-        $inputAdminField = AbstractController::getSetting('inputAdminField');
+        $inputAdminField = $this->controller->getSetting('inputAdminField');
 
         if (! empty($inputAdminField)) {
             // Gets the value
@@ -138,7 +143,7 @@ class FrontendUserManager
                     }
                     break;
                 default:
-                    $extensionKey = DefaultController::getControllerExtensionKey();
+                    $extensionKey = $this->controller->getControllerExtensionKey();
                     $conditionOnInputAdminField = (strpos($inputAdminConfiguration[$extensionKey . '_Admin'], $fieldValue) === false ? false : true);
                     break;
             }
@@ -149,12 +154,12 @@ class FrontendUserManager
     /**
      * Checks if the user is a super admin for the extension
      *
-     * @return boolean
+     * @return bool
      */
-    public function userIsSuperAdmin()
+    public function userIsSuperAdmin(): bool
     {
         // Gets the extension key
-        $extensionKey = DefaultController::getControllerExtensionKey();
+        $extensionKey = $this->controller->getControllerExtensionKey();
 
         // Gets the user TypoScript configuration
         $userTypoScriptConfiguration = $GLOBALS['TSFE']->fe_user->getUserTSconf();
@@ -168,12 +173,12 @@ class FrontendUserManager
     /**
      * Checks if the user is allowed to export data
      *
-     * @return boolean
+     * @return bool
      */
-    public function userIsAllowedToExportData()
+    public function userIsAllowedToExportData(): bool
     {
         // Gets the extension key
-        $extensionKey = DefaultController::getExtensionKey();
+        $extensionKey = $this->controller->getControllerExtensionKey();
 
         // Gets the user TypoScript configuration
         $userTypoScriptConfiguration = $GLOBALS['TSFE']->fe_user->getUserTSconf();
@@ -187,9 +192,9 @@ class FrontendUserManager
     /**
      * Checks if the user is allowed to use query when exporting data
      *
-     * @return boolean
+     * @return bool
      */
-    public function userIsAllowedToExportDataWithQuery()
+    public function userIsAllowedToExportDataWithQuery(): bool
     {
         // Checks if the user is allowad to export data
         if ($this->userIsAllowedToExportData() === false) {
@@ -197,7 +202,7 @@ class FrontendUserManager
         }
 
         // Gets the extension key
-        $extensionKey = DefaultController::getExtensionKey();
+        $extensionKey = $this->controller->getControllerExtensionKey();
 
         // Gets the user TypoScript configuration
         $userTypoScriptConfiguration = $GLOBALS['TSFE']->fe_user->getUserTSconf();
@@ -208,16 +213,4 @@ class FrontendUserManager
         return $condition;
     }
 
-    /**
-     * Gets a setting.
-     *
-     * @param string $settingName
-     *            The setting name
-     * @return mixed
-     */
-    protected function getSetting($settingName)
-    {
-        return $this->controller->settings[$settingName];
-    }
 }
-?>

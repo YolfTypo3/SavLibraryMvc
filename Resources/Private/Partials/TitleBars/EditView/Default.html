@@ -1,35 +1,43 @@
 {namespace sav=YolfTypo3\SavLibraryMvc\ViewHelpers}
-<div class="titleIconLeft">
-	<f:form.submit name="save" value="" class="save"
-		title="{f:translate(key:'button.save', extensionName:'SavLibraryMvc')}" />
-	<f:form.submit name="saveAndClose" value="" class="saveAndClose"
-		title="{f:translate(key:'button.saveandclose', extensionName:'SavLibraryMvc')}" />
-	<f:form.submit name="saveAndShow" value="" class="saveAndShow"
-		title="{f:translate(key:'button.saveandshow', extensionName:'SavLibraryMvc')}" />
-	<f:if condition="{general.saveAndNew}">
-		<f:form.submit name="saveAndNew" value="" class="saveAndNew"
-			title="{f:translate(key:'button.saveandnew', extensionName:'SavLibraryMvc')}" />
-	</f:if>
+<div class="titleIcons">
+	<div class="titleIconLeft">
+	    <f:form.button name="save" value="" class="save"
+	        title="{f:translate(key:'button.save', extensionName:'SavLibraryMvc')}">
+	        <core:icon identifier="actions-save" />
+	    </f:form.button>
+	    <f:form.button name="saveAndClose" value="" class="saveAndClose"
+	        title="{f:translate(key:'button.saveandclose', extensionName:'SavLibraryMvc')}">
+	        <core:icon identifier="actions-save-close" />
+	    </f:form.button>
+	    <f:form.button name="saveAndShow" value="" class="saveAndShow"
+	        title="{f:translate(key:'button.saveandshow', extensionName:'SavLibraryMvc')}">
+	        <core:icon identifier="actions-save-view" />
+	    </f:form.button>
+	    <f:if condition="{general.saveAndNew}">
+	        <f:form.button name="saveAndNew" value="" class="saveAndNew"
+	            title="{f:translate(key:'button.saveandnew', extensionName:'SavLibraryMvc')}">
+	            <core:icon identifier="actions-save-add" />
+	        </f:form.button>
+	    </f:if>
+	</div>
+	<div class="titleIconRight">
+        <f:if condition="{general.isNewItem} == 0">
+            <f:link.action action="single" arguments="{special:general.special}"
+                additionalAttributes="{onclick:'return submitIfChanged();'}"
+                title="{f:translate(key:'button.show', extensionName:'SavLibraryMvc')}">
+                <core:icon identifier="actions-eye" />
+            </f:link.action>
+        </f:if>	
+        <f:link.action action="list" arguments="{special:general.special}"
+            additionalAttributes="{onclick:'return submitIfChanged();'}"
+            title="{f:translate(key:'button.close', extensionName:'SavLibraryMvc')}">
+            <core:icon identifier="actions-close" />
+        </f:link.action>	
+	</div>	
 </div>
 <f:if condition="{general.title}">
-	<div class="titleLabel">
-		<f:format.raw>{general.title}</f:format.raw>
-	</div>
+    <div class="titleLabel">
+        <f:format.raw>{general.title}</f:format.raw>
+    </div>
 </f:if>
-<div class="titleIconRight">
-	<f:if condition="{general.isNewItem} == 0">
-		<f:link.action action="single" arguments="{special:general.special}"
-			additionalAttributes="{onclick:'return submitIfChanged();'}">
-			<f:image class="show" src="{sav:getIconSrc(fileName:'show.gif')}"
-				alt="{f:translate(key:'button.show', extensionName:'SavLibraryMvc')}"
-				title="{f:translate(key:'button.show', extensionName:'SavLibraryMvc')}" />
-		</f:link.action>
-	</f:if>
-	<f:link.action action="list" arguments="{special:general.special}"
-		additionalAttributes="{onclick:'return submitIfChanged();'}">
-		<f:image src="{sav:getIconSrc(fileName:'close.gif')}"
-			alt="{f:translate(key:'button.close', extensionName:'SavLibraryMvc')}"
-			title="{f:translate(key:'button.close', extensionName:'SavLibraryMvc')}" />
-	</f:link.action>
-</div>
 <div class="right"></div>

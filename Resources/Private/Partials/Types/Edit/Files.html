@@ -1,22 +1,30 @@
 {namespace sav=YolfTypo3\SavLibraryMvc\ViewHelpers}
+
 <f:for each="{sav:range(low:1, high:field.maxitems)}" as="range"
-	key="key">
-	<f:alias map="{file:'{field.files->sav:getItem(key:key)}'}">
-		<div class="file item{key}">
-		    <f:if condition="{file.shortFileName}">  
+    key="key">
+    <f:alias map="{file:'{field.files->sav:getItem(key:key)}'}">
+        <div class="file item{key}">
+            <f:if condition="{file.shortFileName}">  
                 <f:link.action action="deleteFile"
                     arguments="{
-                        special:'{sav:changeCompressedParameters(arguments:{fileUid:file.value.uid})}'}">
-                    <f:image src="{sav:getIconSrc(fileName:'delete.gif')}"
-                        alt="{f:translate(key:'button.delete', extensionName:'SavLibraryMvc')}"
-                        title="{f:translate(key:'button.delete', extensionName:'SavLibraryMvc')}" />
+                        special:'{sav:changeCompressedParameters(arguments:{fileUid:file.uid})}'}"
+                    title="{f:translate(key:'button.delete', extensionName:'SavLibraryMvc')}"
+                    onclick="return confirmDelete()">
+                    <core:icon identifier="actions-delete" />
                 </f:link.action>
-		    </f:if>
-            <f:form.textfield class="fileText"
-                name="temp[files][name][{field.fieldName}][{key}]"
-                value="{file.shortFileName}" />
-			<f:form.upload class="file" property="{field.propertyName}.{key}" 
-				additionalAttributes="{onchange:'document.changed=1;'}" />
-		</div>
-	</f:alias>
-</f:for>
+                <f:if condition="{file.icon}">
+                    {file.icon}
+                </f:if>
+           <span class="filename">{file.shortFileName}</span>                
+            </f:if>    
+
+        </div>
+    </f:alias>               
+ </f:for>    
+
+<f:if condition="{field.files->f:count()} < {field.maxitems}">    
+    <f:form.hidden name="viewId" value="{general.viewId}" />     
+    <f:form.upload class="file" property="{field.propertyName}.0" 
+        additionalAttributes="{onchange:'document.changed=1;'}" />
+</f:if>
+

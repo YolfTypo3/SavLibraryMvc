@@ -1,1 +1,0 @@
-<f:form.select property="{field.name}"  options="{field->sav:RelationOneToManySelectorbox(action:'buildOption',configuration:configuration.general)}"  value="{field.value}" additionalAttributes="{onchange:'document.changed=1;'}" />

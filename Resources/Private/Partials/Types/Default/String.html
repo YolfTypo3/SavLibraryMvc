@@ -1,5 +1,10 @@
-{namespace sav=YolfTypo3\SavLibraryMvc\ViewHelpers}
-
-{field.value->f:format.raw()}
-
+<f:switch expression="{field.renderType}">
+    <f:case value="Files">
+        <f:render partial="Types/Default/Files.html"
+            arguments="{field:field, general:general}" />
+    </f:case>
+    <f:defaultCase>
+        <f:format.raw>{field.value}</f:format.raw> 
+    </f:defaultCase>
+</f:switch>
 

@@ -1,20 +1,21 @@
 <f:link.action action="list"
-	arguments="{
-	special:'{sav:changeCompressedParameters(arguments:{orderLink:field.orderAsc})}'}">
-	<f:if condition="{configuration.general.orderLink} == {field.orderAsc}">
-		<f:then>
-			<f:image class="orderAsc"
-				src="{sav:getIconSrc(fileName:'orderAscSelected.gif')}"
-				alt="{f:translate(key:'button.orderAsc', extensionName:'SavLibraryMvc')}"
-				title="{f:translate(key:'button.orderAsc', extensionName:'SavLibraryMvc')}" />
-		</f:then>
-		<f:else>
-			<f:image class="orderAsc"
-				src="{sav:getIconSrc(fileName:'orderAsc.gif')}"
-				alt="{f:translate(key:'button.orderAsc', extensionName:'SavLibraryMvc')}"
-				title="{f:translate(key:'button.orderAsc', extensionName:'SavLibraryMvc')}" />
-		</f:else>
-	</f:if>
+    controller="{general.controllerName}"
+    arguments="{
+    special:'{sav:changeCompressedParameters(arguments:{orderLink:field.orderAsc})}'}">
+    <f:if condition="{configuration.general.orderLink} == {field.orderAsc}">
+        <f:then>
+            <div class="orderAscSelected" 
+                title="{f:translate(key:'button.orderAsc', extensionName:'SavLibraryMvc')}">
+                <core:icon identifier="actions-caret-up" />
+            </div>        
+        </f:then>
+        <f:else>
+            <div class="orderAsc" 
+                title="{f:translate(key:'button.orderAsc', extensionName:'SavLibraryMvc')}">
+                <core:icon identifier="actions-caret-up" />
+            </div>  
+        </f:else>
+    </f:if>
 </f:link.action>
 
 

@@ -1,0 +1,37 @@
+{namespace sav=YolfTypo3\SavLibraryMvc\ViewHelpers}
+<div class="titleIcons">
+    <div class="titleIconLeft">
+        <f:if condition="{general.exportIsLoaded}">
+	        <f:form.button name="save" value="" class="save"
+	            title="{f:translate(key:'button.save', extensionName:'SavLibraryMvc')}">
+	            <core:icon identifier="actions-save" />
+	        </f:form.button> 
+        </f:if>   
+    </div>
+    <div class="titleIconRight">
+        <f:if condition="{general.userIsAllowedToExportData} && {general.exportIsLoaded}">
+            <f:form.button 
+                name="exportExecute" 
+                class="exportExecute"
+                title="{f:translate(key:'button.exportExecute', extensionName:'SavLibraryMvc')}"> 
+                <core:icon identifier="actions-database-export" />
+            </f:form.button>                     
+        </f:if>
+        <f:link.action action="list" arguments="{special:'{sav:changeCompressedParameters(arguments:{exportUid:\'\'})}'}"
+            additionalAttributes="{onclick:'return submitIfChanged();'}"
+            title="{f:translate(key:'button.close', extensionName:'SavLibraryMvc')}">
+            <core:icon identifier="actions-close" />
+        </f:link.action>        
+    </div>
+</div>    
+<f:if condition="{general.title}">
+	<div class="titleLabel">
+		<f:if condition="{configuration.general.titleNeedsFormat}">
+			<f:then>
+				<f:format.raw>{general.title}</f:format.raw>
+			</f:then>
+			<f:else>{general.title}</f:else>
+		</f:if>
+	</div>
+</f:if>
+<div class="right"></div>

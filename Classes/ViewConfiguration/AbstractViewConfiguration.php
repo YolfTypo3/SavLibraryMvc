@@ -1,5 +1,4 @@
 <?php
-namespace YolfTypo3\SavLibraryMvc\ViewConfiguration;
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -13,11 +12,12 @@ namespace YolfTypo3\SavLibraryMvc\ViewConfiguration;
  *
  * The TYPO3 project - inspiring people to share!
  */
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+
+namespace YolfTypo3\SavLibraryMvc\ViewConfiguration;
+
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 use YolfTypo3\SavLibraryMvc\Controller\DefaultController;
-use YolfTypo3\SavLibraryMvc\Managers\FieldConfigurationManager;
 use YolfTypo3\SavLibraryMvc\Parser\TemplateParser;
 
 /**
@@ -61,16 +61,9 @@ abstract class AbstractViewConfiguration
 
     /**
      *
-     * @var integer
+     * @var int
      */
     protected $viewIdentifier = null;
-
-    /**
-     * Field configuration manager
-     *
-     * @var FieldConfigurationManager
-     */
-    protected $fieldConfigurationManager;
 
     /**
      * Storage object
@@ -80,15 +73,16 @@ abstract class AbstractViewConfiguration
     protected $object;
 
     /**
-     * Constructor
+     * Sets the controller
      *
      * @param DefaultController $controller
      *
      * @return void
      */
-    public function __construct($controller)
+    public function setController(DefaultController $controller)
     {
         $this->controller = $controller;
+        $this->templateParser->setController($controller);
     }
 
     /**
@@ -101,19 +95,6 @@ abstract class AbstractViewConfiguration
     public function injectTemplateParser(TemplateParser $templateParser)
     {
         $this->templateParser = $templateParser;
-        $this->templateParser->setController($this->controller);
-    }
-
-    /**
-     * Injects the field configuration manager
-     *
-     * @param FieldConfigurationManager $fieldConfigurationManager
-     *
-     * @return void
-     */
-    public function injectFieldConfigurationManager(FieldConfigurationManager $fieldConfigurationManager)
-    {
-        $this->fieldConfigurationManager = $fieldConfigurationManager;
     }
 
     /**
@@ -121,7 +102,7 @@ abstract class AbstractViewConfiguration
      *
      * @return string
      */
-    protected function getViewType()
+    protected function getViewType():string
     {
         $viewType = lcfirst(preg_replace('/^.+?\\\\(\w+)Configuration$/', '$1', get_class($this)));
         return $viewType;
@@ -153,17 +134,17 @@ abstract class AbstractViewConfiguration
             return $viewIdentifiers[$viewType];
         } else {
             foreach ($viewsWithCondition as $viewWithConditionKey => $viewWithCondition) {
-                // Gets the configuratop,
+                // Gets the configuration
                 $viewWithConditionConfiguration = $viewWithCondition['config'];
 
                 // Processes the condition if it exists
                 if (! empty($viewWithConditionConfiguration['cutIf']) || ! empty($viewWithConditionConfiguration['showIf'])) {
                     // Builds a field configuration manager
-                    $fieldConfigurationManager = GeneralUtility::makeInstance(FieldConfigurationManager::class);
-                    $fieldConfigurationManager::storeFieldsConfiguration();
+                    $fieldConfigurationManager = $this->controller->getFieldConfigurationManager();
+                    $fieldConfigurationManager->storeFieldsConfiguration();
                     $fieldConfigurationManager->setFieldConfiguration($viewWithConditionConfiguration);
                     $fieldConfigurationManager->addDynamicFieldsConfiguration($this->object);
-                    $fieldConfigurationManager::restoreFieldsConfiguration();
+                    $fieldConfigurationManager->restoreFieldsConfiguration();
 
                     // Checks the cutif condition
                     if ($fieldConfigurationManager->cutIf() === false) {
@@ -208,33 +189,6 @@ abstract class AbstractViewConfiguration
     }
 
     /**
-     * Gets the view folder
-     *
-     * @param string $viewIdentifier
-     *            The view identifier
-     * @return array The folder configuration
-     */
-    protected function getViewFolders($viewIdentifier)
-    {
-        $viewFolders = $this->controller->getFolders($viewIdentifier);
-
-        // Sets the folder key
-        $special = $this->getGeneralViewConfiguration('special');
-        $uncompressedParameters = AbstractController::uncompressParameters($special);
-        if ($uncompressedParameters['folder']) {
-            $activeFolder = (empty($viewFolders) ? 0 : $uncompressedParameters['folder']);
-            // Checks if the folder exists otherwise return the first folder
-            if ($activeFolder > 0 && empty($viewFolders[$activeFolder])) {
-                $activeFolder = key($viewFolders);
-            }
-        } else {
-            $activeFolder = (empty($viewFolders) ? 0 : key($viewFolders));
-        }
-        $this->addGeneralViewConfiguration('activeFolder', $activeFolder);
-        return $viewFolders;
-    }
-
-    /**
      * Replaces the localisation markers and parses the template
      *
      * @param string $viewIdentifier
@@ -250,7 +204,7 @@ abstract class AbstractViewConfiguration
         $title = $this->controller->getViewTitleBar($viewIdentifier);
 
         // Processes the localization markers
-        $title = $this->fieldConfigurationManager->parseLocalizationTags($title);
+        $title = $this->controller->getFieldConfigurationManager()->parseLocalizationTags($title);
 
         // Processes the marker
         $matches = [];
@@ -263,32 +217,34 @@ abstract class AbstractViewConfiguration
             $fieldName = $matches[1][$keyMatch];
             switch ($viewType) {
                 case 'listView':
-                    if ($configuration['fields'][$fieldName]['orderLinkInTitle']) {
+                    if ($configuration['field'][$fieldName]['orderLinkInTitle']) {
                         // Gets the associated whereTags
-                        $configuration['fields'][$fieldName]['orderAsc'] = $this->controller->getMainRepository()->getWhereTagByTitle($fieldName . '+');
-                        $configuration['fields'][$fieldName]['orderDesc'] = $this->controller->getMainRepository()->getWhereTagByTitle($fieldName . '-');
+                        $configuration['field'][$fieldName]['orderAsc'] = $this->controller->getMainRepository()->getWhereTagByTitle($fieldName . '+');
+                        $configuration['field'][$fieldName]['orderDesc'] = $this->controller->getMainRepository()->getWhereTagByTitle($fieldName . '-');
                         // Sets the default pattern for the display
-                        if (! isset($configuration['fields'][$fieldName]['orderLinkInTitleSetup'])) {
-                            $configuration['fields'][$fieldName]['orderLinkInTitleSetup'] = ':link:';
+                        if (! isset($configuration['field'][$fieldName]['orderLinkInTitleSetup'])) {
+                            $configuration['field'][$fieldName]['orderLinkInTitleSetup'] = ':link:';
                         }
-                        $replacementString = '<f:render partial="TitleBars/OrderLinks/renderField.html" arguments="{general:general, field:fields.' . $fieldName . '}" />';
+                        $replacementString = '<f:render partial="TitleBars/OrderLinks/renderField.html" arguments="{general:general, field:field.' . $fieldName . '}" />';
                     } else {
-                        $replacementString = '{fields.' . $fieldName . '.label}';
+                        $replacementString = '{field.' . $fieldName . '.label}';
                     }
                     break;
                 default:
-                    $replacementString = '{fields.' . $fieldName . '.value}';
+                    $replacementString = '{field.' . $fieldName . '.value}';
             }
             $title = str_replace($match, $replacementString, $title);
         }
 
         // Parses the title template
-        $title = $this->templateParser->parse($title, [
-            'general' => $configuration['general'],
-            'fields' => $configuration['fields']
-        ]);
+        $title = $this->templateParser->parse(
+            $title,
+            [
+                'general' => $configuration['general'],
+                'field' => $configuration['field']
+            ]
+        );
 
         return $title;
     }
-}
-?>
+}

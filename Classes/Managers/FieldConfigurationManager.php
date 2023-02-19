@@ -1,5 +1,4 @@
 <?php
-namespace YolfTypo3\SavLibraryMvc\Managers;
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -13,16 +12,20 @@ namespace YolfTypo3\SavLibraryMvc\Managers;
  *
  * The TYPO3 project - inspiring people to share!
  */
+
+namespace YolfTypo3\SavLibraryMvc\Managers;
+
 use TYPO3\CMS\Core\Database\ConnectionPool;
-use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Resource\AbstractFile;
 use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
-use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
+use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
+use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
+use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
+use YolfTypo3\SavLibraryMvc\Controller\DefaultController;
 use YolfTypo3\SavLibraryMvc\Controller\FlashMessages;
 use YolfTypo3\SavLibraryMvc\Domain\Repository\DefaultRepository;
 
@@ -57,6 +60,10 @@ class FieldConfigurationManager
     )
   /x';
 
+    const RENDER_FILE_AS_IMAGE_OBJECT = 1;
+    const RENDER_FILE_AS_IMAGE_RESOURCE = 2;
+    const RENDER_FILE_AS_LINK = 3;
+
     /**
      *
      * @var array
@@ -67,19 +74,25 @@ class FieldConfigurationManager
      *
      * @var array
      */
-    protected static $fieldsConfiguration = [];
+    protected $fieldsConfiguration = [];
 
     /**
      *
      * @var array
      */
-    protected static $storedFieldsConfiguration = [];
+    protected $storedFieldsConfiguration = [];
 
     /**
      *
      * @var array
      */
-    protected static $generalConfiguration;
+    protected $generalConfiguration;
+
+    /**
+     *
+     * @var int
+     */
+    protected $uidMainTable;
 
     /**
      *
@@ -103,9 +116,30 @@ class FieldConfigurationManager
     /**
      * Storage object
      *
-     * @var ObjectStorage $object
+     * @var DomainObjectInterface $object
      */
     protected $object = null;
+
+    /**
+     * Previous value for a field if attribute cutIfSameAsPrevious is used.
+     *
+     * @var array $previousValue
+     */
+    protected $previousValue;
+
+    /**
+     * Controller
+     *
+     * @var DefaultController $controller
+     */
+    protected $controller;
+
+    /**
+     * Uri builder
+     *
+     * @var UriBuilder $uriBuilder
+     */
+    protected $uriBuilder = null;
 
     /**
      * Default repository
@@ -115,22 +149,18 @@ class FieldConfigurationManager
     protected $repository;
 
     /**
-     * Object manager
+     * Flag for subforms
      *
-     * @var ObjectManagerInterface
+     * @var bool
      */
-    protected $objectManager;
+    protected $subformFlag = false;
 
     /**
-     * Injects the objet manager
+     * Subform property name
      *
-     * @param ObjectManagerInterface $objectManager
-     * @return void
+     * @var string
      */
-    public function injectObjectManager(ObjectManagerInterface $objectManager)
-    {
-        $this->objectManager = $objectManager;
-    }
+    protected $subformPropertyName = '';
 
     /**
      * Injects the objet storage
@@ -141,6 +171,69 @@ class FieldConfigurationManager
     public function injectObjectStorage(ObjectStorage $object)
     {
         $this->object = $object;
+    }
+
+    /**
+     * Injects the uri builder
+     *
+     * @param UriBuilder UriBuilder
+     * @return void
+     */
+    public function injectUriBuilder(UriBuilder $uriBuilder)
+    {
+        $this->uriBuilder = $uriBuilder;
+    }
+
+    /**
+     * Sets the controller
+     *
+     * @param DefaultController $controller
+     * @return void
+     */
+    public function setController(DefaultController $controller)
+    {
+        $this->controller = $controller;
+    }
+
+    /**
+     * Gets the default repository.
+     *
+     * @return DefaultRepository
+     */
+    public function getDefaultRepository(): DefaultRepository
+    {
+        return $this->repository;
+    }
+
+    /**
+     * Gets the domain object.
+     *
+     * @return DomainObjectInterface
+     */
+    public function getDomainObject(): DomainObjectInterface
+    {
+        return $this->object;
+    }
+
+    /**
+     * Sets the domain object.
+     *
+     * @param DomainObjectInterface $object
+     * @return void
+     */
+    public function setDomainObject(DomainObjectInterface $object)
+    {
+        $this->object = $object;
+    }
+
+    /**
+     * Gets the controller.
+     *
+     * @return DefaultController
+     */
+    public function getController(): DefaultController
+    {
+        return $this->controller;
     }
 
     /**
@@ -158,9 +251,76 @@ class FieldConfigurationManager
      *
      * @return array
      */
-    public static function getFieldsConfiguration(): array
+    public function getFieldsConfiguration(): array
     {
-        return self::$fieldsConfiguration;
+        return $this->fieldsConfiguration;
+    }
+
+    /**
+     * Sets uidMainTable.
+     *
+     * @param int $uidMainTable
+     * @return void
+     */
+    public function setUidMainTable(int $uidMainTable)
+    {
+        $this->$uidMainTable = $uidMainTable;
+    }
+
+    /**
+     * Sets the subform flag.
+     *
+     * @param bool subformFlag
+     * @return void
+     */
+    public function setSubformFlag(bool $subformFlag)
+    {
+        $this->subformFlag = $subformFlag;
+    }
+
+    /**
+     * Gets the subform flag.
+     *
+     * @return bool
+     */
+    public function getSubformFlag(): bool
+    {
+        return $this->subformFlag;
+    }
+
+    /**
+     * Sets the subform property name.
+     *
+     * @param string $subformPropertyName
+     * @return void
+     */
+    public function setSubformPropertyName(string $subformPropertyName)
+    {
+        $this->subformPropertyName = $subformPropertyName;
+    }
+
+    /**
+     * Gets the subform property name.
+     *
+     * @return string
+     */
+    public function getSubformPropertyName():string
+    {
+        return $this->subformPropertyName;
+    }
+
+    /**
+     * Gets the field configuration.
+     *
+     * @return array
+     */
+    public function getFieldConfiguration(string $fieldName = ''): ?array
+    {
+        if (empty($fieldName)) {
+            return $this->fieldConfiguration;
+        } else {
+            return $this->fieldsConfiguration[$fieldName];
+        }
     }
 
     /**
@@ -175,14 +335,14 @@ class FieldConfigurationManager
     }
 
     /**
-     * sets a field configuration.
+     * Sets the general configuration.
      *
-     * @param array $fieldConfiguration
+     * @param array $configuration
      * @return void
      */
-    public function addGeneralConfiguration(array $generalConfiguration)
+    public function setGeneralConfiguration(array $configuration)
     {
-        $this->generalConfiguration = $generalConfiguration;
+        $this->generalConfiguration = $configuration;
     }
 
     /**
@@ -190,10 +350,16 @@ class FieldConfigurationManager
      *
      * @return void
      */
-    public static function storeFieldsConfiguration()
+    public function storeFieldsConfiguration()
     {
-        self::$storedFieldsConfiguration = self::$fieldsConfiguration;
-        self::$fieldsConfiguration = [];
+        array_push($this->storedFieldsConfiguration,
+            [
+                $this->fieldsConfiguration,
+                $this->savLibraryMvcColumns,
+                $this->repository
+            ]
+        );
+        $this->fieldsConfiguration = [];
     }
 
     /**
@@ -201,20 +367,22 @@ class FieldConfigurationManager
      *
      * @return void
      */
-    public static function restoreFieldsConfiguration()
+    public function restoreFieldsConfiguration()
     {
-        self::$fieldsConfiguration = self::$storedFieldsConfiguration;
-        self::$storedFieldsConfiguration = [];
+        $storedFieldsConfiguration = array_pop($this->storedFieldsConfiguration);
+        $this->fieldsConfiguration = $storedFieldsConfiguration[0];
+        $this->savLibraryMvcColumns = $storedFieldsConfiguration[1];
+        $this->repository = $storedFieldsConfiguration[2];
     }
 
     /**
      * Sets the static configuration for all the fields selected in a view.
      *
-     * @param integer $viewIdentifier
+     * @param int $viewIdentifier
      * @param DefaultRepository $repository
      * @return void
      */
-    public function setStaticFieldsConfiguration($viewIdentifier, $repository)
+    public function setStaticFieldsConfiguration(int $viewIdentifier, $repository)
     {
         $this->viewIdentifier = $viewIdentifier;
         $this->repository = $repository;
@@ -227,15 +395,18 @@ class FieldConfigurationManager
                 $temporaryArray[$fieldKey] = $field['order'][$viewIdentifier];
             }
         }
+
+        // Checks if there is at least one selected field
+        if (empty($temporaryArray)) {
+            throw new \Exception('No field selected in the view.');
+        }
         asort($temporaryArray);
 
         // Builds the static fields configuration
-        self::$fieldsConfiguration = [];
+        $this->fieldsConfiguration = [];
         foreach ($temporaryArray as $fieldName => $field) {
-
-            // Merges the TCA and the configuration frim the kickstarter
+            // Merges the TCA and the configuration from the kickstarter
             $this->fieldConfiguration = array_merge($repository->getDataMapFactory()->getTCAFieldConfiguration($fieldName), $this->getSavLibraryMvcFieldConfigurationByView($fieldName));
-
             // Adds the label
             if (empty($this->fieldConfiguration['label'])) {
                 $this->fieldConfiguration['label'] = $repository->getDataMapFactory()->getTCAFieldLabel($fieldName);
@@ -244,6 +415,8 @@ class FieldConfigurationManager
             $this->fieldConfiguration['fieldName'] = $fieldName;
             // Adds the field type
             $this->fieldConfiguration['fieldType'] = $repository->getDataMapFactory()->getFieldType($fieldName);
+            // Adds the foreign model
+            $this->fieldConfiguration['foreignModel'] = $repository->getDataMapFactory()->getForeignModel($fieldName);
             // Adds the folder
             $this->fieldConfiguration['folder'] = $this->getFolder($fieldName);
             // Checks if the field should be displayed
@@ -256,16 +429,17 @@ class FieldConfigurationManager
             }
             // Adds the default class label
             $this->fieldConfiguration['classLabel'] = $this->getClassLabel();
+
             // Adds the default class value
             $this->fieldConfiguration['classValue'] = $this->getClassValue();
             // Adds the default class Field
             $this->fieldConfiguration['classField'] = $this->getClassField();
             // Adds the default class Item
-            $this->fieldConfiguration['classItem'] = $this->getClassItem();
+            $this->fieldConfiguration['classItem_'] = $this->getClassItem();
             // Adds the label cutter
             $this->fieldConfiguration['cutLabel'] = $this->getCutLabel();
 
-            self::$fieldsConfiguration[$fieldName] = $this->fieldConfiguration;
+            $this->fieldsConfiguration[$fieldName] = $this->fieldConfiguration;
         }
     }
 
@@ -279,9 +453,31 @@ class FieldConfigurationManager
     {
         $this->object = $object;
 
-        foreach (self::$fieldsConfiguration as $fieldKey => $this->fieldConfiguration) {
+        // Gets the uidMainTable
+        if ($this->repository == $this->controller->getMainRepository()) {
+            $this->uidMainTable = $this->object->getUid();
+        }
+
+        foreach ($this->fieldsConfiguration as $fieldKey => $this->fieldConfiguration) {
+
+            // Sets the uidMainTable
+            $this->fieldConfiguration['uidMainTable'] = $this->uidMainTable;
+
             // Adds the value
             $this->fieldConfiguration['value'] = $this->getValue();
+
+            // Processes the attribute cutIfSameAsPrevious
+            $this->fieldConfiguration['classItem'] = $this->fieldConfiguration['classItem_'];
+            if ($this->fieldConfiguration['cutIfSameAsPrevious']) {
+                if (! isset($this->previousValue[$fieldKey])) {
+                    $this->previousValue[$fieldKey] = $this->fieldConfiguration['value'];
+                } elseif ($this->previousValue[$fieldKey] == $this->fieldConfiguration['value']) {
+                    $this->fieldConfiguration['value'] = '';
+                    $this->fieldConfiguration['classItem'] = 'item';
+                } else {
+                    $this->previousValue[$fieldKey] = $this->fieldConfiguration['value'];
+                }
+            }
 
             // Adds the cutters (fusion and field)
             $this->setCutFlag();
@@ -289,201 +485,55 @@ class FieldConfigurationManager
             $this->fieldConfiguration['cutDivItemInner'] = $this->getCutDivItemInner();
             $this->fieldConfiguration['cutDivItemEnd'] = $this->getCutDivItemEnd();
 
-            // Adds the property name
+            // Adds property for subforms
             $fieldName = $this->fieldConfiguration['fieldName'];
-            $this->fieldConfiguration['propertyName'] = GeneralUtility::underscoredToLowerCamelCase($fieldName);
+            $propertyName = GeneralUtility::underscoredToLowerCamelCase($fieldName);
+
+            if ($this->getSubformFlag()) {
+                $uid = $object->getUid();
+                if ($uid == null) {
+                    $uid = -1;
+                }
+                $this->fieldConfiguration['propertyName'] = $this->subformPropertyName . '.' . $uid . '.' . $propertyName;
+                $this->fieldConfiguration['uidLocal'] = $uid;
+            } else {
+                $this->fieldConfiguration['propertyName'] = $propertyName;
+            }
 
             // Adds specific configuration depending on the type
-            $addTypeBasedMethod = 'addFieldsConfigurationFor' . ucfirst($this->fieldConfiguration['fieldType']);
-            if (method_exists($this, $addTypeBasedMethod)) {
-                $this->$addTypeBasedMethod($fieldName);
+            $adderClassName = '\\YolfTypo3\\SavLibraryMvc\\Adders\\' . ucfirst($this->fieldConfiguration['fieldType']) . 'Adder';
+            if (method_exists($adderClassName, 'render')) {
+                $adder = new $adderClassName($this);
+                $this->fieldConfiguration = array_merge(
+                    $this->fieldConfiguration,
+                    $adder->render()
+                );
+            }
+
+            // Processes the value from a TypoScript object, if any
+            if ($this->fieldConfiguration['tsObject']) {
+                $this->fieldConfiguration['value'] = $this->getValueFromTypoScriptObject();
+            }
+
+            // Adds wrapItem if required
+            if ($this->fieldConfiguration['wrapItemIfNotCut'] && ! $this->fieldConfiguration['cutDivItemInner']) {
+                $this->fieldConfiguration['wrapItem'] = $this->fieldConfiguration['wrapItemIfNotCut'];
             }
 
             // Adds the field configuration to the fields configuration
-            self::$fieldsConfiguration[$fieldKey] = $this->fieldConfiguration;
-        }
-
-        // Type-based post-processing
-        foreach (self::$fieldsConfiguration as $fieldKey => $this->fieldConfiguration) {
-            // Adds specific configuration depending on the type
-            $addTypeBasedMethod = 'addFieldConfigurationFor' . ucfirst($this->fieldConfiguration['fieldType']);
-            if (method_exists($this, $addTypeBasedMethod)) {
-                self::$fieldsConfiguration[$fieldKey] = array_merge(self::$fieldsConfiguration[$fieldKey], $this->$addTypeBasedMethod($fieldKey));
-            }
+            $this->fieldsConfiguration[$fieldKey] = $this->fieldConfiguration;
         }
 
         // Attribute-based post-processing
-        foreach (self::$fieldsConfiguration as $fieldKey => $this->fieldConfiguration) {
+        foreach ($this->fieldsConfiguration as $fieldKey => $this->fieldConfiguration) {
             // Post-processes for the func attribute
             if (! empty($this->fieldConfiguration['func'])) {
                 $addAttributeBasedMethod = 'postProcessFieldConfigurationForFunc' . ucfirst($this->fieldConfiguration['func']);
                 if (method_exists($this, $addAttributeBasedMethod)) {
-                    self::$fieldsConfiguration[$fieldKey] = array_merge(self::$fieldsConfiguration[$fieldKey], $this->$addAttributeBasedMethod($fieldKey));
+                    $this->fieldsConfiguration[$fieldKey] = array_merge($this->fieldsConfiguration[$fieldKey], $this->$addAttributeBasedMethod($fieldKey));
                 }
             }
         }
-    }
-
-    /**
-     * Adds the static configuration for the type Files.
-     *
-     * @param string $fieldName
-     * @return void
-     */
-    protected function addFieldConfigurationForFiles($fieldName)
-    {
-        $addedFieldConfiguration = [];
-
-        if ($this->fieldConfiguration['value'] instanceof ObjectStorage) {
-            $files = [];
-
-            foreach ($this->fieldConfiguration['value'] as $object) {
-                $fileConfiguration = [];
-                $originalResource = $object->getOriginalResource();
-                $fileConfiguration['fileName'] = $originalResource->getPublicUrl();
-                $fileConfiguration['shortFileName'] = $originalResource->getName();
-
-                // Checks if the file exists
-                if (! is_file(AbstractController::getSitePath() . $fileConfiguration['fileName'])) {
-                    $fileConfiguration['fileUnknown'] = 1;
-                    FlashMessages::addError('error.fileDoesNotExist', [
-                        $fileConfiguration['fileName']
-                    ]);
-                }
-                $type = $originalResource->getType();
-
-                switch ($type) {
-                    case AbstractFile::FILETYPE_IMAGE:
-                        $fileConfiguration['value'] = $originalResource;
-                        $fileConfiguration['isImage'] = 1;
-                        break;
-                    case AbstractFile::FILETYPE_TEXT:
-                    case AbstractFile::FILETYPE_AUDIO:
-                    case AbstractFile::FILETYPE_VIDEO:
-                    case AbstractFile::FILETYPE_APPLICATION:
-
-                        // Gets the value
-                        $fileConfiguration['value'] = $originalResource->getPublicUrl();
-
-                        // Gets the message attribute
-                        $fieldMessage = $this->fieldConfiguration['fieldMessage'];
-                        if ($fieldMessage) {
-                            $fileConfiguration['message'] = self::$fieldsConfiguration[$fieldMessage]['value'];
-                        }
-                        if (empty($this->fieldConfiguration['message']) && empty($fieldMessage)) {
-                            $fileConfiguration['message'] = $originalResource->getName();
-                        }
-
-                        // Processes the addIcon attribute
-                        if ($this->fieldConfiguration['addIcon']) {
-                            $iconFactory = $this->objectManager->get(IconFactory::class);
-                            $pathParts = pathinfo($originalResource->getName());
-                            $fileConfiguration['icon'] = $iconFactory->getIconForFileExtension($pathParts['extension'], \TYPO3\CMS\Core\Imaging\Icon::SIZE_SMALL)->getMarkup();
-                        }
-                        break;
-                }
-
-                // Adds file information
-                $files[] = $fileConfiguration;
-            }
-        }
-        // Adds the files information
-        $addedFieldConfiguration['files'] = $files;
-
-        // Adds the alt attribute
-        $fieldAlt = $this->fieldConfiguration['fieldAlt'];
-        if ($fieldAlt) {
-            $addedFieldConfiguration['alt'] = self::$fieldsConfiguration[$fieldAlt]['value'];
-        }
-        if (empty($this->fieldConfiguration['alt']) && empty($fieldAlt)) {
-            $addedFieldConfiguration['alt'] = $this->fieldConfigurationc;
-        }
-
-        return $addedFieldConfiguration;
-    }
-
-    /**
-     * Adds the static configuration for the type Link.
-     *
-     * @param string $fieldName
-     * @return void
-     */
-    protected function addFieldConfigurationForLink($fieldName)
-    {
-        $addedFieldConfiguration = [];
-        // message attribute
-        $fieldMessage = $this->fieldConfiguration['fieldMessage'];
-        if ($fieldMessage) {
-            $addedFieldConfiguration['message'] = self::$fieldsConfiguration[$fieldMessage]['value'];
-        }
-        if (empty($this->fieldConfiguration['message']) && empty($fieldMessage)) {
-            $addedFieldConfiguration['message'] = $this->fieldConfiguration['value'];
-        }
-        // alt attribute
-        $fieldLink = $this->fieldConfiguration['fieldLink'];
-        if ($fieldLink) {
-            $addedFieldConfiguration['link'] = self::$fieldsConfiguration[$fieldLink]['value'];
-        }
-        if (empty($this->fieldConfiguration['link']) && empty($fieldLink)) {
-            $addedFieldConfiguration['link'] = $this->fieldConfiguration['value'];
-        }
-
-        return $addedFieldConfiguration;
-    }
-
-    /**
-     * Adds the static configuration for the type Radiobuttons.
-     *
-     * @param string $fieldName
-     * @return void
-     */
-    protected function addFieldConfigurationForRadiobuttons(string $fieldName)
-    {
-        $addedFieldConfiguration = [];
-        if ($this->fieldConfiguration['horizontalLayout']) {
-            $this->fieldConfiguration['cols'] = count($this->fieldConfiguration['items']);
-        }
-        return $addedFieldConfiguration;
-    }
-
-    /**
-     * Adds the static configuration for the type RelationManyToManyAsDoubleSelectorbox.
-     *
-     * @param string $fieldName
-     * @return void
-     */
-    protected function addFieldConfigurationForRelationManyToManyAsSubform(string $fieldName)
-    {
-        $addedFieldConfiguration = [];
-
-        // Sets the flag to show first and last buttons
-        $addedFieldConfiguration['general']['showFirstLastButtons'] = $this->fieldConfiguration['noFirstLast'] ? 0 : 1;
-        unset(self::$fieldsConfiguration[$fieldName]['noFirstLast']);
-
-        // Computes the last page id in a subform
-        $maximumItemsInSubform = $this->fieldConfiguration['maxSubformItems'];
-        $lastPageInSubform = (empty($maximumItemsInSubform) ? 0 : floor(($this->fieldConfiguration['value']->count() - 1) / $maximumItemsInSubform));
-        $addedFieldConfiguration['general']['lastPageInSubform'] = $lastPageInSubform;
-
-        // Page information for the page browser
-        $maxPagesInSubform = AbstractController::getSetting('maxItems');
-
-        // Get the page for the subform
-        $arguments = AbstractController::getOriginalArguments();
-        $uncompressedParameters = AbstractController::uncompressParameters($arguments['special']);
-        $subformActivePages = $uncompressedParameters['subformActivePages'];
-        $uncompressedSubformActivePages = AbstractController::uncompressSubformActivePages($subformActivePages);
-        $subformKey = $this->fieldConfiguration['subformKey'];
-        $pageInSubform = (int) $uncompressedSubformActivePages[$subformKey];
-        $addedFieldConfiguration['general']['pageInSubform'] = $pageInSubform;
-
-        $pagesInSubform = [];
-        for ($i = min($pageInSubform, max(0, $lastPageInSubform - $maxPagesInSubform)); $i <= min($lastPageInSubform, $pageInSubform + $maxPagesInSubform); $i ++) {
-            $pagesInSubform[$i] = $i + 1;
-        }
-        $addedFieldConfiguration['general']['pagesInSubform'] = $pagesInSubform;
-        $addedFieldConfiguration['general']['subformUidLocal'] = $this->object->getUid();
-        return $addedFieldConfiguration;
     }
 
     /**
@@ -507,6 +557,7 @@ class FieldConfigurationManager
         // Adds parameters to the special argument
         $special = $this->generalConfiguration['special'];
         $uncompressedParameters = AbstractController::uncompressParameters($special);
+
         if (! empty($this->fieldConfiguration['folderTab'])) {
             // Gets the folders for the requested view
             $viewIdentifiers = $this->repository->getController()->getViewIdentifiers();
@@ -526,20 +577,17 @@ class FieldConfigurationManager
         $compressedParameters = AbstractController::compressParameters($uncompressedParameters);
 
         // Defines the page uid
-        $pageUid = (empty($this->fieldConfiguration['setUid']) ? null : $this->fieldConfiguration['setUid']);
+        $pageUid = (empty($this->fieldConfiguration['setUid']) ? $this->getPageId() : $this->fieldConfiguration['setUid']);
 
         // Builds the uri
-        $pluginNameSpace = AbstractController::getPluginNameSpace();
-        $uriBuilder = $this->repository->getController()
-            ->getControllerContext()
-            ->getUriBuilder();
-        $uri = $uriBuilder->reset()
+        $pluginNameSpace = $this->controller->getPluginNameSpace();
+        $uri = $this->uriBuilder->reset()
             ->setTargetPageUid($pageUid)
             ->setArguments([
             $pluginNameSpace . '[special]' => $compressedParameters,
             $pluginNameSpace . '[action]' => $action,
-            $pluginNameSpace . '[controller]' => AbstractController::getControllerName()
-        ])
+                $pluginNameSpace . '[controller]' => $this->controller->getControllerName()
+            ])
             ->build();
 
         // Modifies the value with the link
@@ -549,7 +597,7 @@ class FieldConfigurationManager
     }
 
     /**
-     * Post-processor for the attribute func=makeItemLink.
+     * Post-processor for the attribute func=makeEmailLink.
      *
      * @param string $fieldName
      * @return array
@@ -558,17 +606,17 @@ class FieldConfigurationManager
     {
         $modifiedConfiguration = [];
 
-        $contentObjectRenderer = $this->objectManager->get(ContentObjectRenderer::class);
+        $contentObjectRenderer = GeneralUtility::makeInstance(ContentObjectRenderer::class);
 
         // Gets the message for the link
         $message = $this->fieldConfiguration['value'];
         if (! empty($this->fieldConfiguration['message'])) {
-            $message = $this->fieldConfiguration['message'];
+            $message = $this->parseFieldTags($this->fieldConfiguration['message']);
         }
 
         if (! empty($this->fieldConfiguration['fieldMessage'])) {
             $fieldMessage = $this->fieldConfiguration['fieldMessage'];
-            $message = self::$fieldsConfiguration[$fieldMessage]['value'];
+            $message = $this->parseFieldTags($this->fieldsConfiguration[$fieldMessage]['value']);
         }
 
         // Gets the mailTo information.
@@ -583,29 +631,28 @@ class FieldConfigurationManager
     }
 
     /**
-     * Post-processor for the attribute func=makeDateFormat.
-     *
-     * @param string $fieldName
-     * @return array
-     */
-    protected function postProcessFieldConfigurationForFuncMakeDateFormat(string $fieldName): array
-    {
-        $modifiedConfiguration = [];
-
-        // Format is processed in the partial type
-        return $modifiedConfiguration;
-    }
-
-    /**
      * Checks if a field is selected for the view.
      *
      * @param string $fieldName
-     * @return array
+     * @param bool $checkFolder
+     * @return bool
      */
-    protected function isSelected($fieldName)
+    public function isSelected(string $fieldName, bool $checkFolder = false): bool
     {
         $fieldConfiguration = $this->savLibraryMvcColumns[$fieldName]['config'];
-        $condition = is_array($fieldConfiguration[$this->getViewIdentifier()]) && $fieldConfiguration[$this->getViewIdentifier()]['selected'];
+        $viewIdentifier = $this->getViewIdentifier();
+        $condition = is_array($fieldConfiguration[$viewIdentifier]) && $fieldConfiguration[$viewIdentifier]['selected'];
+
+        if ($checkFolder && isset($this->savLibraryMvcColumns[$fieldName]['folders'])) {
+            if (isset($this->savLibraryMvcColumns[$fieldName]['folders'][$viewIdentifier])) {
+                $activeFolder = $this->controller->getViewerConfiguration()->getGeneralViewConfiguration('activeFolder');
+                if ($this->savLibraryMvcColumns[$fieldName]['folders'][$viewIdentifier] == $activeFolder) {
+                    return $condition;
+                }
+                $condition = false;
+            }
+        }
+
         return $condition;
     }
 
@@ -613,9 +660,9 @@ class FieldConfigurationManager
      * Checks if a file is an image
      *
      * @param string $fieldName
-     * @return boolean
+     * @return bool
      */
-    protected function isImage($fileName)
+    protected function isImage(string $fileName): bool
     {
         // The attribute disallowed is empty for images
         $disallowed = $this->fieldConfiguration['disallowed'];
@@ -643,7 +690,7 @@ class FieldConfigurationManager
      * @param string $fieldName
      * @return array
      */
-    protected function getSavLibraryMvcFieldConfigurationByView($fieldName)
+    protected function getSavLibraryMvcFieldConfigurationByView(string $fieldName): array
     {
         $savLibraryMvcFieldConfiguration = $this->savLibraryMvcColumns[$fieldName]['config'][$this->getViewIdentifier()];
         if (is_array($savLibraryMvcFieldConfiguration)) {
@@ -658,11 +705,12 @@ class FieldConfigurationManager
      *
      * @param string $fieldName
      * @param $string $attributeName
-     * @return array
+     * @return mixed
      */
-    protected function getSavLibraryMvcFieldAttributeByView($fieldName, $attributeName)
+    protected function getSavLibraryMvcFieldAttributeByView(string $fieldName, string $attributeName)
     {
         $savLibraryMvcFieldAttribute = $this->savLibraryMvcColumns[$fieldName]['config'][$this->getViewIdentifier()][$attributeName];
+
         return $savLibraryMvcFieldAttribute;
     }
 
@@ -670,24 +718,24 @@ class FieldConfigurationManager
      * Gets the folder for the view.
      *
      * @param string $fieldName
-     * @param integer $viewIdentifier
-     * @return integer
+     * @return int
      */
-    protected function getFolder($fieldName)
+    protected function getFolder(string $fieldName): int
     {
-        $folder = $this->savLibraryMvcColumns[$fieldName]['folders'][$this->getViewIdentifier()];
+        $folder = (int) $this->savLibraryMvcColumns[$fieldName]['folders'][$this->getViewIdentifier()];
         return ($folder ? $folder : 0);
     }
 
     /**
      * Builds the value content.
      *
-     * @return string
+     * @return mixed
      */
     protected function getValue()
     {
         // Gets the value directly from the kickstarter (specific and rare case)
         $value = $this->getSavLibraryMvcFieldAttributeByView($this->fieldConfiguration['fieldName'], 'value');
+
         if (! empty($value)) {
             if (empty($this->fieldConfiguration['valueIf']) || (! empty($this->fieldConfiguration['valueif']) && $this->processFieldCondition($this->fieldConfiguration['valueIf']))) {
                 // Parse localization and field tags
@@ -736,29 +784,6 @@ class FieldConfigurationManager
     /**
      * Builds the value content.
      *
-     * @param mixed $value
-     *
-     * @return string
-     */
-    protected function getValueFromTypoScriptStdwrap($value)
-    {
-        // The value is wrapped using the stdWrap TypoScript
-        $configuration = $this->fieldConfiguration['stdwrapValue'];
-        $configuration = $this->parseLocalizationTags($configuration);
-        $configuration = $this->parseFieldTags($configuration);
-
-        $TSparser = $this->objectManager->get(TypoScriptParser::class);
-        $TSparser->parse($configuration);
-
-        $contentObjectRenderer = $this->objectManager->get(ContentObjectRenderer::class);
-        $value = $contentObjectRenderer->stdWrap($value, $TSparser->setup);
-
-        return $value;
-    }
-
-    /**
-     * Builds the value content.
-     *
      * @return string
      */
     protected function getValueFromTypoScriptObject()
@@ -773,15 +798,15 @@ class FieldConfigurationManager
         }
 
         // The value is generated from TypoScript
-        $configuration = $this->fieldConfiguration['tsproperties'];
+        $configuration = $this->fieldConfiguration['tsProperties'];
         $configuration = $this->parseLocalizationTags($configuration);
         $configuration = $this->parseFieldTags($configuration);
 
-        $TSparser = $this->objectManager->get(TypoScriptParser::class);
+        $TSparser = GeneralUtility::makeInstance(TypoScriptParser::class);
         $TSparser->parse($configuration);
 
-        $contentObjectRenderer = $this->objectManager->get(ContentObjectRenderer::class);
-        $value = $contentObjectRenderer->cObjGetSingle($this->fieldConfiguration['tsobject'], $TSparser->setup);
+        $contentObjectRenderer = GeneralUtility::makeInstance(ContentObjectRenderer::class);
+        $value = $contentObjectRenderer->cObjGetSingle($this->fieldConfiguration['tsObject'], $TSparser->setup);
 
         return $value;
     }
@@ -790,6 +815,7 @@ class FieldConfigurationManager
      * Builds the value content from a request.
      *
      * @return string
+     * @throws \Exception
      */
     protected function getValueFromRequest()
     {
@@ -805,17 +831,17 @@ class FieldConfigurationManager
         if (preg_match('/^(?is:SELECT.*?FROM\s+(\w+))/', $query, $match) > 0) {
             $tableForConnection = $match[1];
         } else {
-            FlashMessages::addError('error.onlySelectQueryAllowed', [
+            throw new \Exception(sprintf(
+                'Only SELECT query is allowed in property "reqLabel" of field "%s".',
                 $this->fieldConfiguration['fieldName']
-            ]);
-            return null;
+                )
+            );
         }
         /** @var ConnectionPool $connectionPool */
         $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
         $rows = $connectionPool->getConnectionForTable($tableForConnection)
-            ->query($query)
+            ->executeQuery($query)
             ->fetchAll();
-
         if ($rows === null) {
             FlashMessages::addError('error.incorrectQueryInReqValue', [
                 $this->fieldConfiguration['fieldName']
@@ -850,7 +876,7 @@ class FieldConfigurationManager
      *
      * @return string
      */
-    protected function getClassLabel()
+    protected function getClassLabel(): string
     {
         if (empty($this->fieldConfiguration['classLabel'])) {
             return 'label';
@@ -864,7 +890,7 @@ class FieldConfigurationManager
      *
      * @return string
      */
-    protected function getClassValue()
+    protected function getClassValue(): string
     {
         if (empty($this->fieldConfiguration['classValue'])) {
             $class = 'value';
@@ -880,7 +906,7 @@ class FieldConfigurationManager
      *
      * @return string
      */
-    protected function getClassField()
+    protected function getClassField(): string
     {
         // Adds subform if the type is a RelationManyToManyAsSubform
         if ($this->fieldConfiguration['fieldType'] == 'RelationManyToManyAsSubform') {
@@ -889,8 +915,8 @@ class FieldConfigurationManager
             $class = 'field ';
         }
 
-        if (! empty($this->fieldConfiguration['classfield'])) {
-            $class = $class . $this->fieldConfiguration['classfield'];
+        if (! empty($this->fieldConfiguration['classField'])) {
+            $class = $class . $this->fieldConfiguration['classField'];
         }
 
         return $class;
@@ -901,7 +927,7 @@ class FieldConfigurationManager
      *
      * @return string
      */
-    protected function getClassItem()
+    protected function getClassItem(): string
     {
         if (empty($this->fieldConfiguration['classItem'])) {
             $class = 'item';
@@ -913,32 +939,12 @@ class FieldConfigurationManager
     }
 
     /**
-     * Builds the error flag if any during the update.
-     *
-     * @return boolean
-     */
-    protected function getErrorFlag()
-    {
-        // TODO to be checked
-        $querier = $this->getQuerier();
-        if (empty($querier)) {
-            return false;
-        } elseif ($querier->errorDuringUpdate() === true) {
-            $fieldName = $this->getFullFieldName();
-            $errorCode = $querier->getFieldErrorCodeFromProcessedPostVariables($fieldName);
-            return $errorCode != \YolfTypo3\SavLibraryPlus\Queriers\UpdateQuerier::ERROR_NONE;
-        } else {
-            return false;
-        }
-    }
-
-    /**
      * <DIV class="label"> cutter: checks if the label must be cut
      * Returns true if the <DIV> must be cut.
      *
-     * @return boolean
+     * @return bool
      */
-    protected function getCutLabel()
+    protected function getCutLabel(): bool
     {
         // Cuts the label if the type is a RelationManyToManyAsSubform or cutLabel is not equal to zero
         if ($this->fieldConfiguration['fieldType'] == 'RelationManyToManyAsSubform') {
@@ -1024,7 +1030,24 @@ class FieldConfigurationManager
      */
     protected function setCutFlag()
     {
-        $this->cutFlag = $this->cutIfEmpty() | $this->cutIf();
+        $this->cutFlag = $this->cut() | $this->cutIfEmpty() | $this->cutIf();
+    }
+
+    /**
+     * Content cutter: simple cutter which is used in special cases
+     * when the configuration must be fetched, i.e. for the title bar,
+     * but the field should not be displayed in the view.
+     * Returns true if the content must be cut.
+     *
+     * @return bool
+     */
+    protected function cut(): bool
+    {
+        if ($this->fieldConfiguration['cut']) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -1047,9 +1070,9 @@ class FieldConfigurationManager
      * Content cutter: checks if the content is empty
      * Returns true if the content must be cut.
      *
-     * @return boolean
+     * @return bool
      */
-    public function cutIf()
+    public function cutIf(): bool
     {
         if ($this->fieldConfiguration['cutIf']) {
             return $this->processFieldCondition($this->fieldConfiguration['cutIf']);
@@ -1065,14 +1088,10 @@ class FieldConfigurationManager
      *
      * @param string $fieldCondition
      *
-     * @return boolean True if the field condition is satisfied
+     * @return bool True if the field condition is satisfied
      */
-    public function processFieldCondition($fieldCondition)
+    public function processFieldCondition(string $fieldCondition)
     {
-        // Parses field tags
-        $fieldCondition = $this->parseFieldTags($fieldCondition);
-
-        // Initializes the result
         $result = null;
 
         // Matches the pattern
@@ -1097,7 +1116,7 @@ class FieldConfigurationManager
                     break;
                 case 'usergroup':
                     $isGroupCondition = true;
-                    $lhsValue = self::getTypoScriptFrontendController()->fe_user->user['usergroup'];
+                    $lhsValue = $this->getTypoScriptFrontendController()->fe_user->user['usergroup'];
                     break;
                 case '0':
                     $lhsValue = 0;
@@ -1111,6 +1130,7 @@ class FieldConfigurationManager
                         return false;
                     } else {
                         $lhsValue = $result['value'];
+
                     }
             }
 
@@ -1126,15 +1146,15 @@ class FieldConfigurationManager
                         ->isNewView() && $lhsValue === null);
                     break;
                 case '###user###':
-                    $rhsValue = self::getTypoScriptFrontendController()->fe_user->user['uid'];
+                    $rhsValue = $this->getTypoScriptFrontendController()->fe_user->user['uid'];
                     break;
                 case '###cruser###':
                     $viewer = $this->getController()->getViewer();
                     // Skips the condition if it is a new view since cruser_id will be set when saved
                     if (empty($viewer) === false && $viewer->isNewView() === true) {
-                        continue;
+                        continue 2;
                     } else {
-                        $rhsValue = self::getTypoScriptFrontendController()->fe_user->user['uid'];
+                        $rhsValue = $this->getTypoScriptFrontendController()->fe_user->user['uid'];
                     }
                     break;
                 case '###time()###':
@@ -1161,11 +1181,14 @@ class FieldConfigurationManager
                         $rhsValue = $rhs;
                     } else {
                         $row = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable('fe_groups')
-                            ->select([
-                            'uid'
-                        ], 'fe_groups', [
-                            'title' => $rhs
-                        ])
+                            ->select(
+                                [
+                                    'uid'
+                                ],
+                                'fe_groups',
+                                [
+                                    'title' => $rhs
+                                ])
                             ->fetch();
                         $rhsValue = $row['uid'];
                     }
@@ -1259,15 +1282,15 @@ class FieldConfigurationManager
                     break;
             }
 
-            // debug([
-            // 'lhs' => $lhs,
-            // 'lhsValue' => $lhsValue,
-            // 'operator' => $operator,
-            // 'rhs' => $rhs,
-            // 'rhsValue' => $rhsValue,
-            // 'connector' => $connector,
-            // 'result' => $result
-            // ]);
+//             debug([
+//             'lhs' => $lhs,
+//             'lhsValue' => $lhsValue,
+//             'operator' => $operator,
+//             'rhs' => $rhs,
+//             'rhsValue' => $rhsValue,
+//             'connector' => $connector,
+//             'result' => $result
+//             ]);
 
             // Pops the operator and the result in case of a right parenthesis
             if ($matches['rparenthesis'][$matchKey]) {
@@ -1297,7 +1320,7 @@ class FieldConfigurationManager
      * Processes localization tags
      *
      * @param $input string
-     *            String to process
+     *            String to parse
      * @return string
      */
     public function parseLocalizationTags(string $input = null): string
@@ -1331,7 +1354,7 @@ class FieldConfigurationManager
         // Processes labels as $$$label$$$
         preg_match_all('/\$\$\$([^\$]+)\$\$\$/', $input, $matches);
         foreach ($matches[1] as $matchKey => $match) {
-            $label = LocalizationUtility::translate($match, AbstractController::getControllerExtensionKey());
+            $label = LocalizationUtility::translate($match, $this->controller->getControllerExtensionKey());
             $input = str_replace($matches[0][$matchKey], $label, $input);
         }
 
@@ -1342,13 +1365,11 @@ class FieldConfigurationManager
      * Parses ###field### tags.
      *
      * @param string $input
-     *            The string to process
-     * @param boolean $reportError
-     *            If true report the error associated when the marker is not found
+     *            The string to parse
      *
      * @return string
      */
-    public function parseFieldTags(string $input)
+    public function parseFieldTags(string $input): string
     {
         // Checks if the value must be parsed
         $matches = [];
@@ -1373,8 +1394,15 @@ class FieldConfigurationManager
      * @param string $fieldName
      * @return array
      */
-    protected function getValueFromFieldName($fieldName)
+    protected function getValueFromFieldName(string $fieldName)
     {
+        if ($fieldName == 'uidMainTable') {
+            return [
+                'value' => $this->fieldConfiguration['uidMainTable'],
+                'error' => false
+            ];
+        }
+
         $fieldNameParts = explode('.', $fieldName);
         if (count($fieldNameParts) == 1) {
             $getterName = 'get' . GeneralUtility::underscoredToUpperCamelCase($fieldNameParts[0]);
@@ -1405,6 +1433,7 @@ class FieldConfigurationManager
                 ])
             ];
         }
+
         return [
             'value' => $value,
             'error' => false
@@ -1417,7 +1446,7 @@ class FieldConfigurationManager
      * @param string $className
      * @return string The table name
      */
-    protected function resolveTableName($className)
+    protected function resolveTableName(string $className): string
     {
         $className = ltrim($className, '\\');
         $classNameParts = explode('\\', $className);
@@ -1434,9 +1463,34 @@ class FieldConfigurationManager
 
     /**
      * Check if a quey is a SELECT query
+     *
+     * @param string $query The query to check
+     * @return bool
      */
-    protected function isSelectQuery($query)
+    protected function isSelectQuery(string $query): bool
     {
-        return preg_match('/^[ \r\t\n]*(?i)select\s*/', $query);
+        return preg_match('/^[ \r\t\n]*(?i)select\s*/', $query) ? true : false;
     }
+
+    /**
+     * Gets the page id
+     *
+     * @return int
+     */
+    protected function getPageId(): int
+    {
+        // @extensionScannerIgnoreLine
+        return (int) $GLOBALS['TSFE']->id;
+    }
+
+    /**
+     * Gets the TypoScript Frontend Controller
+     *
+     * @return TypoScriptFrontendController
+     */
+    protected  function getTypoScriptFrontendController(): TypoScriptFrontendController
+    {
+        return $GLOBALS['TSFE'];
+    }
+
 }

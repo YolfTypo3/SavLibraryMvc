@@ -1,23 +1,6 @@
-{namespace sav=YolfTypo3\SavLibraryMvc\ViewHelpers}
-<f:if condition="{field.MM}">
-	<f:then>
-		<f:for
-			each="{field->sav:RenderRelationManyToManyAsDoubleSelectorbox(action:'valuesMM')}"
-			as="item" key="itemKey">
-			<div class="doubleSelectorbox item{itemKey}">
-				{item}
-				<f:if condition="{field.separator}">{field.separator}</f:if>
-			</div>
-		</f:for>
-	</f:then>
-	<f:else>
-		<f:for
-			each="{field->sav:RenderRelationManyToManyAsDoubleSelectorbox(action:'values')}"
-			as="item" key="itemKey">
-			<div class="doubleSelectorbox item{itemKey}">
-				{item}
-				<f:if condition="{field.separator}">{field.separator}</f:if>
-			</div>
-		</f:for>
-	</f:else>
-</f:if>
+<f:for each="{field.selectedItems}"	as="item" key="itemKey">
+	<div class="doubleSelectorbox item{itemKey}">
+		{item}
+		<f:if condition="{field.separator}">{field.separator}</f:if>
+	</div>
+</f:for>

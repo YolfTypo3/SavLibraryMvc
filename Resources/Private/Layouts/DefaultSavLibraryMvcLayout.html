@@ -2,12 +2,18 @@
 
 <f:format.raw><sav:removeEmptyLines>
 <f:if condition="{general.hideExtension} != 1">
-<div class="savLibraryMvc {general.extensionKey} {general.controllerName}">
-    <div class="message">
-		<f:flashMessages queueIdentifier="core.template.flashMessages" />
-	</div>
-	<f:render partial="Errors" arguments="{object:data}" />
-	<f:render section="content" />
-</div>	
+<div class="savLibraryMvc {general.extensionKey} {general.controllerName->f:format.case(mode:'lower')}">
+    <div class="flashMessages">
+        <f:flashMessages queueIdentifier="core.template.flashMessages" as="flashMessages" >
+        <ul class="errors">
+        <f:for each="{flashMessages}" as="flashMessage">
+            <li><f:format.raw>{flashMessage.message}</f:format.raw></li>
+        </f:for>
+        </ul>
+        </f:flashMessages>        
+    </div>
+    <f:render partial="Errors" arguments="{object:data}" />
+    <f:render section="content" />
+</div>    
 </f:if>
 </sav:removeEmptyLines></f:format.raw>

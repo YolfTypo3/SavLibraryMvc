@@ -1,5 +1,6 @@
 <?php
-namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
+
+declare(strict_types=1);
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -13,14 +14,16 @@ namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
  *
  * The TYPO3 project - inspiring people to share!
  */
+
+namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
+
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
+use TYPO3\CMS\Extbase\Mvc\Request;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 use YolfTypo3\SavLibraryMvc\Controller\FlashMessages;
 use YolfTypo3\SavLibraryMvc\Managers\AdditionalHeaderManager;
-use YolfTypo3\SavLibraryMvc\Managers\FieldConfigurationManager;
 use YolfTypo3\SavCharts\XmlParser\XmlParser;
 
 /**
@@ -59,8 +62,9 @@ class GraphViewHelper extends AbstractViewHelper
      *
      * @return string Rendered string
      */
-    public function render()
+    public function render(): string
     {
+        $content = '';
         // Checks that sav_charts is loaded
         if (ExtensionManagementUtility::isLoaded('sav_charts')) {
 
@@ -77,7 +81,6 @@ class GraphViewHelper extends AbstractViewHelper
             }
         } else {
             FlashMessages::addError('error.graphExtensionNotLoaded');
-            $content = '';
         }
 
         return $content;
@@ -99,20 +102,15 @@ class GraphViewHelper extends AbstractViewHelper
             $tags = explode(',', $tags);
 
             // Gets the special parameter
-            $controllerArguments = $this->renderingContext->getControllerContext()
-                ->getRequest()
-                ->getArguments();
-            $parameters = $controllerArguments['special'];
+            $special = $this->templateVariableContainer->get('general')['special'];
 
             // Gets the uid
-            $uncompressedParameters = AbstractController::uncompressParameters($parameters);
+            $uncompressedParameters = AbstractController::uncompressParameters($special);
             $uid = $uncompressedParameters['uid'];
 
-            // Creates the object manager
-            $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-
             // Gets the controller
-            $controller = $objectManager->get(AbstractController::getControllerObjectName());
+            $controllerObjectName = $this->getRequest()->getControllerObjectName();
+            $controller = GeneralUtility::makeInstance($controllerObjectName);
 
             // Gets the main repository
             $mainRepository = $controller->getMainRepository();
@@ -121,10 +119,10 @@ class GraphViewHelper extends AbstractViewHelper
             $object = $mainRepository->findByUid($uid);
 
             // Builds a field configuration manager
-            $fieldConfigurationManager = GeneralUtility::makeInstance(FieldConfigurationManager::class);
-            $fieldConfigurationManager::storeFieldsConfiguration();
+            $fieldConfigurationManager = $controller->getFieldConfigurationManager();
+            $fieldConfigurationManager->storeFieldsConfiguration();
             $fieldConfigurationManager->addDynamicFieldsConfiguration($object);
-            $fieldConfigurationManager::restoreFieldsConfiguration();
+            $fieldConfigurationManager->restoreFieldsConfiguration();
 
             // Processes the tags
             foreach ($tags as $tag) {
@@ -161,7 +159,7 @@ class GraphViewHelper extends AbstractViewHelper
      *
      * @return string The image element or empty string
      */
-    protected function processTemplate()
+    protected function processTemplate(): string
     {
         $content = '';
 
@@ -210,6 +208,23 @@ class GraphViewHelper extends AbstractViewHelper
 
         return $content;
     }
-}
 
-?>
+    /**
+     * Shortcut for retrieving the request from the controller context
+     *
+     * @return Request
+     */
+    protected function getRequest(): Request
+    {
+        if (method_exists($this->renderingContext, 'getRequest')) {
+            return $this->renderingContext->getRequest();
+        } else {
+            // For TYPO3 v10
+            // @extensionScannerIgnoreLine
+            return $this->renderingContext
+                ->getControllerContext()
+                ->getRequest();
+        }
+    }
+
+}

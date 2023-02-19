@@ -1,18 +1,20 @@
 <f:if condition="{configuration.general.orderLink} == {field.orderAsc}">
-	<f:then>
-		<f:link.action action="list"
-			arguments="{
-	special:'{sav:changeCompressedParameters(arguments:{orderLink:field.orderDesc})}'}">
-			<span>{field.label}</span>
-		</f:link.action>
-	</f:then>
-	<f:else>
-		<f:link.action action="list"
-			arguments="{
-	special:'{sav:changeCompressedParameters(arguments:{orderLink:field.orderAsc})}'}">
-			<span>{field.label}</span>
-		</f:link.action>
-	</f:else>
+    <f:then>
+        <f:link.action action="list"
+            controller="{general.controllerName}"
+            arguments="{
+                special:'{sav:changeCompressedParameters(arguments:{orderLink:field.orderDesc})}'}">
+            <span>{field.label}</span>
+        </f:link.action>
+    </f:then>
+    <f:else>
+        <f:link.action action="list"
+            controller="{general.controllerName}"
+            arguments="{
+                special:'{sav:changeCompressedParameters(arguments:{orderLink:field.orderAsc})}'}">
+            <span>{field.label}</span>
+        </f:link.action>
+    </f:else>
 </f:if>
 
 

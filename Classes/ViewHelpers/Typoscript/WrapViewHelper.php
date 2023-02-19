@@ -1,5 +1,4 @@
 <?php
-namespace YolfTypo3\SavLibraryMvc\ViewHelpers\Typoscript;
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -13,9 +12,14 @@ namespace YolfTypo3\SavLibraryMvc\ViewHelpers\Typoscript;
  *
  * The TYPO3 project - inspiring people to share!
  */
+
+namespace YolfTypo3\SavLibraryMvc\ViewHelpers\Typoscript;
+
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 
 /**
  * Typoscript wrapper view helper.
@@ -26,7 +30,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
  */
 class WrapViewHelper extends AbstractViewHelper
 {
-
+    use CompileWithRenderStatic;
     /**
      * Initializes arguments.
      */
@@ -39,16 +43,20 @@ class WrapViewHelper extends AbstractViewHelper
     /**
      * Renders the viewhelper
      *
-     * @return string Rendered The wrapped content
+     * @param array $arguments
+     * @param \Closure $renderChildrenClosure
+     * @param RenderingContextInterface $renderingContext
+     *
+     * @return array The range array
      */
-    public function render()
+    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
     {
         // Gets the arguments
-        $data = $this->arguments['data'];
-        $configuration = $this->arguments['configuration'];
+        $data = $arguments['data'];
+        $configuration = $arguments['configuration'];
 
         if ($data === null) {
-            $data = html_entity_decode($this->renderChildren());
+            $data = html_entity_decode($renderChildrenClosure());
         }
 
         $contentObject = GeneralUtility::makeInstance(ContentObjectRenderer::class);
@@ -56,5 +64,3 @@ class WrapViewHelper extends AbstractViewHelper
         return $contentObject->dataWrap($data, $configuration);
     }
 }
-
-?>

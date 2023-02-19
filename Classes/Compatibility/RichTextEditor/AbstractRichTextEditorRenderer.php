@@ -1,5 +1,4 @@
 <?php
-namespace YolfTypo3\SavLibraryMvc\Compatibility\RichTextEditor;
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -13,6 +12,8 @@ namespace YolfTypo3\SavLibraryMvc\Compatibility\RichTextEditor;
  *
  * The TYPO3 project - inspiring people to share!
  */
+
+namespace YolfTypo3\SavLibraryMvc\Compatibility\RichTextEditor;
 
 /**
  * Abstract Rich text editor renderer
@@ -69,6 +70,15 @@ abstract class AbstractRichTextEditorRenderer
     public function render()
     {
     }
-}
 
-?>
+    /**
+     * Gets the page id
+     *
+     * @return int
+     */
+    protected function getPageId():int
+    {
+        // @extensionScannerIgnoreLine
+        return (int) $GLOBALS['TSFE']->id;
+    }
+}

@@ -1,5 +1,4 @@
 <?php
-namespace YolfTypo3\SavLibraryMvc\Compatibility\RichTextEditor;
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -13,6 +12,9 @@ namespace YolfTypo3\SavLibraryMvc\Compatibility\RichTextEditor;
  *
  * The TYPO3 project - inspiring people to share!
  */
+
+namespace YolfTypo3\SavLibraryMvc\Compatibility\RichTextEditor;
+
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -22,7 +24,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class RichTextEditorCompatibility
 {
-
     /**
      * Gets the rich text editor renderer
      *

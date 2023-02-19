@@ -1,5 +1,6 @@
 <?php
-namespace YolfTypo3\SavLibraryMvc\Managers;
+
+declare(strict_types=1);
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -13,6 +14,9 @@ namespace YolfTypo3\SavLibraryMvc\Managers;
  *
  * The TYPO3 project - inspiring people to share!
  */
+
+namespace YolfTypo3\SavLibraryMvc\Managers;
+
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 
 /**
@@ -103,7 +107,7 @@ class SessionManager
             // Removes filters in the same page which are not active,
             // that is not selected or with the same contentID
             foreach (self::$filtersData as $filterKey => $filter) {
-                if ($filterKey != self::$selectedFilterKey && $filter['pageId'] == $GLOBALS['TSFE']->id && $filter['contentUid'] != self::$filtersData[self::$selectedFilterKey]['contentUid']) {
+                if ($filterKey != self::$selectedFilterKey && $filter['pageId'] == $this->getPageId() && $filter['contentUid'] != self::$filtersData[self::$selectedFilterKey]['contentUid']) {
                     unset(self::$filtersData[$filterKey]);
                 }
             }
@@ -131,7 +135,8 @@ class SessionManager
         // Cleans the selected filter key
         $GLOBALS['TSFE']->fe_user->setKey('ses', 'selectedFilterKey', null);
 
-        $GLOBALS['TSFE']->storeSessionData();
+        // @extensionScannerIgnoreLine
+        $GLOBALS['TSFE']->fe_user->storeSessionData();
     }
 
     /**
@@ -142,7 +147,7 @@ class SessionManager
      *
      * @return mixed
      */
-    public static function getFieldFromSession($fieldKey)
+    public static function getFieldFromSession(string $fieldKey)
     {
         return self::$libraryData[$fieldKey];
     }
@@ -155,9 +160,9 @@ class SessionManager
      * @param $value mixed
      *            The value
      *
-     * @return mixed
+     * @return void
      */
-    public static function setFieldFromSession($fieldKey, $value)
+    public static function setFieldFromSession(string $fieldKey, $value)
     {
         self::$libraryData[$fieldKey] = $value;
     }
@@ -172,7 +177,7 @@ class SessionManager
      *
      * @return mixed
      */
-    public static function getSessionSubformField($subfromKey, $field)
+    public static function getSessionSubformField(string $subfromKey, string $field)
     {
         return self::$libraryData['subform'][$subfromKey][$field];
     }
@@ -189,27 +194,18 @@ class SessionManager
      *
      * @return void
      */
-    public static function setSessionSubformField($subfromKey, $field, $value)
+    public static function setSessionSubformField(string $subfromKey, string $field, $value)
     {
         self::$libraryData['subform'][$subfromKey][$field] = $value;
     }
 
-    /**
-     * Clears the subform fields
-     *
-     * @return void
-     */
-    public static function clearSessionSubformm()
-    {
-        unset(self::$libraryData['subform']);
-    }
 
     /**
      * Gets the selected filter key
      *
      * @return string
      */
-    public static function getSelectedFilterKey()
+    public static function getSelectedFilterKey(): string
     {
         return self::$selectedFilterKey;
     }
@@ -224,10 +220,19 @@ class SessionManager
      *
      * @return mixed
      */
-    public static function getFilterField($filterKey, $fieldName)
+    public static function getFilterField(string $filterKey, string $fieldName)
     {
         return self::$filtersData[$filterKey][$fieldName];
     }
-}
 
-?>
+    /**
+     * Gets the page id
+     *
+     * @return int
+     */
+    protected function getPageId():int
+    {
+        // @extensionScannerIgnoreLine
+        return (int) $GLOBALS['TSFE']->id;
+    }
+}

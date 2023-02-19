@@ -1,5 +1,4 @@
 <?php
-namespace YolfTypo3\SavLibraryMvc\ViewConfiguration;
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -13,6 +12,8 @@ namespace YolfTypo3\SavLibraryMvc\ViewConfiguration;
  *
  * The TYPO3 project - inspiring people to share!
  */
+
+namespace YolfTypo3\SavLibraryMvc\ViewConfiguration;
 
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 
@@ -34,7 +35,6 @@ class EditViewConfiguration extends AbstractViewConfiguration
         $special = $arguments['special'];
         $uncompressedParameters = AbstractController::uncompressParameters($special);
         $uncompressedParameters['mode'] = AbstractController::EDIT_MODE;
-        $special = AbstractController::compressParameters($uncompressedParameters);
 
         // Gets the uid
         $uid = $uncompressedParameters['uid'];
@@ -45,13 +45,23 @@ class EditViewConfiguration extends AbstractViewConfiguration
         // Gets the object from the uid
         if ($uid) {
             $this->object = $mainRepository->findByUid($uid);
+            $folderIdentifier = $uncompressedParameters['folder'];
         } else {
             $this->object = $mainRepository->createModelObject();
+            unset($uncompressedParameters['folder']);
+            $folderIdentifier = null;
         }
+        $special = AbstractController::compressParameters($uncompressedParameters);
+
+        // Gets the view identifier
+        $viewIdentifier = $this->getViewIdentifier();
+
+        // Gets the field configuration manager
+        $fieldConfigurationManager = $this->controller->getFieldConfigurationManager();
 
         // Sets general configuration values
-        $this->addGeneralViewConfiguration('extensionKey', AbstractController::getControllerExtensionKey());
-        $this->addGeneralViewConfiguration('controllerName', AbstractController::getControllerName());
+        $this->addGeneralViewConfiguration('extensionKey', $this->controller->getControllerExtensionKey());
+        $this->addGeneralViewConfiguration('controllerName', $this->controller->getControllerName());
         $this->addGeneralViewConfiguration('object', $this->object);
         $this->addGeneralViewConfiguration('special', $special);
         $this->addGeneralViewConfiguration('contentUid', $this->controller->getContentObjectRenderer()->data['uid']);
@@ -62,37 +72,35 @@ class EditViewConfiguration extends AbstractViewConfiguration
         $this->addGeneralViewConfiguration('saveAndNew', $mainRepository->getDataMapFactory()
             ->getSavLibraryMvcCtrlField('saveAndNew'));
         $this->addGeneralViewConfiguration('isNewItem', ($uid == - 1));
+        $this->addGeneralViewConfiguration('viewId', $this->getViewIdentifier());
+        $this->addGeneralViewConfiguration('activeFolder', $this->controller->getActiveFolder($viewIdentifier, $folderIdentifier));
 
-        // Gets the fields configuration
-        $this->fieldConfigurationManager->setStaticFieldsConfiguration($this->getViewIdentifier(), $mainRepository);
+        // Sets the fields configuration
+        $fieldConfigurationManager->setStaticFieldsConfiguration($viewIdentifier, $mainRepository);
 
         // Adds the dynamic configuration
-        $this->fieldConfigurationManager->addDynamicFieldsConfiguration($this->object);
+        $fieldConfigurationManager->addDynamicFieldsConfiguration($this->object);
 
-        // Gets the view identifier
-        $viewIdentifier = $this->getViewIdentifier();
+        // Gets the folders
+        $viewFolders = $this->controller->getFolders($viewIdentifier);
 
         // Adds the title
         $title = $this->parseTitle(
             $viewIdentifier,
             [
                 'general' => $this->getGeneralViewConfiguration(),
-                'fields' => $this->fieldConfigurationManager::getFieldsConfiguration()
+                'field' => $fieldConfigurationManager->getFieldsConfiguration()
             ]
         );
         $this->addGeneralViewConfiguration('title', $title);
 
-        // Gets the folders
-        $viewFolders = $this->getViewFolders($viewIdentifier);
-
         // Sets the view configuration
         $viewConfiguration = [
             'general' => $this->getGeneralViewConfiguration(),
-            'fields' => $this->fieldConfigurationManager::getFieldsConfiguration(),
+            'fields' => $fieldConfigurationManager->getFieldsConfiguration(),
             'folders' => $viewFolders
         ];
 
         return $viewConfiguration;
     }
 }
-?>
