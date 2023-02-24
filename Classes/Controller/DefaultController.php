@@ -245,9 +245,8 @@ class DefaultController extends AbstractController
             unset($uncompressedParameters['subformUidForeign']);
 
             // Updates the subform fields
-debug($data);
             $this->updateSubformFields($data, $uncompressedParameters['subformUidLocal']);
-debug($data);
+
             // Updates the main repository
             $this->getMainRepository()->update($data);
             $this->getMainRepository()->persistAll();
