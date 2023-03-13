@@ -146,9 +146,9 @@ class DataMapFactory extends \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataM
      *
      * @param string $fieldName
      *
-     * @return array|null
+     * @return mixed|null
      */
-    public function getSavLibraryMvcCtrlField($fieldName): ?array
+    public function getSavLibraryMvcCtrlField($fieldName)
     {
         return $this->savLibraryMvcCtrl[$fieldName] ?? null;
     }
