@@ -55,7 +55,7 @@ class ListViewConfiguration extends AbstractViewConfiguration
         $lastPage = ($maxItems ? floor(($count - 1) / $maxItems) : 0);
 
         // Defines the pages
-        $page = (int) $uncompressedParameters['page'];
+        $page = (int) ($uncompressedParameters['page'] ?? 0);
         $pages = [];
         for ($i = min($page, max(0, $lastPage - $maxItems)); $i <= min($lastPage, $page + $maxItems); $i ++) {
             $pages[$i] = $i + 1;
@@ -66,7 +66,7 @@ class ListViewConfiguration extends AbstractViewConfiguration
         $this->addGeneralViewConfiguration('controllerName', $this->controller->getControllerName());
         $this->addGeneralViewConfiguration('special', $special);
         $this->addGeneralViewConfiguration('contentUid', $this->controller->getContentObjectRenderer()->data['uid']);
-        $this->addGeneralViewConfiguration('orderLink', $uncompressedParameters['orderLink']);
+        $this->addGeneralViewConfiguration('orderLink', $uncompressedParameters['orderLink'] ?? null);
         $this->addGeneralViewConfiguration('currentMode', $uncompressedParameters['mode']);
         $this->addGeneralViewConfiguration('page', $page);
         $this->addGeneralViewConfiguration('pages', $pages);

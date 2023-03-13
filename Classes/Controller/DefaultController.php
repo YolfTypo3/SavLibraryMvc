@@ -125,10 +125,13 @@ class DefaultController extends AbstractController
                 'special' => $special
             ]);
         }
+        // Gets the arguments
+        $arguments = $this->request->getArguments();
 
         $arguments = [
             'special' => $special,
-            'executeRequested' => $executeRequested
+            'filter' => $arguments['filter'] ?? null,
+            'executeRequested' => $executeRequested,
         ];
         $viewConfiguration = $this->getViewConfiguration($arguments);
 
@@ -153,7 +156,7 @@ class DefaultController extends AbstractController
         $arguments = $this->request->getArguments();
 
         // Uncompresses the special arguments
-        $special = $arguments['special'];
+        $special = $arguments['special'] ?? null;
 
         // Checks if the user is allowed to export data
         if ($this->getFrontendUserManager()->userIsAllowedToExportData() === false) {
@@ -170,7 +173,8 @@ class DefaultController extends AbstractController
 
         if (isset($arguments['exportLoad'])) {
             $this->redirect('export', null, null, [
-                'special' => $special
+                'special' => $special,
+                'filter' => $arguments['filter'] ?? null
             ]);
         }
 

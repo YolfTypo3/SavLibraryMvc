@@ -22,6 +22,7 @@ use Symfony\Component\Yaml\Yaml;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\CommandUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 use YolfTypo3\SavLibraryMvc\Controller\FlashMessages;
 use YolfTypo3\SavLibraryMvc\Domain\Model\Export;
@@ -41,10 +42,18 @@ class ExportViewConfiguration extends AbstractViewConfiguration
     public function getConfiguration(array $arguments): array
     {
         // Gets the special parameters from arguments, uncompresses it and modifies it if needed
-        $special = $arguments['special'];
+        $special = $arguments['special'] ?? null;
         $uncompressedParameters = AbstractController::uncompressParameters($special);
         $special = AbstractController::compressParameters($uncompressedParameters);
 
+        // Gets the extension key
+        $extensionKey = $this->controller->getControllerExtensionKey();
+
+        // Gets the typoScript configuration
+        $typoScriptConfiguration = $this->controller->getTypoScriptConfiguration($extensionKey);
+
+        // Sets flags
+        $showFilterInExport = $typoScriptConfiguration['showFilterInExport'] ?? false;
         $exportIsLoaded = isset($uncompressedParameters['exportUid']);
 
         // Gets the content Id
@@ -58,6 +67,7 @@ class ExportViewConfiguration extends AbstractViewConfiguration
             $exportUid = $uncompressedParameters['exportUid'];
             $exportConfiguration = $exportRepository->findByUid($exportUid);
         } else {
+            $exportUid = null;
             $exportConfiguration = GeneralUtility::makeInstance(Export::class);
         }
 
@@ -70,10 +80,16 @@ class ExportViewConfiguration extends AbstractViewConfiguration
 
         // Gets the options
         $query = $exportRepository->createQuery();
-        $options = $query->matching($query->equals('cid', $contentId))->execute();
+        $constraints = [];
+        $constraints[] = $query->equals('cid', $contentId);
+        if ($arguments['filter']) {
+            $constraints[] = $query->like('name', '%' . $arguments['filter'] . '%');
+        }
+        $options = $query->matching($query->logicalAnd($constraints))->execute();
+
 
         // Sets general configuration values
-        $this->addGeneralViewConfiguration('extensionKey', $this->controller->getControllerExtensionKey());
+        $this->addGeneralViewConfiguration('extensionKey', $extensionKey);
         $this->addGeneralViewConfiguration('controllerName', $this->controller->getControllerName());
         $this->addGeneralViewConfiguration('special', $special);
         $this->addGeneralViewConfiguration('userIsAllowedToExportData', $userIsAllowedToExportData);
@@ -82,6 +98,8 @@ class ExportViewConfiguration extends AbstractViewConfiguration
         $this->addGeneralViewConfiguration('cid', $contentId);
         $this->addGeneralViewConfiguration('exportIsLoaded', $exportIsLoaded);
         $this->addGeneralViewConfiguration('exportUid', $exportUid);
+        $this->addGeneralViewConfiguration('showFilterInExport', $showFilterInExport);
+        $this->addGeneralViewConfiguration('filter', $arguments['filter']);
 
         // Sets the view configuration
         $viewConfiguration = [
@@ -254,7 +272,7 @@ class ExportViewConfiguration extends AbstractViewConfiguration
 
         // Special processing for white spaces in windows directories
         $cmd = preg_replace('/\/(\w+(?:\s+\w+)+)/', '/"$1"', $cmd);
-
+        file_put_contents('truc.txt', $cmd);
         // Executes the command
         CommandUtility::exec($cmd, $_, $returnValue);
 

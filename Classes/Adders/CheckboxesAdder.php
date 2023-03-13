@@ -36,7 +36,8 @@ final class CheckboxesAdder extends AbstractAdder
         $addedFieldConfiguration = [];
         $addedFieldConfiguration['checkboxes'] = Conversion::integerToBooleanArray((int) $this->fieldConfiguration['value']);
 
-        if ($this->fieldConfiguration['edit']) {
+        $edit = $this->fieldConfiguration['edit'] ?? false;
+        if ($edit) {
             return $addedFieldConfiguration;
         }
 

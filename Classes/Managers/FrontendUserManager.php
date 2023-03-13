@@ -59,7 +59,7 @@ class FrontendUserManager
      */
     public function userIsAuthenticated(): bool
     {
-        return (is_null($GLOBALS['TSFE']->fe_user->user['uid']) ? false : true);
+        return (!isset($GLOBALS['TSFE']->fe_user->user['uid']) ? false : true);
     }
 
     /**
@@ -165,7 +165,7 @@ class FrontendUserManager
         $userTypoScriptConfiguration = $GLOBALS['TSFE']->fe_user->getUserTSconf();
 
         // Sets the condition
-        $condition = ($userTypoScriptConfiguration[$extensionKey . '_Admin'] == '*');
+        $condition = (($userTypoScriptConfiguration[$extensionKey . '_Admin'] ?? null) == '*');
 
         return $condition;
     }
@@ -184,7 +184,7 @@ class FrontendUserManager
         $userTypoScriptConfiguration = $GLOBALS['TSFE']->fe_user->getUserTSconf();
 
         // Sets the condition
-        $condition = ($userTypoScriptConfiguration[$extensionKey . '_Export'] == '*' || $userTypoScriptConfiguration[$extensionKey . '_ExportWithQuery'] == '*');
+        $condition = (($userTypoScriptConfiguration[$extensionKey . '_Export'] ?? null) == '*' || ($userTypoScriptConfiguration[$extensionKey . '_ExportWithQuery'] ?? null) == '*');
 
         return $condition;
     }

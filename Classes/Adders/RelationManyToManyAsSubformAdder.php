@@ -54,11 +54,12 @@ final class RelationManyToManyAsSubformAdder extends AbstractAdder
         $generalConfiguration = [];
 
         // Sets the flag to show first and last buttons
-        $generalConfiguration['showFirstLastButtons'] = $this->fieldConfiguration['noFirstLast'] ? 0 : 1;
+        $noFirstLast = $this->fieldConfiguration['noFirstLast'] ?? false;
+        $generalConfiguration['showFirstLastButtons'] = $noFirstLast ? 0 : 1;
 
         // Computes the last page id in a subform
-        $maximumItemsInSubform = $this->fieldConfiguration['maxSubformItems'];
-        $lastPageInSubform = (empty($maximumItemsInSubform) ? 0 : floor(($this->fieldConfiguration['value']->count() - 1) / $maximumItemsInSubform));
+        $maxSubformItems = $this->fieldConfiguration['maxSubformItems'] ?? 0;
+        $lastPageInSubform = (empty($maxSubformItems) ? 0 : floor(($this->fieldConfiguration['value']->count() - 1) / $maxSubformItems));
         $generalConfiguration['lastPageInSubform'] = $lastPageInSubform;
 
         // Page information for the page browser
@@ -67,10 +68,10 @@ final class RelationManyToManyAsSubformAdder extends AbstractAdder
         // Gets the page for the subform
         $arguments = $this->fieldConfigurationManager->getController()->getArguments();
         $uncompressedParameters = AbstractController::uncompressParameters($arguments['special']);
-        $subformActivePages = $uncompressedParameters['subformActivePages'];
+        $subformActivePages = $uncompressedParameters['subformActivePages'] ?? null;
         $uncompressedSubformActivePages = AbstractController::uncompressSubformActivePages($subformActivePages);
         $subformKey = $this->fieldConfiguration['subformKey'];
-        $pageInSubform = (int) $uncompressedSubformActivePages[$subformKey];
+        $pageInSubform = (int) ($uncompressedSubformActivePages[$subformKey] ?? 0);
         $generalConfiguration['pageInSubform'] = $pageInSubform;
 
         $pagesInSubform = [];
@@ -87,20 +88,21 @@ final class RelationManyToManyAsSubformAdder extends AbstractAdder
         $generalConfiguration['subformKey'] = $this->fieldConfiguration['subformKey'];
 
         // Checks if the maximum number of relations is reached
-        if (($this->fieldConfiguration['value'] instanceof ObjectStorage) && $this->fieldConfiguration['value']->count() < $this->fieldConfiguration['maxitems']) {
+        $maxitems = $this->fieldConfiguration['maxitems'] ?? 0;
+        if (($this->fieldConfiguration['value'] instanceof ObjectStorage) && $this->fieldConfiguration['value']->count() < $maxitems) {
             $newButtonIsAllowed = true;
         } else {
             $newButtonIsAllowed = false;
         }
 
         $generalConfiguration['newButtonIsAllowed'] = $newButtonIsAllowed;
-        $generalConfiguration['upDownButtonIsAllowed'] = $this->fieldConfiguration['addUpDown'];
-        $generalConfiguration['deleteButtonIsAllowed'] = $this->fieldConfiguration['addDelete'];
+        $generalConfiguration['upDownButtonIsAllowed'] = $this->fieldConfiguration['addUpDown'] ?? false;
+        $generalConfiguration['deleteButtonIsAllowed'] = $this->fieldConfiguration['addDelete'] ?? false;
 
         // Processes the items
-        $start = min($generalConfiguration['pageInSubform'], $generalConfiguration['lastPageInSubform']) * $this->fieldConfiguration['maxSubformItems'];
+        $start = min($generalConfiguration['pageInSubform'], $generalConfiguration['lastPageInSubform']) * $maxSubformItems;
         $count = 0;
-        $maxSubformItems = $this->fieldConfiguration['maxSubformItems'] ? $this->fieldConfiguration['maxSubformItems'] : $this->fieldConfiguration['maxitems'];
+        $maxSubformItems = $maxSubformItems ? $maxSubformItems : $maxitems;
 
         // Gets the controller
         $controller = $this->fieldConfigurationManager->getController();
@@ -125,6 +127,7 @@ final class RelationManyToManyAsSubformAdder extends AbstractAdder
         // Stores the fields configuration
         $this->fieldConfigurationManager->storeFieldsConfiguration();
 
+        $items = [];
         if ($isNewItemInSubform) {
             // Creates a new object
             $subform = $controller->getSubform((int) $uncompressedParameters['subformKey']);
@@ -162,7 +165,7 @@ final class RelationManyToManyAsSubformAdder extends AbstractAdder
         }
 
         // Gets the subform title
-        $subformTitle = $this->fieldConfiguration['subformTitle'];
+        $subformTitle = $this->fieldConfiguration['subformTitle'] ?? '';
         if (empty($subformTitle)) {
             // Gets the label cutter
             $cutLabel = $this->fieldConfiguration['cutLabel'];
@@ -177,12 +180,13 @@ final class RelationManyToManyAsSubformAdder extends AbstractAdder
         $generalConfiguration['title'] = $subformTitle;
 
         // Adds the javascript to confirm the delete action
-        if ($this->fieldConfiguration['edit'] == 1) {
+        $edit = $this->fieldConfiguration['edit'] ?? false;
+        if ($edit) {
             AdditionalHeaderManager::addConfirmDeleteJavaScript('subformItem');
         }
 
         // Restores the field configuration
-       $this->fieldConfigurationManager->restoreFieldsConfiguration();
+        $this->fieldConfigurationManager->restoreFieldsConfiguration();
 
         $addedFieldConfiguration['subformConfiguration'] = [
             'items' => $items,

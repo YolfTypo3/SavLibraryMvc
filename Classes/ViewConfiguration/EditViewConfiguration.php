@@ -45,7 +45,7 @@ class EditViewConfiguration extends AbstractViewConfiguration
         // Gets the object from the uid
         if ($uid) {
             $this->object = $mainRepository->findByUid($uid);
-            $folderIdentifier = $uncompressedParameters['folder'];
+            $folderIdentifier = $uncompressedParameters['folder'] ?? null;
         } else {
             $this->object = $mainRepository->createModelObject();
             unset($uncompressedParameters['folder']);

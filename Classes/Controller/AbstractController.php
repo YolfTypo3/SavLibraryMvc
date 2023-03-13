@@ -104,6 +104,13 @@ abstract class AbstractController extends ActionController
     protected $extensionSettings = null;
 
     /**
+     * TypoScript setup
+     *
+     * @var array
+     */
+    protected static $typoScriptSetup;
+
+    /**
      * Front end user manager
      *
      * @var FrontendUserManager
@@ -187,11 +194,12 @@ abstract class AbstractController extends ActionController
             $fieldName = GeneralUtility::camelCaseToLowerCaseUnderscored($propertyName);
             $tcaFieldConfiguration = $dataMapFactory->getTCAFieldConfiguration($fieldName);
             $fieldType = $dataMapFactory->getFieldType($fieldName);
+            $renderType = $tcaFieldConfiguration['renderType'] ?? '';
             if ($fieldType == 'RelationManyToManyAsSubform') {
                 $propertyMapping = $propertyMappingConfiguration->forProperty($propertyName);
                 $this->processPropertyMapping($tcaFieldConfiguration, $field, $propertyMapping);
             } elseif (($fieldType == 'RelationManyToManyAsDoubleSelectorbox' &&
-                !empty($tcaFieldConfiguration['MM'])) || $tcaFieldConfiguration['renderType'] == 'selectMultipleSideBySide') {
+                ! empty($tcaFieldConfiguration['MM'])) || $renderType == 'selectMultipleSideBySide') {
                 if (is_array($field)) {
                     foreach ($field as $itemKey => $item) {
                         $propertyMappingConfiguration->forProperty($propertyName)->allowProperties($itemKey);
@@ -217,10 +225,11 @@ abstract class AbstractController extends ActionController
                  $fieldName = GeneralUtility::camelCaseToLowerCaseUnderscored($propertyName);
                  $tcaFieldConfiguration = $dataMapFactory->getTCAFieldConfiguration($fieldName);
                  $fieldType = $dataMapFactory->getFieldType($fieldName);
+                 $renderType = $tcaFieldConfiguration['renderType'] ?? '';
                  if ($fieldType == 'RelationManyToManyAsSubform') {
                      $this->processPropertyMapping($tcaFieldConfiguration, $field, $propertyMapping->forProperty($itemsKey)->forProperty($propertyName));
                  } elseif (($fieldType == 'RelationManyToManyAsDoubleSelectorbox' &&
-                     !empty($tcaFieldConfiguration['MM'])) || $tcaFieldConfiguration['renderType'] == 'selectMultipleSideBySide') {
+                     !empty($tcaFieldConfiguration['MM'])) || $renderType == 'selectMultipleSideBySide') {
                      if (is_array($field)) {
                          foreach ($field as $itemKey => $item) {
                              $propertyMapping->forProperty($itemsKey)->forProperty($propertyName)->allowProperties($itemKey);
@@ -577,10 +586,10 @@ abstract class AbstractController extends ActionController
         $configuration = $GLOBALS['TCA']['tx_savlibrarymvc_domain_model_configuration']['ctrl']['EXT'][$this->getControllerExtensionKey()];
         $this->controllerConfiguration = $configuration['controllers'][$controllerIdentifier];
 
-        // Redirects to the required controller if not the defaut one
+        // Forwards to the required controller if not the default one
         $controllerName = $this->controllerConfiguration['name'];
         if ($this->getControllerName() != $controllerName) {
-            $this->redirect($this->getControllerActionName(),
+            $this->forward($this->getControllerActionName(),
                 $controllerName,
                 $this->getControllerExtensionName(),
                 $this->getArguments());
@@ -589,10 +598,10 @@ abstract class AbstractController extends ActionController
         // Checks if the static extension template is included
         /** @var FrontendConfigurationManager $frontendConfigurationManager */
         $frontendConfigurationManager = GeneralUtility::makeInstance(FrontendConfigurationManager::class);
-        $typoScriptSetup = $frontendConfigurationManager->getTypoScriptSetup();
+        self::$typoScriptSetup = $frontendConfigurationManager->getTypoScriptSetup();
         $pluginSetupName = 'tx_' . strtolower($this->getControllerExtensionName()) . '.';
-        if (! @is_array($typoScriptSetup['plugin.'][$pluginSetupName]['view.'])) {
-            die('Fatal error: You have to include the static template of the extension ' . $this->getControllerExtensionKey() . '.');
+        if (! is_array(self::$typoScriptSetup['plugin.'][$pluginSetupName]['view.'] ?? null)) {
+            throw new \RuntimeException('You have to include the static template of the extension ' . $this->getControllerExtensionKey() . '.');
         }
 
         // Sets the controller where required
@@ -663,7 +672,7 @@ abstract class AbstractController extends ActionController
         if ($this->extensionSettings === null) {
             $this->extensionSettings = $this->settings;
         }
-        return $this->extensionSettings[$settingName];
+        return $this->extensionSettings[$settingName] ?? null;
     }
 
     /**
@@ -712,7 +721,7 @@ abstract class AbstractController extends ActionController
     public static function getTypoScriptConfiguration(string $extensionKey): ?array
     {
         $prefixId = 'tx_' . str_replace('_', '', $extensionKey) . '.';
-        $typoScriptConfiguration = $GLOBALS['TSFE']->tmpl->setup['plugin.'][$prefixId];
+        $typoScriptConfiguration = self::$typoScriptSetup['plugin.'][$prefixId] ?? null;
         if (is_array($typoScriptConfiguration)) {
             return $typoScriptConfiguration;
         } else {
@@ -778,16 +787,18 @@ abstract class AbstractController extends ActionController
     protected function setViewConfiguration($view)
     {
         // Calls the parent function.
-        // @TODO in V12, type ViewInterface could be added in th eparameter declaration.
+        // @TODO in V12, type ViewInterface could be added in the parameter declaration.
         parent::setViewConfiguration($view);
+
         // Sets the template path and file name
         $viewFunctionName = 'setTemplatePathAndFilename';
         if (method_exists($view, $viewFunctionName)) {
             $templateRootPaths = $this->getTemplateRootPaths();
-            foreach ($templateRootPaths as $templateRootPath) {
+
+            // Calls the templates in the reverse order
+            while (null !== ($templateRootPath = array_pop($templateRootPaths))) {
                 $parameter = GeneralUtility::getFileAbsFileName($templateRootPath) . '/Default/' . ucfirst(str_replace('Action', '', $this->actionMethodName)) . '.html';
-                // no need to bother if there is nothing to set
-                if ($parameter) {
+                if (is_file($parameter)) {
                     $view->$viewFunctionName($parameter);
                     return;
                 }

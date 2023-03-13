@@ -245,7 +245,7 @@ class AdditionalHeaderManager
      */
     public static function addJavaScript(string $key, string $javaScript = null)
     {
-        if (! is_array(self::$javaScript[$key])) {
+        if (! is_array(self::$javaScript[$key] ?? null)) {
             self::$javaScript[$key] = [];
         }
         self::$javaScript[$key][] = $javaScript;

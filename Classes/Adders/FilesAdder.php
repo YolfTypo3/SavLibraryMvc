@@ -85,7 +85,8 @@ final class FilesAdder extends AbstractAdder
                         break;
                 }
                 // Processes the addIcon attribute
-                if ($this->fieldConfiguration['addIcon']) {
+                $addIcon = $this->fieldConfiguration['addIcon'] ?? false;
+                if ($addIcon) {
                     $iconFactory = GeneralUtility::makeInstance(IconFactory::class);
                     $pathParts = pathinfo($originalResource->getName());
                     $fileConfiguration['icon'] = $iconFactory->getIconForFileExtension($pathParts['extension'], Icon::SIZE_SMALL)->render();
@@ -119,7 +120,7 @@ final class FilesAdder extends AbstractAdder
         $addedFieldConfiguration['files'] = $files;
 
         // Adds the alt attribute
-        $fieldAlt = $this->fieldConfiguration['fieldAlt'];
+        $fieldAlt = $this->fieldConfiguration['fieldAlt'] ?? false;
         if ($fieldAlt) {
             $addedFieldConfiguration['alt'] = $this->fieldConfigurationManager->getFieldConfiguration($fieldAlt)['value'];
         }
@@ -128,7 +129,8 @@ final class FilesAdder extends AbstractAdder
         }
 
         // Adds the javascript to confirm the delete action
-        if ($this->fieldConfiguration['edit'] == AbstractController::EDIT_MODE) {
+        $edit = $this->fieldConfiguration['edit'] ?? null;
+        if ($edit == AbstractController::EDIT_MODE) {
             AdditionalHeaderManager::addConfirmDeleteJavaScript('file');
         }
 

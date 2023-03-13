@@ -33,8 +33,6 @@ class RichTextEditorRenderer extends AbstractRichTextEditorRenderer
      */
     public function render(): string
     {
-        $GLOBALS['BE_USER'] = GeneralUtility::makeInstance(BackendUserAuthentication::class);
-        $GLOBALS['BE_USER']->uc['edit_RTE'] = true;
 
         $richtextConfigurationProvider = GeneralUtility::makeInstance(Richtext::class);
         $richtextConfiguration = $richtextConfigurationProvider->getConfiguration('', '', $this->getPageId(), '', [
@@ -46,9 +44,11 @@ class RichTextEditorRenderer extends AbstractRichTextEditorRenderer
         $nodeFactory = GeneralUtility::makeInstance(NodeFactory::class);
         $formData = [
             'renderType' => 'text',
+            'fieldName' => $this->name,
             'inlineStructure' => [],
             'row' => [
-                'pid' => $this->getPageId()
+                'pid' => $this->getPageId(),
+
             ],
             'parameterArray' => [
                 'fieldConf' => [

@@ -57,6 +57,7 @@ class GetItemViewHelper extends AbstractViewHelper
         if ($value === null) {
             $value = $renderChildrenClosure();
         }
-        return $value[$key + $offset];
+
+        return $value[$key + $offset] ?? null;
     }
 }

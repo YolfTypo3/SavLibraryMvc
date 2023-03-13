@@ -97,7 +97,7 @@ final class DatePicker
         $libraryName = AbstractController::LIBRARY_NAME;
         $key = self::KEY . '.';
         $extensionTypoScriptConfiguration = AbstractController::getTypoScriptConfiguration($this->extensionKey);
-        $datePickerTypoScriptConfiguration = $extensionTypoScriptConfiguration[$key];
+        $datePickerTypoScriptConfiguration = $extensionTypoScriptConfiguration[$key] ?? null;
         if (! empty($datePickerTypoScriptConfiguration['stylesheet'])) {
             // The style sheet is given by the extension TypoScript
             $cascadingStyleSheetAbsoluteFileName = GeneralUtility::getFileAbsFileName($datePickerTypoScriptConfiguration['stylesheet']);
@@ -111,7 +111,7 @@ final class DatePicker
             }
         } else {
             $libraryTypoScriptConfiguration = AbstractController::getTypoScriptConfiguration($libraryName);
-            $datePickerTypoScriptConfiguration = $libraryTypoScriptConfiguration[$key];
+            $datePickerTypoScriptConfiguration = $libraryTypoScriptConfiguration[$key] ?? null;
             if (empty($datePickerTypoScriptConfiguration['stylesheet']) === false) {
                 // The style sheet is given by the library TypoScript
                 $cascadingStyleSheetAbsoluteFileName = GeneralUtility::getFileAbsFileName($datePickerTypoScriptConfiguration['stylesheet']);
@@ -156,13 +156,13 @@ final class DatePicker
         $libraryName = AbstractController::LIBRARY_NAME;
         $key = self::KEY . '.';
         $extensionTypoScriptConfiguration = AbstractController::getTypoScriptConfiguration($this->extensionKey);
-        $datePickerTypoScriptConfiguration = $extensionTypoScriptConfiguration[$key];
-        if (is_array($datePickerTypoScriptConfiguration['format.'])) {
+        $datePickerTypoScriptConfiguration = $extensionTypoScriptConfiguration[$key] ?? null;
+        if (is_array($datePickerTypoScriptConfiguration['format.'] ?? null)) {
             return $datePickerTypoScriptConfiguration['format.'];
         } else {
             $libraryTypoScriptConfiguration = AbstractController::getTypoScriptConfiguration($libraryName);
-            $datePickerTypoScriptConfiguration = $libraryTypoScriptConfiguration[$key];
-            if (is_array($datePickerTypoScriptConfiguration['format.'])) {
+            $datePickerTypoScriptConfiguration = $libraryTypoScriptConfiguration[$key] ?? null;
+            if (is_array($datePickerTypoScriptConfiguration['format.'] ?? null)) {
                 return $datePickerTypoScriptConfiguration['format.'];
             }
         }

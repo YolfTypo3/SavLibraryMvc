@@ -67,7 +67,7 @@ abstract class AbstractRichTextEditorRenderer
      *
      * @return string
      */
-    public function render()
+    public function render(): string
     {
     }
 
@@ -76,7 +76,7 @@ abstract class AbstractRichTextEditorRenderer
      *
      * @return int
      */
-    protected function getPageId():int
+    protected function getPageId(): int
     {
         // @extensionScannerIgnoreLine
         return (int) $GLOBALS['TSFE']->id;

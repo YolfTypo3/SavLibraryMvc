@@ -33,7 +33,8 @@ final class SelectorboxAdder extends AbstractAdder
      */
     public function render(): array
     {
-        if ($this->fieldConfiguration['edit']) {
+        $edit = $this->fieldConfiguration['edit'] ?? false;
+        if ($edit) {
             return $this->renderInEditMode();
         } else {
             return $this->renderInDefaultMode();
@@ -71,6 +72,7 @@ final class SelectorboxAdder extends AbstractAdder
     {
         $addedFieldConfiguration = [];
 
+        $extensionKey = $this->fieldConfigurationManager->getController()->getControllerExtensionKey();
         $items = $this->fieldConfiguration['items'];
         $value = $this->fieldConfiguration['value'];
         foreach ($items as $item) {

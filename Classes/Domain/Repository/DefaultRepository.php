@@ -182,7 +182,7 @@ class DefaultRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
 
         // Applies the order by clause
         $arguments = $this->controller->getArguments();
-        $uncompressedParameters = AbstractController::uncompressParameters($arguments['special']);
+        $uncompressedParameters = AbstractController::uncompressParameters($arguments['special'] ?? null);
         // Checks if there is an order link
         if (isset($uncompressedParameters['orderLink'])) {
             $orderByMethod = 'orderByClauseForWhereTag' . $uncompressedParameters['orderLink'];
@@ -283,10 +283,7 @@ class DefaultRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
      */
     protected function keepWhereClause(): bool
     {
-        if (!isset($this->selectedSessionFilter['keepWhereClause'])) {
-            return false;
-        }
-        return $this->selectedSessionFilter['keepWhereClause'];
+        return $this->selectedSessionFilter['keepWhereClause'] ?? false;
     }
 
     /**

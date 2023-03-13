@@ -32,7 +32,8 @@ final class StringAdder extends AbstractAdder
     {
         $addedFieldConfiguration = [];
 
-        if ($this->fieldConfiguration['renderType'] == 'Files') {
+        $renderType = $this->fieldConfiguration['renderType'] ?? null;
+        if ($renderType == 'Files') {
             $fileAdder = new FilesAdder($this->fieldConfigurationManager);
             $addedFieldConfiguration = $fileAdder->render();
         }

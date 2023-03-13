@@ -34,7 +34,8 @@ final class RelationManyToManyAsDoubleSelectorboxAdder extends AbstractAdder
      */
     public function render(): array
     {
-        if ($this->fieldConfiguration['edit']) {
+        $edit = $this->fieldConfiguration['edit'] ?? false;
+        if ($edit) {
             return $this->renderInEditMode();
         } else {
             return $this->renderInDefaultMode();
@@ -64,33 +65,37 @@ final class RelationManyToManyAsDoubleSelectorboxAdder extends AbstractAdder
         $addedFieldConfiguration['destinationName'] = 'data[' . str_replace('.', '][', $propertyName) . ']';
 
         // Cheks if options are provided by a query
-        if ($this->fieldConfiguration['reqLabel']) {
-            $options = $this->getLabelFromRequest($this->fieldConfiguration['reqLabel']);
+        $reqLabel = $this->fieldConfiguration['reqLabel'] ?? '';
+        if (! empty($reqLabel)) {
+            $options = $this->getLabelFromRequest($reqLabel);
         }
 
         // Gets the repository and its query
         $repository = $this->getRepository();
         $query = $this->getQuery($repository);
-        if ($this->fieldConfiguration['MM'] || $this->fieldConfiguration['value'] instanceof ObjectStorage) {
-            $selectedObjects = $this->fieldConfiguration['value'];
+        $MM = $this->fieldConfiguration['MM'] ?? '';
+        $value = $this->fieldConfiguration['value'];
+        if (! empty($MM) || $value instanceof ObjectStorage) {
+            $selectedObjects = $value;
         } else {
-            $items = explode(',', $this->fieldConfiguration['value']);
+            $items = explode(',', $value);
             $selectedObjects = $query->matching($query->in('uid', $items))->execute();
         }
 
         // Gets the list of uid.
         $uidSelectedObjects = [];
         $selectedOptions = [];
+        $labelSelect = $this->fieldConfiguration['labelSelect'] ?? '';
 
         foreach ($selectedObjects as $object) {
             $uid = $object->getUid();
             $uidSelectedObjects[] = $uid;
-            if (! empty($this->fieldConfiguration['reqLabel'])) {
+            if (! empty($reqLabel)) {
                 if (isset($options[$uid])) {
                     $selectedOptions[$uid] = $options[$uid];
                 }
-            } elseif (! empty($this->fieldConfiguration['labelSelect'])) {
-                $selectedOptions[$uid] = $this->parseLabel($object, $this->fieldConfiguration['labelSelect']);
+            } elseif (! empty($labelSelect)) {
+                $selectedOptions[$uid] = $this->parseLabel($object, $labelSelect);
             } else {
                 $labelGetter = 'get' . GeneralUtility::underscoredToUpperCamelCase($repository->getDataMapFactory()->getLabelField());
                 $selectedOptions[$uid] = $object->$labelGetter();
@@ -110,12 +115,12 @@ final class RelationManyToManyAsDoubleSelectorboxAdder extends AbstractAdder
         $unselectedOptions = [];
         foreach ($unselectedObjects as $object) {
             $uid = $object->getUid();
-            if (! empty($this->fieldConfiguration['reqLabel'])) {
+            if (! empty($reqLabel)) {
                 if (isset($options[$uid])) {
                     $unselectedOptions[$uid] = $options[$uid];
                 }
-            } elseif (! empty($this->fieldConfiguration['labelSelect'])) {
-                $unselectedOptions[$uid] = $this->parseLabel($object, $this->fieldConfiguration['labelSelect']);
+            } elseif (! empty($labelSelect)) {
+                $unselectedOptions[$uid] = $this->parseLabel($object, $labelSelect);
             } else {
                 $labelGetter = 'get' . GeneralUtility::underscoredToUpperCamelCase($repository->getDataMapFactory()->getLabelField());
                 $unselectedOptions[$uid] = $object->$labelGetter();
@@ -138,18 +143,21 @@ final class RelationManyToManyAsDoubleSelectorboxAdder extends AbstractAdder
         $addedFieldConfiguration = [];
 
         // Cheks if options are provided by a query
-        if ($this->fieldConfiguration['reqLabel']) {
-            $options = $this->getLabelFromRequest($this->fieldConfiguration['reqLabel']);
+        $reqLabel = $this->fieldConfiguration['reqLabel'] ?? '';
+        if (! empty($reqLabel)) {
+            $options = $this->getLabelFromRequest($reqLabel);
         }
 
         // Gets the repository and its query
         $repository = $this->getRepository();
         $query = $this->getQuery($repository);
-        if ($this->fieldConfiguration['MM'] || $this->fieldConfiguration['value'] instanceof ObjectStorage) {
-            $selectedObjects = $this->fieldConfiguration['value'];
+        $MM = $this->fieldConfiguration['MM'] ?? '';
+        $value = $this->fieldConfiguration['value'];
+        if (! empty($MM) || $value instanceof ObjectStorage) {
+            $selectedObjects = $value;
         } else {
-            if (!empty($this->fieldConfiguration['value'])) {
-                $items = explode(',', $this->fieldConfiguration['value']);
+            if (!empty($value)) {
+                $items = explode(',', $value);
                 $selectedObjects = $query->matching($query->in('uid', $items))->execute();
             } else {
                 $selectedObjects = null;
@@ -159,14 +167,15 @@ final class RelationManyToManyAsDoubleSelectorboxAdder extends AbstractAdder
 
         $selectedItems = [];
         if ($selectedObjects !== null) {
+            $labelSelect = $this->fieldConfiguration['labelSelect'] ?? '';
             foreach ($selectedObjects as $object) {
                 $uid = $object->getUid();
-                if (! empty($this->fieldConfiguration['reqLabel'])) {
+                if (! empty($reqLabel)) {
                     if (isset($options[$uid])) {
                         $selectedItems[] = $options[$uid];
                     }
-                } elseif (! empty($this->fieldConfiguration['labelSelect'])) {
-                    $selectedItems[] = $this->parseLabel($object, $this->fieldConfiguration['labelSelect']);
+                } elseif (! empty($labelSelect)) {
+                    $selectedItems[] = $this->parseLabel($object, $labelSelect);
                 } else {
                     $labelGetter = 'get' . GeneralUtility::underscoredToUpperCamelCase($repository->getDataMapFactory()->getLabelField());
                     $selectedItems[] = $object->$labelGetter();

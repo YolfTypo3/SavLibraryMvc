@@ -50,6 +50,7 @@ class RteViewHelper extends TextareaViewHelper
 
         $GLOBALS['BE_USER'] = GeneralUtility::makeInstance(BackendUserAuthentication::class);
         $GLOBALS['BE_USER']->uc['edit_RTE'] = true;
+        $GLOBALS['LANG'] = null;
 
         $richTextEditorRenderer = RichTextEditorCompatibility::getRichTextEditorRenderer();
         $richTextEditorRenderer->setArguments($this->arguments);

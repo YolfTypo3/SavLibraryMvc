@@ -62,7 +62,7 @@ class SingleViewConfiguration extends AbstractViewConfiguration
         $userIsAllowedToInputData = $this->controller->getFrontendUserManager()->userIsAllowedToInputData() && ! $mainRepository->isInDraftWorkspace($uid);
         $this->addGeneralViewConfiguration('userIsAllowedToInputData', $userIsAllowedToInputData);
         $this->addGeneralViewConfiguration('isInDraftWorkspace', $mainRepository->isInDraftWorkspace($uid));
-        $this->addGeneralViewConfiguration('activeFolder', $this->controller->getActiveFolder($viewIdentifier, $uncompressedParameters['folder']));
+        $this->addGeneralViewConfiguration('activeFolder', $this->controller->getActiveFolder($viewIdentifier, $uncompressedParameters['folder'] ?? null));
 
         // Sets the fields configuration
         $fieldConfigurationManager->setStaticFieldsConfiguration($viewIdentifier, $mainRepository);

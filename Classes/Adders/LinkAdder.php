@@ -33,7 +33,7 @@ final class LinkAdder extends AbstractAdder
         $addedFieldConfiguration = [];
 
         // message attribute
-        $fieldMessage = $this->fieldConfiguration['fieldMessage'];
+        $fieldMessage = $this->fieldConfiguration['fieldMessage'] ?? false;
         if ($fieldMessage) {
             $addedFieldConfiguration['message'] = $this->fieldConfigurationManager->getFieldConfiguration($fieldMessage)['value'];
         }
@@ -41,7 +41,7 @@ final class LinkAdder extends AbstractAdder
             $addedFieldConfiguration['message'] = $this->fieldConfiguration['value'];
         }
         // alt attribute
-        $fieldLink = $this->fieldConfiguration['fieldLink'];
+        $fieldLink = $this->fieldConfiguration['fieldLink'] ?? false;
         if ($fieldLink) {
             $addedFieldConfiguration['link'] = $this->fieldConfigurationManager->getFieldConfiguration($fieldLink)['value'];
         }

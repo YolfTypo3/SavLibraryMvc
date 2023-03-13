@@ -128,7 +128,7 @@ abstract class AbstractViewConfiguration
         $viewType = $this->getViewType();
 
         // Gets the views with condition if any
-        $viewsWithCondition = $viewIdentifiers['viewsWithCondition'][$viewType];
+        $viewsWithCondition = $viewIdentifiers['viewsWithCondition'][$viewType] ?? null;
 
         if ($checkViewsWithCondition === false || empty($viewsWithCondition)) {
             return $viewIdentifiers[$viewType];
@@ -217,7 +217,8 @@ abstract class AbstractViewConfiguration
             $fieldName = $matches[1][$keyMatch];
             switch ($viewType) {
                 case 'listView':
-                    if ($configuration['field'][$fieldName]['orderLinkInTitle']) {
+                    $orderLinkInTitle = $configuration['field'][$fieldName]['orderLinkInTitle'] ?? false;
+                    if ($orderLinkInTitle) {
                         // Gets the associated whereTags
                         $configuration['field'][$fieldName]['orderAsc'] = $this->controller->getMainRepository()->getWhereTagByTitle($fieldName . '+');
                         $configuration['field'][$fieldName]['orderDesc'] = $this->controller->getMainRepository()->getWhereTagByTitle($fieldName . '-');

@@ -98,17 +98,19 @@ class DatePickerViewHelper extends AbstractFormFieldViewHelper
         $this->tag->addAttribute('id', 'input_' . $datePickerConfiguration['id']);
 
         // Adds items to the configuration
-        $datePickerConfiguration['format'] = $fieldConfiguration['format'];
-        $datePickerConfiguration['showsTime'] = $fieldConfiguration['showsTime'];
+        $datePickerConfiguration['format'] = $fieldConfiguration['format'] ?? null;
+        $datePickerConfiguration['showsTime'] = $fieldConfiguration['showsTime'] ?? null;
 
         $iconFactory = GeneralUtility::makeInstance(IconFactory::class);
         $datePickerConfiguration['icon'] = $iconFactory->getIcon('actions-calendar', Icon::SIZE_SMALL);
 
         // Sets the value
         $dateTimeFormat = $this->convertToDateTimeFormat($datePickerConfiguration['format']);
+        $newRecord = $fieldConfiguration['newRecord'] ?? false;
+        $noDefault = $fieldConfiguration['noDefault'] ?? false;
         if ($this->getValueAttribute() === null || empty($this->getValueAttribute())) {
-            $value = $fieldConfiguration['noDefault'] ? '' : date($dateTimeFormat);
-        } elseif ($fieldConfiguration['noDefault'] && $fieldConfiguration['newRecord']) {
+            $value = $noDefault ? '' : date($dateTimeFormat);
+        } elseif ($noDefault && $newRecord) {
             $value = '';
         } else {
             $value = strftime($datePickerConfiguration['format'], $this->getValueAttribute()->format('U'));

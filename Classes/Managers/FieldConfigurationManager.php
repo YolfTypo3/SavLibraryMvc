@@ -107,6 +107,18 @@ class FieldConfigurationManager
     protected $cutFlag;
 
     /**
+     *
+     * @var boolean
+     */
+    protected $fusionInProgress = false;
+
+    /**
+     *
+     * @var boolean
+     */
+    protected $fusionBeginPending = false;
+
+    /**
      * View identifier
      *
      * @var int
@@ -304,7 +316,7 @@ class FieldConfigurationManager
      *
      * @return string
      */
-    public function getSubformPropertyName():string
+    public function getSubformPropertyName(): string
     {
         return $this->subformPropertyName;
     }
@@ -420,12 +432,12 @@ class FieldConfigurationManager
             // Adds the folder
             $this->fieldConfiguration['folder'] = $this->getFolder($fieldName);
             // Checks if the field should be displayed
-            $this->fieldConfiguration['display'] = ($this->fieldConfiguration['doNotDisplay'] ? 0 : 1);
+            $this->fieldConfiguration['display'] = ($this->fieldConfiguration['doNotDisplay'] ?? false ? 0 : 1);
             // Adds the required attribute
-            if ($this->fieldConfiguration['requiredIf']) {
-                $this->fieldConfiguration['required'] = $this->processFieldCondition($this->fieldConfiguration['requiredIf']);
+            if ($this->fieldConfiguration['requiredIf'] ?? false) {
+                $this->fieldConfiguration['required'] = $this->processFieldCondition($this->fieldConfiguration['requiredIf'] ?? '');
             } else {
-                $this->fieldConfiguration['required'] = $this->fieldConfiguration['required'] || preg_match('/required/', $this->fieldConfiguration['eval']) > 0;
+                $this->fieldConfiguration['required'] = $this->fieldConfiguration['required'] ?? false || preg_match('/required/', $this->fieldConfiguration['eval'] ?? '') > 0;
             }
             // Adds the default class label
             $this->fieldConfiguration['classLabel'] = $this->getClassLabel();
@@ -468,7 +480,7 @@ class FieldConfigurationManager
 
             // Processes the attribute cutIfSameAsPrevious
             $this->fieldConfiguration['classItem'] = $this->fieldConfiguration['classItem_'];
-            if ($this->fieldConfiguration['cutIfSameAsPrevious']) {
+            if ($this->fieldConfiguration['cutIfSameAsPrevious'] ?? false) {
                 if (! isset($this->previousValue[$fieldKey])) {
                     $this->previousValue[$fieldKey] = $this->fieldConfiguration['value'];
                 } elseif ($this->previousValue[$fieldKey] == $this->fieldConfiguration['value']) {
@@ -511,12 +523,15 @@ class FieldConfigurationManager
             }
 
             // Processes the value from a TypoScript object, if any
-            if ($this->fieldConfiguration['tsObject']) {
+            $tsObject = $this->fieldConfiguration['tsObject'] ?? false;
+            if ($tsObject) {
                 $this->fieldConfiguration['value'] = $this->getValueFromTypoScriptObject();
             }
 
             // Adds wrapItem if required
-            if ($this->fieldConfiguration['wrapItemIfNotCut'] && ! $this->fieldConfiguration['cutDivItemInner']) {
+            $wrapItemIfNotCut = $this->fieldConfiguration['wrapItemIfNotCut'] ?? false;
+            $cutDivItemInner = $this->fieldConfiguration['cutDivItemInner'] ?? false;
+            if ($wrapItemIfNotCut && ! $cutDivItemInner) {
                 $this->fieldConfiguration['wrapItem'] = $this->fieldConfiguration['wrapItemIfNotCut'];
             }
 
@@ -527,7 +542,7 @@ class FieldConfigurationManager
         // Attribute-based post-processing
         foreach ($this->fieldsConfiguration as $fieldKey => $this->fieldConfiguration) {
             // Post-processes for the func attribute
-            if (! empty($this->fieldConfiguration['func'])) {
+            if (! empty($this->fieldConfiguration['func'] ?? null)) {
                 $addAttributeBasedMethod = 'postProcessFieldConfigurationForFunc' . ucfirst($this->fieldConfiguration['func']);
                 if (method_exists($this, $addAttributeBasedMethod)) {
                     $this->fieldsConfiguration[$fieldKey] = array_merge($this->fieldsConfiguration[$fieldKey], $this->$addAttributeBasedMethod($fieldKey));
@@ -549,7 +564,8 @@ class FieldConfigurationManager
         // Defines the action and the view
         $viewName = 'singleView';
         $action = 'single';
-        if ($this->fieldConfiguration['inputForm'] == 1) {
+        $inputForm = $this->fieldConfiguration['inputForm'] ?? null;
+        if ($inputForm == 1) {
             $viewName = 'editView';
             $action = 'edit';
         }
@@ -610,11 +626,11 @@ class FieldConfigurationManager
 
         // Gets the message for the link
         $message = $this->fieldConfiguration['value'];
-        if (! empty($this->fieldConfiguration['message'])) {
+        if (! empty($this->fieldConfiguration['message'] ?? null)) {
             $message = $this->parseFieldTags($this->fieldConfiguration['message']);
         }
 
-        if (! empty($this->fieldConfiguration['fieldMessage'])) {
+        if (! empty($this->fieldConfiguration['fieldMessage'] ?? null)) {
             $fieldMessage = $this->fieldConfiguration['fieldMessage'];
             $message = $this->parseFieldTags($this->fieldsConfiguration[$fieldMessage]['value']);
         }
@@ -709,7 +725,7 @@ class FieldConfigurationManager
      */
     protected function getSavLibraryMvcFieldAttributeByView(string $fieldName, string $attributeName)
     {
-        $savLibraryMvcFieldAttribute = $this->savLibraryMvcColumns[$fieldName]['config'][$this->getViewIdentifier()][$attributeName];
+        $savLibraryMvcFieldAttribute = $this->savLibraryMvcColumns[$fieldName]['config'][$this->getViewIdentifier()][$attributeName] ?? null;
 
         return $savLibraryMvcFieldAttribute;
     }
@@ -722,8 +738,8 @@ class FieldConfigurationManager
      */
     protected function getFolder(string $fieldName): int
     {
-        $folder = (int) $this->savLibraryMvcColumns[$fieldName]['folders'][$this->getViewIdentifier()];
-        return ($folder ? $folder : 0);
+        $folder = (int) ($this->savLibraryMvcColumns[$fieldName]['folders'][$this->getViewIdentifier()] ?? 0);
+        return $folder;
     }
 
     /**
@@ -789,7 +805,7 @@ class FieldConfigurationManager
     protected function getValueFromTypoScriptObject()
     {
         // Checks if the typoscript properties exist
-        if (empty($this->fieldConfiguration['tsProperties'])) {
+        if (empty($this->fieldConfiguration['tsProperties'] ?? null)) {
             FlashMessages::addError('error.noAttributeInField', [
                 'tsProperties',
                 $this->fieldConfiguration['fieldName']
@@ -949,7 +965,7 @@ class FieldConfigurationManager
         // Cuts the label if the type is a RelationManyToManyAsSubform or cutLabel is not equal to zero
         if ($this->fieldConfiguration['fieldType'] == 'RelationManyToManyAsSubform') {
             $cut = true;
-        } elseif ($this->fieldConfiguration['cutLabel']) {
+        } elseif ($this->fieldConfiguration['cutLabel'] ?? false) {
             $cut = true;
         } else {
             $cut = false;
@@ -966,7 +982,8 @@ class FieldConfigurationManager
      */
     protected function getCutDivItemBegin(): bool
     {
-        $fusionBegin = ($this->fieldConfiguration['fusion'] == 'begin');
+        $fusion = $this->fieldConfiguration['fusion'] ?? null;
+        $fusionBegin = ($fusion == 'begin');
 
         if ($fusionBegin) {
             $this->fusionBeginPending = true;
@@ -990,7 +1007,8 @@ class FieldConfigurationManager
      */
     protected function getCutDivItemEnd(): bool
     {
-        $fusionEnd = ($this->fieldConfiguration['fusion'] == 'end');
+        $fusion = $this->fieldConfiguration['fusion'] ?? null;
+        $fusionEnd = ($fusion == 'end');
 
         $cut = (($this->fusionInProgress && ! $fusionEnd) || ($this->getCutFlag() && ! $this->fusionInProgress));
         if ($fusionEnd) {
@@ -1043,7 +1061,8 @@ class FieldConfigurationManager
      */
     protected function cut(): bool
     {
-        if ($this->fieldConfiguration['cut']) {
+        $cut = $this->fieldConfiguration['cut'] ?? false;
+        if ($cut) {
             return true;
         } else {
             return false;
@@ -1052,13 +1071,15 @@ class FieldConfigurationManager
 
     /**
      * Content cutter: checks if the content is empty
-     * Returns true if the content must be cut.
+     * Returns true if the content mus t be cut.
      *
      * @return bool
      */
     protected function cutIfEmpty(): bool
     {
-        if ($this->fieldConfiguration['cutIfNull'] || $this->fieldConfiguration['cutIfEmpty']) {
+        $cutIfNull = $this->fieldConfiguration['cutIfNull'] ?? false;
+        $cutIfEmpty = $this->fieldConfiguration['cutIfEmpty'] ?? false;
+        if ($cutIfNull || $cutIfEmpty) {
             $value = $this->getValue();
             return empty($value);
         } else {
@@ -1074,9 +1095,9 @@ class FieldConfigurationManager
      */
     public function cutIf(): bool
     {
-        if ($this->fieldConfiguration['cutIf']) {
+        if ($this->fieldConfiguration['cutIf'] ?? false) {
             return $this->processFieldCondition($this->fieldConfiguration['cutIf']);
-        } elseif ($this->fieldConfiguration['showIf']) {
+        } elseif ($this->fieldConfiguration['showIf'] ?? false) {
             return ! $this->processFieldCondition($this->fieldConfiguration['showIf']);
         } else {
             return false;

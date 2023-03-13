@@ -34,7 +34,8 @@ final class RelationOneToManyAsSelectorboxAdder extends AbstractAdder
      */
     public function render(): array
     {
-        if ($this->fieldConfiguration['edit']) {
+        $edit = $this->fieldConfiguration['edit'] ?? false;
+        if ($edit) {
             return $this->renderInEditMode();
         } else {
             return $this->renderInDefaultMode();

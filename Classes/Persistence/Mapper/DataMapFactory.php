@@ -126,7 +126,7 @@ class DataMapFactory extends \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataM
      *
      * @return array
      */
-    public function getSavLibraryMvcColumns()
+    public function getSavLibraryMvcColumns(): array
     {
         return $this->savLibraryMvcColumns;
     }
@@ -136,7 +136,7 @@ class DataMapFactory extends \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataM
      *
      * @return array
      */
-    public function getSavLibraryMvcCtrl()
+    public function getSavLibraryMvcCtrl(): array
     {
         return $this->savLibraryMvcCtrl;
     }
@@ -146,11 +146,11 @@ class DataMapFactory extends \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataM
      *
      * @param string $fieldName
      *
-     * @return array
+     * @return array|null
      */
-    public function getSavLibraryMvcCtrlField($fieldName)
+    public function getSavLibraryMvcCtrlField($fieldName): ?array
     {
-        return $this->savLibraryMvcCtrl[$fieldName];
+        return $this->savLibraryMvcCtrl[$fieldName] ?? null;
     }
 
     /**
@@ -159,9 +159,9 @@ class DataMapFactory extends \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataM
      * @param string $fieldName
      * @return array
      */
-    public function getTCAFieldConfiguration($fieldName)
+    public function getTCAFieldConfiguration($fieldName): array
     {
-        return is_array($this->columnsDefinition[$fieldName]['config']) ? $this->columnsDefinition[$fieldName]['config'] : [];
+        return $this->columnsDefinition[$fieldName]['config'] ?? [];
     }
 
     /**
@@ -202,9 +202,9 @@ class DataMapFactory extends \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataM
      * @param string $fieldName
      * @return string
      */
-    public function getFieldType($fieldName)
+    public function getFieldType($fieldName): string
     {
-        return $this->savLibraryMvcColumns[$fieldName]['fieldType'];
+        return $this->savLibraryMvcColumns[$fieldName]['fieldType'] ?? '';
     }
 
     /**
@@ -213,9 +213,9 @@ class DataMapFactory extends \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataM
      * @param string $fieldName
      * @return string
      */
-    public function getForeignModel($fieldName)
+    public function getForeignModel($fieldName): string
     {
-        return $this->savLibraryMvcColumns[$fieldName]['foreignModel'];
+        return $this->savLibraryMvcColumns[$fieldName]['foreignModel'] ?? '';
     }
 
     /**

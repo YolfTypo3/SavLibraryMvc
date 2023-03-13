@@ -37,7 +37,8 @@ final class CheckboxAdder extends AbstractAdder
     {
         $addedFieldConfiguration = [];
 
-        if ($this->fieldConfiguration['edit']) {
+        $edit = $this->fieldConfiguration['edit'] ?? false;
+        if ($edit) {
             return $addedFieldConfiguration;
         }
 
@@ -59,8 +60,9 @@ final class CheckboxAdder extends AbstractAdder
         if ($value) {
             // The checkbox is checked
             if ($fieldConfiguration['displayAsImage']) {
-                if ($fieldConfiguration['checkboxSelectedImage']) {
-                    $iconIdentifier = $fieldConfiguration['checkboxSelectedImage'];
+                $checkboxSelectedImage = $fieldConfiguration['checkboxSelectedImage'] ?? '';
+                if (! empty($checkboxSelectedImage)) {
+                    $iconIdentifier = $checkboxSelectedImage;
                 } else {
                     $iconIdentifier = 'checkbox-checked';
                 }
@@ -74,14 +76,16 @@ final class CheckboxAdder extends AbstractAdder
             }
         } else {
             // The checkbox is not checked and must not be displayed
-            if ($fieldConfiguration['doNotDisplayIfNotChecked']) {
+            $doNotDisplayIfNotChecked = $fieldConfiguration['doNotDisplayIfNotChecked'] ?? false;
+            if ($doNotDisplayIfNotChecked) {
                 return '';
             }
 
             // The checkbox is not checked and diplayed
             if ($fieldConfiguration['displayAsImage']) {
-                if ($fieldConfiguration['checkboxNotSelectedImage']) {
-                    $iconIdentifier = $fieldConfiguration['checkboxNotSelectedImage'];
+                $checkboxNotSelectedImage = $fieldConfiguration['checkboxNotSelectedImage'] ?? '';
+                if (! empty($checkboxNotSelectedImage)) {
+                    $iconIdentifier = $checkboxNotSelectedImage;
                 } else {
                     $iconIdentifier = 'checkbox-empty';
                 }

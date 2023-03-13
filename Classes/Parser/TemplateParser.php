@@ -89,6 +89,6 @@ class TemplateParser
         }
 
         // Renders the view
-        return $standaloneView->render();
+        return $standaloneView->render() ?? '';
     }
 }

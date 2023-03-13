@@ -121,7 +121,7 @@ class WhereClauseParser
                 $methodName = $matchesSpecialExpression['method'];
                 $clause = $matchesSpecialExpression['clause'];
                 $clause = $matchesSpecialExpression['clause'];
-                $specialOperand = ($this->$methodName($methodParameter) ? $clause : null);
+                $specialOperand = ($this->$methodName($methodParameter) ? $this->analyzeWhereClause($query, $clause) : null);
                 array_push($operands, $specialOperand);
             } else {
                 // Splits the expression from the allowed operators
@@ -225,7 +225,7 @@ class WhereClauseParser
             // Adds the logical not if needed
             if (! empty($matchesWhere['negation'][$matchKey])) {
                 $rightHandSideLogicalOperand = array_pop($operands);
-                $rightHandSideLogicalOperand = $query->logicalNot($query->equals($rightHandSideLogicalOperand, 1));
+                $rightHandSideLogicalOperand = $query->logicalNot($rightHandSideLogicalOperand);
             }
 
             if ($matchKey > 0) {

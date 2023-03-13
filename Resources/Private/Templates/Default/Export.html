@@ -25,7 +25,11 @@
                                     <f:form.select name="exportUid" options="{general.options}"
                                         optionValueField="uid" optionLabelField="name"
                                         prependOptionLabel="---" prependOptionValue="0"
+                                        sortByOptionLabel="1"
                                         value="{general.exportUid}" />
+                                    <f:if condition="{general.showFilterInExport}">    
+                                    <f:form.textfield name="filter" value="{general.filter}"/>  
+                                    </f:if>  
                                 </div>
 
                                 <f:form.button name="exportLoad" class="exportLoad"
@@ -34,7 +38,7 @@
                                 </f:form.button>
                             </div>				
 				
-					<f:if condition="{general.exportIsLoaded}">
+					<f:if condition="({general.exportIsLoaded}) && ({general.exportUid} || {general.filter} == '')">
 						<f:then>
 							<f:comment>Content id</f:comment>
 							<f:form.hidden property="cid" value="{general.cid}" />
