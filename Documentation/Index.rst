@@ -16,7 +16,7 @@ SAV Library Mvc
    en
 
 :Description:
-   The SAV Library Mvc is a library for TYPO3 6.x and higher. It relies on the MVC approach and is entirely 
+   The SAV Library Mvc is entirely 
    based on fluid and extbase. Used with the SAV Library Kickstarter, it
    makes it possible to directly build extensions without any PHP coding,
    thanks to simple configuration parameters using the SAV Library Kickstarter as an extension editor.

@@ -28,7 +28,7 @@ General Folder
    of the documentation.
 
 #. **Select form**: use this selector to select the form name. Let use
-   recall that the `sav_library_plus
+   recall that the `sav_library_mvc
    <https://extensions.typo3.org/extension/sav_library_mvc>`_ makes it possible 
    to build several forms associated with the same extension, thus providing
    different views of your tables.

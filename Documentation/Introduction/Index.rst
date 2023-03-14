@@ -21,8 +21,7 @@ coding**, thanks to simple configuration parameters. It includes:
 - Views with folders,
 - Simple interface in the Kickstarter with Context Sensitive Help,
 - Generation of emails,
-- Generation of RTF files using database tags,
-- Data export in CSV format,
+- Data export,
 - Many other features.
 
 The latest developments of the SAV Library Mvc extension are
@@ -34,7 +33,7 @@ available in GitHub ( `SAV Library Mvc
 
     The SAV Library Mvc replaces the SAV Library Plus extension. However,
     several configuration features available in SAV Library Plus 
-    are not implemented. 
+    are not yet implemented or are obsolete. 
     
     A test extension `SAV Library Mvc Example0 <https://extensions.typo3.org/extension/sav_librarymvc_example0>`_ 
     is available in the TER. It implements the same feature as `SAV Library Example0 
