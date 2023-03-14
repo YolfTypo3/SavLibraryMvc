@@ -52,11 +52,12 @@ final class FilesAdder extends AbstractAdder
                 $fileConfiguration['fileName'] = $originalResource->getPublicUrl();
                 $fileConfiguration['shortFileName'] = $originalResource->getName();
                 $fileConfiguration['uid'] = $object->getUid();
+
                 // Checks if the file exists
-                if (! is_file(AbstractController::getSitePath() . $fileConfiguration['fileName'])) {
+                if (! is_file(AbstractController::getSitePath() . rawurldecode($fileConfiguration['fileName']))) {
                     $fileConfiguration['fileUnknown'] = 1;
                     FlashMessages::addError('error.fileDoesNotExist', [
-                        $fileConfiguration['fileName']
+                        rawurldecode($fileConfiguration['fileName'])
                     ]);
                 }
                 $type = $originalResource->getType();
