@@ -647,6 +647,49 @@ class FieldConfigurationManager
     }
 
     /**
+     * Post-processor for the attribute func=makeUrlLink.
+     *
+     * @param string $fieldName
+     * @return array
+     */
+    protected function postProcessFieldConfigurationForFuncMakeUrlLink(string $fieldName): array
+    {
+        $modifiedConfiguration = [];
+
+        // Gets the message and processes it
+        $message = $this->fieldConfiguration['value'];
+        if (! empty($this->fieldConfiguration['message'] ?? null)) {
+            $message = $this->parseFieldTags($this->fieldConfiguration['message']);
+        }
+
+        // Gets the parameter
+        $link = $this->fieldConfiguration['value'];
+        if (! empty($this->fieldConfiguration['link'] ?? null)) {
+            $link = $this->fieldConfiguration['link'];
+        }
+
+        // Gets the target
+        $target = '_blank';
+        if (! empty($this->fieldConfiguration['exttarget'] ?? null)) {
+            $target = $this->fieldConfiguration['exttarget'];
+        }
+
+        $typoScriptConfiguration = [
+            'parameter' => $link,
+            'extTarget' => $target
+        ];
+
+        // Gets the content object
+        $contentObjectRenderer = GeneralUtility::makeInstance(ContentObjectRenderer::class);
+
+        $modifiedConfiguration['value'] = $contentObjectRenderer->typolink($message, $typoScriptConfiguration);
+
+        return $modifiedConfiguration;
+    }
+
+
+
+    /**
      * Checks if a field is selected for the view.
      *
      * @param string $fieldName
