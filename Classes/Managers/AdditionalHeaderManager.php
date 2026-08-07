@@ -36,14 +36,14 @@ class AdditionalHeaderManager
      *
      * @var DefaultController
      */
-    protected static $controller = null;
+    protected static ?DefaultController $controller = null;
 
     /**
      * Array of javaScript code used for the view
      *
      * @var array
      */
-    protected static $javaScript = [];
+    protected static array $javaScript = [];
 
     /**
      * Sets the controller
@@ -51,7 +51,7 @@ class AdditionalHeaderManager
      * @param DefaultController $controller
      * @return void
      */
-    public static function setController(DefaultController $controller)
+    public static function setController(DefaultController $controller): void
     {
         self::$controller = $controller;
     }
@@ -61,7 +61,7 @@ class AdditionalHeaderManager
      *
      * @return void
      */
-    public static function addCascadingStyleSheets()
+    public static function addCascadingStyleSheets(): void
     {
         // Adds the library cascading style sheet
         self::addLibraryCascadingStyleSheet();
@@ -77,16 +77,17 @@ class AdditionalHeaderManager
      *
      * @return void
      */
-    protected static function addLibraryCascadingStyleSheet()
+    protected static function addLibraryCascadingStyleSheet(): void
     {
         $extensionKey = AbstractController::LIBRARY_NAME;
         $typoScriptConfiguration = AbstractController::getTypoScriptConfiguration($extensionKey);
-        if (empty($typoScriptConfiguration['stylesheet'])) {
-            $extensionWebPath = AbstractController::getExtensionWebPath($extensionKey);
-            $cascadingStyleSheet = $extensionWebPath . AbstractController::$cssRootPath . '/' . $extensionKey . '.css';
+        // @extensionScannerIgnoreLine
+        $stylesheet = $typoScriptConfiguration['stylesheet'] ?? null;
+        if (empty($stylesheet)) {
+            $cascadingStyleSheet = 'EXT:' . $extensionKey . '/' . AbstractController::$cssRootPath . '/' . $extensionKey . '.css';
             self::addCascadingStyleSheet($cascadingStyleSheet);
         } else {
-            $cascadingStyleSheetAbsoluteFileName = GeneralUtility::getFileAbsFileName($typoScriptConfiguration['stylesheet']);
+            $cascadingStyleSheetAbsoluteFileName = GeneralUtility::getFileAbsFileName($stylesheet);
             if (is_file($cascadingStyleSheetAbsoluteFileName)) {
                 $cascadingStyleSheet = substr($cascadingStyleSheetAbsoluteFileName, strlen(AbstractController::getSitePath()));
                 self::addCascadingStyleSheet($cascadingStyleSheet);
@@ -105,12 +106,14 @@ class AdditionalHeaderManager
      *
      * @return void
      */
-    protected static function addExtensionCascadingStyleSheet()
+    protected static function addExtensionCascadingStyleSheet(): void
     {
         $extensionKey = self::$controller->getControllerExtensionKey();
         $typoScriptConfiguration = AbstractController::getTypoScriptConfiguration($extensionKey);
-        if (empty($typoScriptConfiguration['stylesheet']) === false) {
-            $cascadingStyleSheetAbsoluteFileName = GeneralUtility::getFileAbsFileName($typoScriptConfiguration['stylesheet']);
+        // @extensionScannerIgnoreLine
+        $stylesheet = $typoScriptConfiguration['stylesheet'] ?? null;
+        if (! empty($stylesheet)) {
+            $cascadingStyleSheetAbsoluteFileName = GeneralUtility::getFileAbsFileName($stylesheet);
             if (is_file($cascadingStyleSheetAbsoluteFileName)) {
                 $cascadingStyleSheet = substr($cascadingStyleSheetAbsoluteFileName, strlen(AbstractController::getSitePath()));
                 self::addCascadingStyleSheet($cascadingStyleSheet);
@@ -120,8 +123,7 @@ class AdditionalHeaderManager
                 ]));
             }
         } elseif (is_file(ExtensionManagementUtility::extPath($extensionKey) . AbstractController::$cssRootPath . '/' . $extensionKey . '.css')) {
-            $extensionWebPath = AbstractController::getExtensionWebPath($extensionKey);
-            $cascadingStyleSheet = $extensionWebPath . AbstractController::$cssRootPath . '/' . $extensionKey . '.css';
+            $cascadingStyleSheet = 'EXT:' . $extensionKey . '/' . AbstractController::$cssRootPath . '/' . $extensionKey . '.css';
             self::addCascadingStyleSheet($cascadingStyleSheet);
         }
     }
@@ -130,9 +132,10 @@ class AdditionalHeaderManager
      * Adds a cascading style Sheet
      *
      * @param string $cascadingStyleSheet
+     * 
      * @return void
      */
-    public static function addCascadingStyleSheet(string $cascadingStyleSheet)
+    public static function addCascadingStyleSheet(string $cascadingStyleSheet): void
     {
         $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
         $pageRenderer->addCssFile($cascadingStyleSheet);
@@ -154,12 +157,13 @@ class AdditionalHeaderManager
      * Adds a javaScript file
      *
      * @param string $javaScriptFileName
+     * 
      * @return void
      */
-    public static function addJavaScriptFile(string $javaScriptFileName)
+    public static function addJavaScriptFile(string $javaScriptFileName): void
     {
-        $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
-        $pageRenderer->addJsFile($javaScriptFileName);
+           $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
+           $pageRenderer->addJsFile($javaScriptFileName);
     }
 
     /**
@@ -170,23 +174,10 @@ class AdditionalHeaderManager
      *
      * @return void
      */
-    public static function addJavaScriptInlineCode(string $key, string $javaScriptInlineCode)
+    public static function addJavaScriptInlineCode(string $key, string $javaScriptInlineCode): void
     {
         $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
         $pageRenderer->addJsInlineCode($key, $javaScriptInlineCode);
-    }
-
-    /**
-     * Adds Javascript Inline Setting.
-     *
-     * @param string $namespace
-     * @param array $array
-     * @return void
-     */
-    public static function addInlineSettingArray(string $namespace, array $array)
-    {
-        $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
-        $pageRenderer->addInlineSettingArray($namespace, $array);
     }
 
     /**
@@ -196,7 +187,7 @@ class AdditionalHeaderManager
      *
      * @return void
      */
-    public static function addJavaScriptFooterFile(string $javaScriptFileName)
+    public static function addJavaScriptFooterFile(string $javaScriptFileName): void
     {
         $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
         $pageRenderer->addJsFooterFile($javaScriptFileName);
@@ -210,7 +201,7 @@ class AdditionalHeaderManager
      *
      * @return void
      */
-    public static function addJavaScriptFooterInlineCode(string $key, string $javaScriptInlineCode)
+    public static function addJavaScriptFooterInlineCode(string $key, string $javaScriptInlineCode): void
     {
         $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
         $pageRenderer->addJsFooterInlineCode($key, $javaScriptInlineCode);
@@ -221,12 +212,11 @@ class AdditionalHeaderManager
      *
      * @return void
      */
-    public static function addAdditionalJavaScriptHeader()
+    public static function addAdditionalJavaScriptHeader(): void
     {
         if (count(self::$javaScript) > 0) {
             if (count(self::$javaScript['selectAll']) > 0) {
-                $extensionWebPath = AbstractController::getExtensionWebPath(AbstractController::LIBRARY_NAME);
-                $javaScriptFileName = $extensionWebPath . AbstractController::$javaScriptRootPath . '/' . AbstractController::LIBRARY_NAME . '.js';
+                $javaScriptFileName = 'EXT:' . AbstractController::LIBRARY_NAME . '/' . AbstractController::$javaScriptRootPath . '/' . AbstractController::LIBRARY_NAME . '.js';
                 self::addJavaScriptFile($javaScriptFileName);
             }
             $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
@@ -235,15 +225,31 @@ class AdditionalHeaderManager
     }
 
     /**
-     * Adds javaScript to a given key
+     * Loads javaScript modules
+     * 
+     * @param array $javaScriptModules
      *
-     * @param $key string
-     *            The key
-     * @param $javaScript string
-     *            The javaScript
      * @return void
      */
-    public static function addJavaScript(string $key, string $javaScript = null)
+    public static function loadJavaScriptModules(array $javaScriptModules): void
+    {
+        $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
+        foreach ($javaScriptModules as $javaScriptModule) {
+            $pageRenderer->loadJavaScriptModule($javaScriptModule->getName());
+        }
+    }
+
+    /**
+     * Adds javaScript to a given key
+     *
+     * @param string $key 
+     *            The key
+     * @param string|null $javaScript 
+     *            The javaScript
+     *            
+     * @return void
+     */
+    public static function addJavaScript(string $key, ?string $javaScript = null): void
     {
         if (! is_array(self::$javaScript[$key] ?? null)) {
             self::$javaScript[$key] = [];
@@ -254,8 +260,9 @@ class AdditionalHeaderManager
     /**
      * Gets the javaScript for a given key
      *
-     * @param $key string
+     * @param string $key 
      *            The key
+     *            
      * @return string the javaScript
      */
     protected static function getJavaScript(string $key): string
@@ -310,24 +317,22 @@ class AdditionalHeaderManager
     /**
      * Adds the javaScript to confirm delete action
      *
-     * @param string $className
-     *
      * @return void
      */
-    public static function addConfirmDeleteJavaScript($className)
+    public static function addConfirmDeleteJavaScript(): void
     {
         $javaScript = [];
-
-        $javaScript[] = '  function confirmDelete() {';
-        $javaScript[] = '    document.activeElement.closest(".' . $className . '").classList.add("deleteWarning");';
+        $javaScript[] = '  function confirmDelete(className) {';
+        $javaScript[] = '    var element = document.activeElement.closest("." + className);';
+        $javaScript[] = '    element.classList.add("deleteWarning");';
         $javaScript[] = '    if (confirm("' . FlashMessages::translate('warning.delete') . '"))	{';
         $javaScript[] = '      return true;';
         $javaScript[] = '    }';
-        $javaScript[] = '    document.activeElement.closest(".' . $className . '").classList.remove("deleteWarning");';
+        $javaScript[] = '    element.classList.remove("deleteWarning");';
         $javaScript[] = '    return false;';
         $javaScript[] = '  }';
 
-        self::addJavaScriptFooterInlineCode('confirmDelete',implode(chr(10), $javaScript));
+        self::addJavaScriptFooterInlineCode('confirmDelete', implode(chr(10), $javaScript));
     }
 
 }

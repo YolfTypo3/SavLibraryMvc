@@ -16,13 +16,14 @@
 namespace YolfTypo3\SavLibraryMvc\Controller;
 
 use TYPO3\CMS\Core\Core\Environment;
-use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Information\Typo3Version;
+use TYPO3\CMS\Core\Localization\LanguageService;
+use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Utility\PathUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Configuration\FrontendConfigurationManager;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
-use TYPO3\CMS\Extbase\Mvc\Request;
+use TYPO3\CMS\Extbase\Mvc\RequestInterface;
 use TYPO3\CMS\Extbase\Service\CacheService;
 use TYPO3Fluid\Fluid\View\ViewInterface;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
@@ -32,6 +33,7 @@ use YolfTypo3\SavLibraryMvc\Managers\AdditionalHeaderManager;
 use YolfTypo3\SavLibraryMvc\Managers\FieldConfigurationManager;
 use YolfTypo3\SavLibraryMvc\Managers\FrontendUserManager;
 use YolfTypo3\SavLibraryMvc\ViewConfiguration\AbstractViewConfiguration;
+use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 
 /**
  * Abstract controller for the SAV Library MVC
@@ -51,31 +53,31 @@ abstract class AbstractController extends ActionController
     /**
      * @var CacheService
      */
-    protected $cacheService;
+    protected CacheService $cacheService;
 
     /**
      * Css root path
      *
      * @var string
      */
-    public static $cssRootPath = 'Resources/Public/Css';
+    public static string $cssRootPath = 'Resources/Public/Css';
 
     /**
      * JavaScript root path
      *
      * @var string
      */
-    public static $javaScriptRootPath = 'Resources/Public/JavaScript';
+    public static string $javaScriptRootPath = 'Resources/Public/JavaScript';
 
     /**
      * Allowed icon file name extensions
      *
      * @var string
      */
-    protected static $allowedIconFileNameExtensions = '.gif,.png,.jpg,.jpeg,.svg';
+    protected static string $allowedIconFileNameExtensions = '.gif,.png,.jpg,.jpeg,.svg';
 
     // Variable to encode/decode the special parameters
-    protected static $specialParameters = [
+    protected static array $specialParameters = [
         'page', // 0
         'formKey', // 1
         'mode', // 2
@@ -92,7 +94,7 @@ abstract class AbstractController extends ActionController
     ];
 
     // Variable to encode/decode the special parameters
-    protected static $specialParametersToRemoveIfNotSet = [
+    protected static array $specialParametersToRemoveIfNotSet = [
         'subformUidForeign'
     ];
 
@@ -101,61 +103,89 @@ abstract class AbstractController extends ActionController
      *
      * @var array
      */
-    protected $extensionSettings = null;
+    protected ?array $extensionSettings = null;
+
+    /**
+     * Controller configuration
+     *
+     * @var array
+     */
+    protected ?array $controllerConfiguration = null;
 
     /**
      * TypoScript setup
      *
      * @var array
      */
-    protected static $typoScriptSetup;
+    protected static array $typoScriptSetup;
+    
+    /**
+     * Frontend configuration manager
+     *
+     * @var FrontendConfigurationManager
+     */
+    protected FrontendConfigurationManager $frontendConfigurationManager;
 
     /**
-     * Front end user manager
+     * Frontend user manager
      *
      * @var FrontendUserManager
      */
-    protected $frontendUserManager;
+    protected FrontendUserManager $frontendUserManager;
 
     /**
      * Field configuration manager
      *
      * @var FieldConfigurationManager
      */
-    protected $fieldConfigurationManager;
+    protected FieldConfigurationManager $fieldConfigurationManager;
 
     /**
      * Viewer configuration
      *
      * @var AbstractViewConfiguration
      */
-    protected $viewerConfiguration = null;
+    protected ?AbstractViewConfiguration $viewerConfiguration = null;
 
     /**
      * ExportRepository
      *
      * @var ExportRepository
      */
-    protected $exportRepository = null;
+    protected ?ExportRepository $exportRepository = null;
 
     /**
      * Injects the cache service
      *
      * @param CacheService $cacheService
+     * 
      * @return void
      */
-    public function injectCacheService(CacheService $cacheService)
+    public function injectCacheService(CacheService $cacheService): void
     {
         $this->cacheService = $cacheService;
     }
-
+   
+    /**
+     * Injects the frontend configuration manager
+     *
+     * @param FrontendConfigurationManager $frontendConfigurationManager
+     *
+     * @return void
+     */
+    public function injectFrontendConfigurationManager(FrontendConfigurationManager $frontendConfigurationManager): void
+    {
+        $this->frontendConfigurationManager = $frontendConfigurationManager;
+    }
+        
     /**
      * Injects the frontend user manager
      *
      * @param FrontendUserManager $frontendUserManager
+     * 
      * @return void
      */
-    public function injectFrontendUserManager(FrontendUserManager $frontendUserManager)
+    public function injectFrontendUserManager(FrontendUserManager $frontendUserManager): void
     {
         $this->frontendUserManager = $frontendUserManager;
     }
@@ -167,7 +197,7 @@ abstract class AbstractController extends ActionController
      *
      * @return void
      */
-    public function injectFieldConfigurationManager(FieldConfigurationManager $fieldConfigurationManager)
+    public function injectFieldConfigurationManager(FieldConfigurationManager $fieldConfigurationManager): void
     {
         $this->fieldConfigurationManager = $fieldConfigurationManager;
     }
@@ -175,17 +205,17 @@ abstract class AbstractController extends ActionController
     /**
      * @param ExportRepository $exportRepository
      */
-    public function injectExportRepository(ExportRepository $exportRepository)
+    public function injectExportRepository(ExportRepository $exportRepository): void
     {
         $this->exportRepository = $exportRepository;
     }
-
+    
     /**
      * Initializes the controller for the save action method.
      *
      * @return void
      */
-    protected function initializeSaveAction()
+    protected function initializeSaveAction(): void
     {
         $propertyMappingConfiguration = $this->arguments['data']->getPropertyMappingConfiguration();
         $fields = $this->request->getArgument('data');
@@ -211,10 +241,14 @@ abstract class AbstractController extends ActionController
 
     /**
      * Processes the property mapping for RelationManyToManyAsDoubleSelectorbox.
+     * 
+     * @param array $tcaFieldConfigurationFields
+     * @param array $fields
+     * @param array $propertyMapping
      *
      * @return void
      */
-    protected function processPropertyMapping($tcaFieldConfigurationFields, $fields, $propertyMapping)
+    protected function processPropertyMapping($tcaFieldConfigurationFields, $fields, $propertyMapping): void
      {
          foreach($fields as $itemsKey => $items) {
              $repositoryClassName = $this->resolveRepositoryClassNameFromTableName($tcaFieldConfigurationFields['foreign_table']);
@@ -263,13 +297,23 @@ abstract class AbstractController extends ActionController
     /**
      * Gets the request.
      *
-     * @return Request
+     * @return RequestInterface
      */
-    public function getRequest(): Request
+    public function getRequest(): RequestInterface
     {
         return $this->request;
     }
 
+    /**
+     * Gets the URI builder.
+     *
+     * @return UriBuilder
+     */
+    public function getUriBuilder(): UriBuilder
+    {
+        return $this->uriBuilder;
+    }
+    
     /**
      * Gets the frontend user manager
      *
@@ -368,7 +412,7 @@ abstract class AbstractController extends ActionController
      * @return AbstractViewConfiguration
      * @throws \Exception
      */
-    public function getViewerConfiguration(?string $actionMethodName = null)
+    public function getViewerConfiguration(?string $actionMethodName = null): AbstractViewConfiguration
     {
         if ($actionMethodName === null) {
             $actionMethodName = $this->actionMethodName;
@@ -399,7 +443,7 @@ abstract class AbstractController extends ActionController
      *
      * @return DefaultRepository
      */
-    public function getMainRepository()
+    public function getMainRepository(): DefaultRepository
     {
         return $this->mainRepository;
     }
@@ -502,11 +546,11 @@ abstract class AbstractController extends ActionController
     /**
      * Gets the folder
      *
-     * @param string $viewIdentifier
+     * @param int $viewIdentifier
      *            The view identifier
      * @return array
      */
-    public function getFolders(string $viewIdentifier): array
+    public function getFolders(int $viewIdentifier): array
     {
         if (is_array($this->controllerConfiguration['folders'])) {
             $folders = $this->controllerConfiguration['folders'][$viewIdentifier];
@@ -579,7 +623,7 @@ abstract class AbstractController extends ActionController
      *
      * @return void
      */
-    protected function initializeAction()
+    protected function initializeAction(): void
     {
         // Gets the controller identifier
         $controllerIdentifier = $this->getSetting('formId');
@@ -589,21 +633,23 @@ abstract class AbstractController extends ActionController
         // Forwards to the required controller if not the default one
         $controllerName = $this->controllerConfiguration['name'];
         if ($this->getControllerName() != $controllerName) {
-            $this->forward($this->getControllerActionName(),
+            $this->redirect($this->getControllerActionName(),
                 $controllerName,
                 $this->getControllerExtensionName(),
                 $this->getArguments());
         }
 
-        // Checks if the static extension template is included
-        /** @var FrontendConfigurationManager $frontendConfigurationManager */
-        $frontendConfigurationManager = GeneralUtility::makeInstance(FrontendConfigurationManager::class);
-        self::$typoScriptSetup = $frontendConfigurationManager->getTypoScriptSetup();
-        $pluginSetupName = 'tx_' . strtolower($this->getControllerExtensionName()) . '.';
-        if (! is_array(self::$typoScriptSetup['plugin.'][$pluginSetupName]['view.'] ?? null)) {
-            throw new \RuntimeException('You have to include the static template of the extension ' . $this->getControllerExtensionKey() . '.');
+        // Gets the extension key
+        $extensionKey = $this->request->getControllerExtensionKey();
+        
+        // Checks if the extension is included in the site configuration
+        $lowerCamelExtensionKey = GeneralUtility::underscoredToLowerCamelCase($extensionKey);
+        $siteSettings = $this->request->getAttribute('site')->getSettings();
+        if (! $siteSettings->has($lowerCamelExtensionKey)) {
+            throw new \RuntimeException('You have to include the extension ' . $extensionKey . ' in the site setup.');
         }
-
+        $this->request = $this->request->withAttribute('controller', $this);
+        
         // Sets the controller where required
         $this->frontendUserManager->setController($this);
         $this->mainRepository->setController($this);
@@ -643,7 +689,7 @@ abstract class AbstractController extends ActionController
     {
         $extbaseFrameworkConfiguration = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
         $templateRootPaths = $extbaseFrameworkConfiguration['view']['templateRootPaths'];
-
+ 
         return $templateRootPaths;
     }
 
@@ -700,17 +746,6 @@ abstract class AbstractController extends ActionController
         return $repositoryClassName;
     }
 
-
-    /**
-     * Gets the content object
-     *
-     * @return ContentObjectRenderer
-     */
-    public function getContentObjectRenderer(): ContentObjectRenderer
-    {
-        return $this->configurationManager->getContentObject();
-    }
-
     /**
      * Gets the default date format from the library TypoScript configuration if any.
      *
@@ -727,24 +762,6 @@ abstract class AbstractController extends ActionController
         } else {
             return null;
         }
-    }
-
-    /**
-     * Gets the relative web path of a given extension.
-     *
-     * @param string $extensionKey
-     *            The extension key
-     *
-     * @return string The relative web path
-     */
-    public static function getExtensionWebPath(string $extensionKey): string
-    {
-        $extensionWebPath = PathUtility::getAbsoluteWebPath(ExtensionManagementUtility::extPath($extensionKey));
-        if ($extensionWebPath[0] === '/') {
-            // Makes the path relative
-            $extensionWebPath = substr($extensionWebPath, 1);
-        }
-        return $extensionWebPath;
     }
 
     /**
@@ -784,10 +801,9 @@ abstract class AbstractController extends ActionController
      *
      * @return void
      */
-    protected function setViewConfiguration($view)
+    protected function setViewConfiguration(ViewInterface $view): void
     {
         // Calls the parent function.
-        // @TODO in V12, type ViewInterface could be added in the parameter declaration.
         parent::setViewConfiguration($view);
 
         // Sets the template path and file name
@@ -816,6 +832,15 @@ abstract class AbstractController extends ActionController
     public function getViewConfiguration(array $arguments = []): array
     {
         $viewConfiguration = $this->getViewerConfiguration()->getConfiguration($arguments);
+        $templatePaths = $this->view->getRenderingContext()->getTemplatePaths();
+        $templateRootPaths = $templatePaths->getTemplateRootPaths();
+        foreach($templateRootPaths as $templateRootPath) {
+            $template = GeneralUtility::getFileAbsFileName($templateRootPath) . 'Default/' . ucfirst(str_replace('Action', '', $this->actionMethodName)) . '.html';         
+            if (is_file($template)) {
+                $templatePaths->setTemplatePathAndFilename($template);
+                break;
+            }
+        }
 
         return $viewConfiguration;
     }
@@ -868,7 +893,6 @@ abstract class AbstractController extends ActionController
     public static function compressParameters(array $parameters): string
     {
         $compressedParameters = '';
-
         foreach ($parameters as $parameterKey => $parameter) {
             $parameterIndex = array_search($parameterKey, self::$specialParameters);
             if ($parameterIndex === false) {
@@ -876,7 +900,7 @@ abstract class AbstractController extends ActionController
             } else {
                 $compressedParameters .= dechex($parameterIndex);
             }
-            $compressedParameters .= sprintf('%01x%s', strlen($parameter), $parameter);
+            $compressedParameters .= sprintf('%01x%s', strlen(strval($parameter ?? '')), strval($parameter ?? ''));
         }
         return $compressedParameters;
     }
@@ -1014,12 +1038,46 @@ abstract class AbstractController extends ActionController
     /**
      * Gets the page id
      *
+     * @return int|null
+     */
+    public function getPageId(): ?int
+    {
+        /** @var \TYPO3\CMS\Frontend\Page\PageInformation $pageInformation */
+        $pageInformation = $this->request->getAttribute('frontend.page.information');
+        return $pageInformation->getId();
+    }
+ 
+    /**
+     * Gets the content object
+     *
+     * @return ContentObjectRenderer
+     */
+    public function getContentObjectRenderer(): ContentObjectRenderer
+    {
+        return $this->request->getAttribute('currentContentObject');
+    }
+    
+    /**
+     * Gets the content object uid.
+     *
      * @return int
      */
-    protected function getPageId(): int
+    public function getContentObjectUid(): int
     {
         // @extensionScannerIgnoreLine
-        return (int) $GLOBALS['TSFE']->id;
+        return $this->getContentObjectRenderer()->data['uid'];
     }
-
+    
+    /**
+     * Returns the language service instance
+     *
+     * @return LanguageService
+     */
+    public function getLanguageService(): LanguageService
+    {
+        $languageService = GeneralUtility::makeInstance(LanguageServiceFactory::class)
+        ->createFromSiteLanguage($this->request->getAttribute('language'));
+        
+        return $languageService;
+    }
 }

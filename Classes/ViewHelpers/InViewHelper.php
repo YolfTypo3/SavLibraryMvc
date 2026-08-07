@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the TYPO3 CMS project.
  *
@@ -15,44 +17,40 @@
 
 namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
 
-use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
-use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 
 /**
  * Test the bit of an integer
  *
  * @package SavLibraryMvc
  */
-class InViewHelper extends AbstractViewHelper
+final class InViewHelper extends AbstractViewHelper
 {
-    use CompileWithRenderStatic;
+    
     /**
      * Initializes arguments.
+     * 
+     * @return void
      */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         $this->registerArgument('list', 'string', 'The comma-separated list', true);
         $this->registerArgument('key', 'string', 'The key', false);
     }
 
     /**
-     * Renders the viewhelper
+     * Renders the view helper
      *
-     * @param array $arguments
-     * @param \Closure $renderChildrenClosure
-     * @param RenderingContextInterface $renderingContext
-     *
-     * @return array the options array
+     * @return bool
      */
-    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
+    public function render(): bool
     {
         // Gets the arguments
-        $list = $arguments['list'];
-        $key = $arguments['key'];
+        $list = $this->arguments['list'];
+        $key = $this->arguments['key'];
 
         if ($key === null) {
-            $key = $renderChildrenClosure();
+            $key = $this->renderChildren();
         }
 
         return in_array($key, explode(',', $list));

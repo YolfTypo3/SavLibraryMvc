@@ -5,7 +5,6 @@ return [
         'label' => 'r',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
-        'cruser_id' => 'cruser_id',
         'delete' => 'deleted',
         'enablecolumns' => [
             'disabled' => 'hidden',
@@ -25,9 +24,8 @@ return [
             'exclude' => 1,
             'label'  => 'LLL:EXT:sav_library_mvc/Resources/Private/Language/locallang_db.xlf:tx_savlibrarymvc_domain_model_export.cid',
             'config' => [
-                'type' => 'input',
+                'type' => 'number',
                 'size' => '7',
-                'eval' => 'int'
             ],
         ],
         'name' => [

@@ -28,26 +28,6 @@ class IntegerConverter extends AbstractTypeConverter implements SingletonInterfa
 {
 
     /**
-     *
-     * @var array<string>
-     */
-    protected $sourceTypes = [
-        'array'
-    ];
-
-    /**
-     *
-     * @var string
-     */
-    protected $targetType = 'integer';
-
-    /**
-     *
-     * @var int
-     */
-    protected $priority = 2;
-
-    /**
      * Actually convert from $source to $targetType, in fact a noop here.
      *
      * @param integer|string $source
@@ -56,7 +36,7 @@ class IntegerConverter extends AbstractTypeConverter implements SingletonInterfa
      * @param PropertyMappingConfigurationInterface $configuration
      * @return integer | Error @api
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], ?PropertyMappingConfigurationInterface $configuration = null)
     {
         if (! is_array($source)) {
             return new Error('"%s" is not an array.', 1332933658, [

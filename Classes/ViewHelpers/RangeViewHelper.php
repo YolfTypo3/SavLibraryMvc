@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the TYPO3 CMS project.
  *
@@ -15,23 +17,22 @@
 
 namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
 
-use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
-use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 
 /**
  * Returns an array of numbers
  *
  * @package SavLibraryMvc
  */
-class RangeViewHelper extends AbstractViewHelper
+final class RangeViewHelper extends AbstractViewHelper
 {
-    use CompileWithRenderStatic;
 
     /**
      * Initializes arguments.
+     * 
+     * @return void
      */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         $this->registerArgument('low', 'integer', 'Low value', true);
         $this->registerArgument('high', 'integer', 'High value', true);
@@ -39,20 +40,16 @@ class RangeViewHelper extends AbstractViewHelper
     }
 
     /**
-     * Renders the viewhelper
-     *
-     * @param array $arguments
-     * @param \Closure $renderChildrenClosure
-     * @param RenderingContextInterface $renderingContext
+     * Renders the view helper
      *
      * @return array The range array
      */
-    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
+    public function render(): array
     {
         // Gets the arguments
-        $low = $arguments['low'];
-        $high = $arguments['high'];
-        $step = $arguments['step'];
+        $low = $this->arguments['low'];
+        $high = $this->arguments['high'];
+        $step = $this->arguments['step'];
 
         return range($low, $high, $step);
     }

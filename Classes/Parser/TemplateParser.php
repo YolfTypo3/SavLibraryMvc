@@ -17,8 +17,12 @@ declare(strict_types=1);
 
 namespace YolfTypo3\SavLibraryMvc\Parser;
 
+use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\View\ViewFactoryData;
+use TYPO3\CMS\Core\View\ViewFactoryInterface;
 use TYPO3\CMS\Fluid\View\StandaloneView;
+use TYPO3\CMS\Fluid\Core\Rendering\RenderingContextFactory;
 use YolfTypo3\SavLibraryMvc\Controller\DefaultController;
 
 /**
@@ -64,31 +68,67 @@ class TemplateParser
             return '';
         }
 
-        // Gets a standalone view
-        /** @var StandaloneView $standaloneView */
-        $standaloneView = GeneralUtility::makeInstance(StandaloneView::class);
-        $standaloneView->getRequest()->setOriginalRequest($this->controller->getRequest());
-        $standaloneView->getRequest()->setControllerExtensionName($this->controller->getControllerExtensionName());
-        $standaloneView->getRequest()->setControllerName($this->controller->getControllerName());
-        $standaloneView->getRequest()->setControllerActionName($this->controller->getControllerActionName());
+        // Builds the rendering context
+        $context = GeneralUtility::makeInstance(RenderingContextFactory::class)->create();
+        $context->setControllerName($this->controller->getControllerName());
+        $context->setControllerAction($this->controller->getControllerActionName());
 
-        // Sets the template source
-        $standaloneView->setTemplateSource($nameSpace . '<f:format.raw>' . $content . '</f:format.raw>');
+        // Gets the view
+        $view = $this->createView($nameSpace . '<f:format.raw>' . $content . '</f:format.raw>');
 
+        // Assigns the arguments
+        foreach ($arguments as $argumentKey => $argument) {
+            $view->assign($argumentKey, $argument);
+        }
+
+        // Renders the view
+        return $view->render() ?? '';
+    }
+    
+    /**
+     * Creates the view
+     *
+     * @param string $template
+     * @param string $isTemplateFile
+     *
+     * @return mixed
+     */
+    public function createView(string $template): mixed
+    {
+        $typo3Version = new (Typo3Version::class);
+        
         // Sets the partial root paths
         $partialRootPaths = $this->controller->getPartialRootPaths();
         $convertedPartialRootPaths = [];
         foreach ($partialRootPaths as $partialRootPathKey => $partialRootPath) {
             $convertedPartialRootPaths[$partialRootPathKey] = GeneralUtility::getFileAbsFileName($partialRootPath);
         }
-        $standaloneView->setPartialRootPaths($convertedPartialRootPaths);
+        
+        if ($typo3Version->getMajorVersion() < 13) {
+            // @extensionScannerIgnoreLine
+            $view = GeneralUtility::makeInstance(StandaloneView::class);
+            // Sets the server request
+            $view->getRenderingContext()->setRequest($this->controller->getRequest());
+            
+            // Sets the file source
+            $view->setTemplateSource($template);
+            
+            // Sets the partial root paths
+            $view->setPartialRootPaths($convertedPartialRootPaths);
+            
+            return $view;
+        } else {
+            $viewFactory = GeneralUtility::makeInstance(ViewFactoryInterface::class);
+            $viewFactoryData = new (ViewFactoryData::class)(
+                partialRootPaths: $convertedPartialRootPaths,
+                request: $this->controller->getRequest(),
+                );
+            
+            $view = $viewFactory->create($viewFactoryData);
+            $view->getRenderingContext()->getTemplatePaths()->setTemplateSource($template);
 
-        // Assigns the arguments
-        foreach ($arguments as $argumentKey => $argument) {
-            $standaloneView->assign($argumentKey, $argument);
+            return $view;
         }
-
-        // Renders the view
-        return $standaloneView->render() ?? '';
-    }
+    }    
+    
 }

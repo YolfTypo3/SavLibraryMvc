@@ -30,26 +30,6 @@ class StringConverter extends AbstractTypeConverter implements SingletonInterfac
 {
 
     /**
-     *
-     * @var array<string>
-     */
-    protected $sourceTypes = [
-        'array'
-    ];
-
-    /**
-     *
-     * @var string
-     */
-    protected $targetType = 'string';
-
-    /**
-     *
-     * @var int
-     */
-    protected $priority = 2;
-
-    /**
      * Actually convert from $source to $targetType, taking into account the fully
      * built $convertedChildProperties and $configuration.
      *
@@ -59,7 +39,7 @@ class StringConverter extends AbstractTypeConverter implements SingletonInterfac
      * @param PropertyMappingConfigurationInterface $configuration
      * @return string | Error @api
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], ?PropertyMappingConfigurationInterface $configuration = null)
     {
         if (! is_array($source)) {
             return new Error('"%s" is not an array.', 1332933658, [

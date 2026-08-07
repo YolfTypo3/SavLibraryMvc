@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the TYPO3 CMS project.
  *
@@ -15,44 +17,40 @@
 
 namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
 
-use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
-use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 
 /**
  * Test the bit of an integer
  *
  * @package SavLibraryMvc
  */
-class BitTestViewHelper extends AbstractViewHelper
+final class BitTestViewHelper extends AbstractViewHelper
 {
-    use CompileWithRenderStatic;
+    
     /**
      * Initializes arguments.
+     * 
+     * @return void
      */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         $this->registerArgument('value', 'int', 'The value to test', false);
         $this->registerArgument('bit', 'int', 'Bit to test', true);
     }
 
     /**
-     * Renders the viewhelper
+     * Renders the view helper
      *
-     * @param array $arguments
-     * @param \Closure $renderChildrenClosure
-     * @param RenderingContextInterface $renderingContext
-     *
-     * @return array the options array
+     * @return int
      */
-    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
+    public function render(): int
     {
         // Gets the arguments
-        $value = $arguments['value'];
-        $bit = $arguments['bit'];
+        $value = $this->arguments['value'];
+        $bit = $this->arguments['bit'];
 
         if ($value === null) {
-            $value = $renderChildrenClosure();
+            $value = $this->renderChildren();
         }
 
         return $value & (1 << $bit);

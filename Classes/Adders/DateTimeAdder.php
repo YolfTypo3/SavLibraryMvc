@@ -17,10 +17,8 @@ declare(strict_types=1);
 
 namespace YolfTypo3\SavLibraryMvc\Adders;
 
-use TYPO3\CMS\Core\Imaging\Icon;
-use TYPO3\CMS\Core\Imaging\IconFactory;
+use TYPO3\CMS\Core\Localization\DateFormatter;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
  * Field configuration adder for Date type.
@@ -37,22 +35,19 @@ final class DateTimeAdder extends AbstractAdder
     {
         $addedFieldConfiguration = [];
 
-        $edit = $this->fieldConfiguration['edit'] ?? false;
-        if ($edit) {
-            return $addedFieldConfiguration;
-        }
-
         // Sets the format if any
-        $format = $this->fieldConfiguration['format'] ?? null;
-        if (empty($format)) {
-            $format = 'd/m/Y H:i';
+        $dateFormat = $this->fieldConfiguration['dateFormat'] ?? null;
+        if (empty($dateFormat)) {
+            $dateFormat = 'd/m/Y H:i';
         }
 
         $value = $this->fieldConfiguration['value'];
-        if (strpos($format, '%') !== false) {
-            $addedFieldConfiguration['value'] =  strftime($format, (int)$value->format('U'));
+        if (strpos($dateFormat, '%') !== false) {
+            /** @var DateFormatter $dateFormatter */
+            $dateFormatter = GeneralUtility::makeInstance(DateFormatter::class);
+            $addedFieldConfiguration['value'] = $dateFormatter->strftime($dateFormat, (int)$value->format('U'));
         } else  {
-            $addedFieldConfiguration['value'] = $value->format($format);
+            $addedFieldConfiguration['value'] = $value->format($dateFormat);
         }
 
         return $addedFieldConfiguration;

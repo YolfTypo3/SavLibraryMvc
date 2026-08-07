@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the TYPO3 CMS project.
  *
@@ -23,23 +25,25 @@ use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
  *
  * @package SavLibraryMvc
  */
-class ChangePageViewHelper extends AbstractViewHelper
+final class ChangePageViewHelper extends AbstractViewHelper
 {
 
     /**
      * Initializes arguments.
+     * 
+     * @return void
      */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         $this->registerArgument('arguments', 'array', 'Arguments', false, null);
     }
 
     /**
-     * Renders the viewhelper
+     * Renders the view helper
      *
      * @return string The modified compressed parameters
      */
-    public function render()
+    public function render(): string
     {
         // Gets the arguments
         $arguments = $this->arguments['arguments'];
@@ -59,10 +63,10 @@ class ChangePageViewHelper extends AbstractViewHelper
                 $page = $arguments['lastPage'];
                 break;
             case 'previousPage':
-                $page = $uncompressedParameters['page'] - 1;
+                $page = ($uncompressedParameters['page'] ?? 0) - 1;
                 break;
             case 'nextPage':
-                $page = $uncompressedParameters['page'] + 1;
+                $page = ($uncompressedParameters['page'] ?? 0) + 1;
                 break;
             case 'changePage':
                 $page = $arguments['page'];

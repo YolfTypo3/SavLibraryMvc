@@ -8,6 +8,7 @@
             onsubmit="update('data');"
             enctype="multipart/form-data">
             <f:form.hidden name="special" value="{general.special}" />
+    		<f:form.hidden name="viewId" value="{general.viewId}" />             
             <div class="titleBar">
                 <f:render partial="TitleBars/EditView/Default.html"
                     arguments="{general:general}" />

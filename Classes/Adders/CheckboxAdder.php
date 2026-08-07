@@ -17,10 +17,11 @@ declare(strict_types=1);
 
 namespace YolfTypo3\SavLibraryMvc\Adders;
 
-use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
+use TYPO3\CMS\Core\Imaging\IconSize;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
+use YolfTypo3\SavLibraryMvc\Utility\Conversion;
 
 /**
  * Field configuration adder for Checkbox type.
@@ -53,9 +54,10 @@ final class CheckboxAdder extends AbstractAdder
      *
      * @param bool $value
      * @param array $fieldConfiguration
+     * 
      * @return mixed
      */
-    public static function renderValueInDefaultMode(bool $value, array $fieldConfiguration)
+    public static function renderValueInDefaultMode(bool $value, array $fieldConfiguration): mixed
     {
         if ($value) {
             // The checkbox is checked
@@ -69,7 +71,7 @@ final class CheckboxAdder extends AbstractAdder
                 $iconFactory = GeneralUtility::makeInstance(IconFactory::class);
                 $renderedValue = $iconFactory->getIcon(
                     $iconIdentifier,
-                    Icon::SIZE_SMALL
+                    IconSize::SMALL
                 );
             } else {
                 $renderedValue = LocalizationUtility::translate('itemviewer.yes', 'sav_library_mvc');
@@ -92,7 +94,7 @@ final class CheckboxAdder extends AbstractAdder
                 $iconFactory = GeneralUtility::makeInstance(IconFactory::class);
                 $renderedValue = $iconFactory->getIcon(
                     $iconIdentifier,
-                    Icon::SIZE_SMALL
+                    IconSize::SMALL
                 );
             } else {
                 $renderedValue = LocalizationUtility::translate('itemviewer.no', 'sav_library_mvc');

@@ -23,7 +23,6 @@ use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
 use TYPO3\CMS\Extbase\Persistence\Generic\Qom\ConstraintInterface;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
-use YolfTypo3\SavLibraryMvc\Controller\DefaultController;
 use YolfTypo3\SavLibraryMvc\Parser\WhereClauseParser;
 use YolfTypo3\SavLibraryMvc\Persistence\Mapper\DataMapFactory;
 
@@ -34,7 +33,7 @@ class DefaultRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
 {
     /**
      *
-     * @var DefaultController
+     * @var AbstractController
      */
     protected $controller = null;
 
@@ -51,6 +50,12 @@ class DefaultRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
     protected $sessionFilter = [];
 
     /**
+     *
+     * @var array
+     */
+    protected $selectedSessionFilter = [];
+
+    /**
      * Injects the data map factory
      *
      * @param DataMapFactory $dataMapFactory
@@ -64,10 +69,10 @@ class DefaultRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
     /**
      * Sets the controller
      *
-     * @param DefaultController $controller
+     * @param AbstractController $controller
      * @return void
      */
-    public function setController(DefaultController $controller)
+    public function setController(AbstractController $controller)
     {
         $this->controller = $controller;
     }
@@ -75,7 +80,7 @@ class DefaultRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
     /**
      * Gets the controller
      *
-     * @return DefaultController
+     * @return AbstractController
      */
     public function getController()
     {
@@ -157,8 +162,6 @@ class DefaultRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
         // Adds the constraints
         $query = $this->addConstraints($query);
 
-        //         $this->debugQuery($query);
-
         return $query->execute()->count();
     }
 
@@ -201,7 +204,6 @@ class DefaultRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
         // Adds the limit the result
         $query = $query->setOffset($offset)->setLimit($limit ? $limit : 1);
 
-        //          $this->debugQuery($query);
         return $query->execute();
     }
 
@@ -210,7 +212,7 @@ class DefaultRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
      *
      * @return void
      */
-    public function persistAll()
+    public function persistAll(): void
     {
         $this->persistenceManager->persistAll();
     }
@@ -253,10 +255,11 @@ class DefaultRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
     protected function getFilterConstraints(QueryInterface $query): ?ConstraintInterface
     {
         // Gets the session variables
-        $sessionFilters = $GLOBALS['TSFE']->fe_user->getKey('ses', 'filters');
-        $selectedFilterKey = $GLOBALS['TSFE']->fe_user->getKey('ses', 'selectedFilterKey');
+        $frontEndUser = $this->controller->getFrontendUserManager()->getFrontEndUser();
+        $sessionFilters = $frontEndUser->getKey('ses', 'filters');
+        $selectedFilterKey = $frontEndUser->getKey('ses', 'selectedFilterKey');
 
-        if (! empty($sessionFilters) && ! empty($selectedFilterKey) && ! empty($sessionFilters[$selectedFilterKey]) && $sessionFilters[$selectedFilterKey]['pageId'] == $this->getPageId()) {
+        if (! empty($sessionFilters) && ! empty($selectedFilterKey) && ! empty($sessionFilters[$selectedFilterKey]) && $sessionFilters[$selectedFilterKey]['pageId'] == $this->controller->getPageId()) {
             //Sets the selected session filter
             $this->selectedSessionFilter = $sessionFilters[$selectedFilterKey];
 
@@ -327,7 +330,7 @@ class DefaultRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
         }
 
         if (! empty($finalConstraints)) {
-            $query = $query->matching($query->logicalAnd($finalConstraints));
+            $query = $query->matching($query->logicalAnd(...$finalConstraints));
         }
 
         return $query;
@@ -383,7 +386,7 @@ class DefaultRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
             return false;
         }
 
-        return is_array($GLOBALS['TSFE']->fe_user->groupData['title']) && in_array($groupName, $GLOBALS['TSFE']->fe_user->groupData['title']);
+        return is_array($this->controller->getFrontendUserManager()->getFrontendUser()->groupData['title']) && in_array($groupName, $this->controller->getFrontendUserManager()->getFrontendUser()->groupData['title']);
     }
 
     /**
@@ -393,55 +396,38 @@ class DefaultRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
      *
      * @return bool (true if the current user is not a member of the group)
      */
-    protected static function isNotGroupMember(string $groupName): bool
+    protected function isNotGroupMember(string $groupName): bool
     {
         if (empty($groupName)) {
             return true;
         }
 
-        return is_array($GLOBALS['TSFE']->fe_user->groupData['title']) && ! in_array($groupName, $GLOBALS['TSFE']->fe_user->groupData['title']);
+        return is_array($this->controller->getFrontendUserManager()->getFrontendUser()->groupData['title']) && ! in_array($groupName, $this->controller->getFrontendUserManager()->getFrontendUser()->groupData['title']);
     }
 
 
     /**
-     * Gets the page id
+     * Gets the user group uids
      *
-     * @return int
+     * @return array
      */
-    protected function getPageId(): int
+    protected function getUserGroupIds(): array
     {
-        // @extensionScannerIgnoreLine
-        return (int) $GLOBALS['TSFE']->id;
-    }
-
-    /**
-     * Gets the userd id
-     *
-     * @return int
-     */
-    protected function getUserId(): int
-    {
-        // @extensionScannerIgnoreLine
-        return (int) $GLOBALS['TSFE']->fe_user->user['uid'];
+        return $this->controller->getFrontendUserManager()->getFrontendUser()->groupData['uid'] ?? [];
     }
 
     /**
      * Debug a query
      *
      * @param QueryInterface $query
+     * 
      * @return void
      */
-    public function debugQuery($query)
+    public function debugQuery(QueryInterface $query): void
     {
-        $objectManager = GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\ObjectManager::class);
         $dbParser = GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Persistence\Generic\Storage\Typo3DbQueryParser::class);
-        $environmentService = GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Service\EnvironmentService::class);
-        $dbParser->injectObjectManager($objectManager);
-        $dbParser->injectEnvironmentService($environmentService);
-        $dbParser->initializeObject();
         $builder = $dbParser->convertQueryToDoctrineQueryBuilder($query);
         debug([$builder->getSQL(), $builder->getParameters()]);
-
     }
 
 }

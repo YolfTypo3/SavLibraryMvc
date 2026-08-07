@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the TYPO3 CMS project.
  *
@@ -15,10 +17,7 @@
 
 namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
 
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
-use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
-use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithContentArgumentAndRenderStatic;
 use YolfTypo3\SavLibraryMvc\Controller\FlashMessages;
 
 /**
@@ -27,13 +26,15 @@ use YolfTypo3\SavLibraryMvc\Controller\FlashMessages;
  * This view helper can be used in templates
  * for exporting data
  */
-class QueryViewHelper extends AbstractViewHelper
+final class QueryViewHelper extends AbstractViewHelper
 {
-    use CompileWithContentArgumentAndRenderStatic;
+    
     /**
      * Initializes arguments.
+     * 
+     * @return void
      */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         $this->registerArgument('name', 'string', 'Name of variable to create', true);
         $this->registerArgument('statement', 'string', 'The statement', false);
@@ -41,58 +42,45 @@ class QueryViewHelper extends AbstractViewHelper
     }
 
     /**
-     * @param array $arguments
-     * @param \Closure $renderChildrenClosure
-     * @param RenderingContextInterface $renderingContext
+     * Renders the view helper
+     * 
+     * @return void
      */
-    public static function renderStatic(
-        array $arguments,
-        \Closure $renderChildrenClosure,
-        RenderingContextInterface $renderingContext
-    ) {
-            $name = $arguments['name'];
-            $statement = $arguments['statement'];
-            $debug = $arguments['debug'];
+    public function render(): void
+    {
+        $name = $this->arguments['name'];
+        $statement = $this->arguments['statement'];
+        $debug = $this->arguments['debug'];
 
-            if ($statement === null) {
-                $statement = $renderChildrenClosure();
-            }
-
-            // Gets the controller
-            if (method_exists(__CLASS__, 'getRequest')) {
-                $request = $renderingContext->getRequest();
-            } else {
-                // For TYPO3 v10
-                // @extensionScannerIgnoreLine
-                $request =  $renderingContext
-                ->getControllerContext()
-                ->getRequest();
-            }
-            $controllerObjectName = $request->getOriginalRequest()
-                ->getControllerObjectName();
-            $controller = GeneralUtility::makeInstance($controllerObjectName);
-
-            $userIsAllowedToExportData = $controller->getFrontendUserManager()
-                ->userIsAllowedToExportData();
-
-            // Checks if the user is allowed to export data
-            if ($userIsAllowedToExportData) {
-
-                // Gets the main repository
-                $mainRepository = $controller->getMainRepository();
-
-                $query = $mainRepository->createQuery();
-                $result = $query->statement($statement)->execute(true);
-
-                if ($debug) {
-                    debug($result);
-                }
-
-                $renderingContext->getVariableProvider()->add($name, $result);
-            } else {
-                $renderingContext->getVariableProvider()->add($name, []);
-                FlashMessages::addMessageOnce('error.notAllowedToUseQueryViewHelper');
-            }
+        if ($statement === null) {
+            $statement = $this->renderChildren();
         }
+
+        // Gets the controller information
+        $request = $this->renderingContext->getRequest();
+        $controller = $request->getAttribute('controller');
+
+        $userIsAllowedToExportData = $controller->getFrontendUserManager()
+            ->userIsAllowedToExportData();
+
+        // Checks if the user is allowed to export data
+        if ($userIsAllowedToExportData) {
+
+            // Gets the main repository
+            $mainRepository = $controller->getMainRepository();
+
+            $query = $mainRepository->createQuery();
+            $result = $query->statement($statement)->execute(true);
+
+            if ($debug) {
+                debug($result);
+            }
+
+            $this->renderingContext->getVariableProvider()->add($name, $result);
+        } else {
+            $this->renderingContext->getVariableProvider()->add($name, []);
+            FlashMessages::addMessageOnce('error.notAllowedToUseQueryViewHelper');
+        }
+    }
 
 }

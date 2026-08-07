@@ -3,7 +3,7 @@ services:
     autowire: true
     autoconfigure: true
     public: false
-
+                   
   YolfTypo3\SavLibraryMvc\:
     resource: '../Classes/*'
     exclude: '../Classes/Domain/Model/*'
@@ -29,4 +29,17 @@ services:
   YolfTypo3\SavLibraryMvc\Persistence\Mapper\DataMapFactory:
     arguments:
       $baseCacheIdentifier: '@=service("TYPO3\\CMS\\Core\\Package\\Cache\\PackageDependentCacheIdentifier").toString()'
-   
+  
+  YolfTypo3\SavLibraryMvc\Property\TypeConverter\IntegerConverter:
+    tags:
+      - name: extbase.type_converter
+        priority: 10
+        target: integer
+        sources: array
+        
+  YolfTypo3\SavLibraryMvc\Property\TypeConverter\StringConverter:
+    tags:
+      - name: extbase.type_converter
+        priority: 10
+        target: string
+        sources: array   

@@ -279,18 +279,12 @@
 			<trans-unit id="tx_savlibrarymvc_domain_model_export.xsltFile" resname="tx_savlibrarymvc_domain_model_export.xsltFile" xml:space="preserve">
 				<source>XSLT file</source>
 			</trans-unit>
-			<trans-unit id="upload.error.150530345" resname="upload.error.150530345" xml:space="preserve">
-				<source>Maximum file size exceeded.</source>
+			<trans-unit id="upload.notAllowed" resname="upload.notAllowed" xml:space="preserve">
+				<source>Uploading this file is not allowed.</source>
 			</trans-unit>
-			<trans-unit id="upload.error.150530346" resname="upload.error.150530346" xml:space="preserve">
-				<source>Upload failed. The file was only partially uploaded, please try again.</source>
-			</trans-unit>
-			<trans-unit id="upload.error.150530347" resname="upload.error.150530347" xml:space="preserve">
-				<source>No file was uploaded.</source>
-			</trans-unit>
-			<trans-unit id="upload.error.150530348" resname="upload.error.150530348" xml:space="preserve">
-				<source>Upload failed.</source>
-			</trans-unit>
+			<trans-unit id="upload.invalidFileExtension" resname="upload.invalidFileExtension" xml:space="preserve">
+				<source>Invalid file extension.</source>
+			</trans-unit>			
 			<trans-unit id="warning.delete" resname="warning.delete" xml:space="preserve">
 				<source>Are you sure you want to delete this record?</source>
 			</trans-unit>

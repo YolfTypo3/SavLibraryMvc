@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the TYPO3 CMS project.
  *
@@ -15,13 +17,13 @@
 
 namespace YolfTypo3\SavLibraryMvc\ViewHelpers\Widget;
 
-use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
+use TYPO3\CMS\Core\Imaging\IconSize;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\ViewHelpers\Form\AbstractFormFieldViewHelper;
 use YolfTypo3\SavLibraryMvc\Controller\FlashMessages;
-use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 use YolfTypo3\SavLibraryMvc\DatePicker\DatePicker;
+use YolfTypo3\SavLibraryMvc\Utility\Conversion;
 
 /**
  * A date picker view helper.
@@ -49,10 +51,9 @@ class DatePickerViewHelper extends AbstractFormFieldViewHelper
      *
      * @return void
      */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
-        $this->registerUniversalTagAttributes();
         $this->registerArgument('arguments', 'array', 'Arguments', true);
         $this->registerArgument('default', 'array', 'Default configuration', false, []);
     }
@@ -62,7 +63,7 @@ class DatePickerViewHelper extends AbstractFormFieldViewHelper
      *
      * @return string the options array
      */
-    public function render()
+    public function render(): string
     {
         // Gets the arguments
         $arguments = $this->arguments['arguments'];
@@ -72,18 +73,15 @@ class DatePickerViewHelper extends AbstractFormFieldViewHelper
         $name = $this->getName();
 
         // Sets the date format
-        if (! isset($default['format'])) {
-            $default['format'] = '%d/%m/%Y %H:%M';
+        if (! isset($default['dateFormat'])) {
+            $default['dateFormat'] = '%d/%m/%Y %H:%M';
         }
 
         // Merges the default values with the field configuration
         $fieldConfiguration = array_merge($default, $arguments['field']);
 
-        // Gets the extension key
-        $extensionKey = $this->getRequest()->getControllerExtensionKey();
-
         // Instanciates the calendar
-        $datePicker = new DatePicker($extensionKey);
+        $datePicker = new DatePicker($this->getRequest());
 
         // Registers the field name
         $this->registerFieldNameForFormTokenGeneration($name);
@@ -98,22 +96,32 @@ class DatePickerViewHelper extends AbstractFormFieldViewHelper
         $this->tag->addAttribute('id', 'input_' . $datePickerConfiguration['id']);
 
         // Adds items to the configuration
-        $datePickerConfiguration['format'] = $fieldConfiguration['format'] ?? null;
+        $datePickerConfiguration['dateFormat'] = $fieldConfiguration['dateFormat'] ?? null;
         $datePickerConfiguration['showsTime'] = $fieldConfiguration['showsTime'] ?? null;
 
         $iconFactory = GeneralUtility::makeInstance(IconFactory::class);
-        $datePickerConfiguration['icon'] = $iconFactory->getIcon('actions-calendar', Icon::SIZE_SMALL);
+        
+        $datePickerConfiguration['icon'] = $iconFactory->getIcon('actions-calendar', IconSize::SMALL);
 
         // Sets the value
-        $dateTimeFormat = $this->convertToDateTimeFormat($datePickerConfiguration['format']);
+        $dateTimeFormat = $this->convertToDateTimeFormat($datePickerConfiguration['dateFormat']);
         $newRecord = $fieldConfiguration['newRecord'] ?? false;
         $noDefault = $fieldConfiguration['noDefault'] ?? false;
         if ($this->getValueAttribute() === null || empty($this->getValueAttribute())) {
-            $value = $noDefault ? '' : date($dateTimeFormat);
+            if ($noDefault) {
+                $value = '';
+            } else {
+                if (strpos($datePickerConfiguration['dateFormat'], '%') !== false) {
+                    // @todo Replace deprecated strftime in php 8.1. Suppress warning in v11.
+                    $value =  @strftime($datePickerConfiguration['dateFormat'], (int)((new \DateTime())->format('U')));
+                } else  {
+                    $value = (new \DateTime())->format($datePickerConfiguration['dateFormat']);
+                }
+            }
         } elseif ($noDefault && $newRecord) {
             $value = '';
         } else {
-            $value = strftime($datePickerConfiguration['format'], $this->getValueAttribute()->format('U'));
+            $value = $this->getValueAttribute();
         }
         $this->tag->addAttribute('value', $value);
         $this->tag->addAttribute('onchange', 'document.changed=1;');
@@ -133,7 +141,7 @@ class DatePickerViewHelper extends AbstractFormFieldViewHelper
      *
      * @return string Datetime format
      */
-    public function convertToDateTimeFormat($format)
+    public function convertToDateTimeFormat(string $format): string
     {
         $conversionArray = [
             // Day

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the TYPO3 CMS project.
  *
@@ -17,9 +19,7 @@ namespace YolfTypo3\SavLibraryMvc\ViewHelpers\Typoscript;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
-use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
-use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 
 /**
  * Typoscript wrapper view helper.
@@ -28,39 +28,40 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
  * @package SavLibraryMvc
  * @subpackage ViewHelpers
  */
-class WrapViewHelper extends AbstractViewHelper
+final class WrapViewHelper extends AbstractViewHelper
 {
-    use CompileWithRenderStatic;
+    
     /**
      * Initializes arguments.
+     * 
+     * @return void
      */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         $this->registerArgument('data', 'mixed', 'Data to be used for rendering the cObject. Can be an object, array or string', false, null);
         $this->registerArgument('configuration', 'string', 'Configuration', false, null);
     }
 
     /**
-     * Renders the viewhelper
+     * Renders the view helper
      *
-     * @param array $arguments
-     * @param \Closure $renderChildrenClosure
-     * @param RenderingContextInterface $renderingContext
-     *
-     * @return array The range array
+     * @return string
      */
-    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
+    public function render(): string
     {
         // Gets the arguments
-        $data = $arguments['data'];
-        $configuration = $arguments['configuration'];
+        $data = $this->arguments['data'];
+        $configuration = $this->arguments['configuration'];
 
         if ($data === null) {
-            $data = html_entity_decode($renderChildrenClosure());
+            $data = html_entity_decode($this->renderChildren());
         }
-
-        $contentObject = GeneralUtility::makeInstance(ContentObjectRenderer::class);
-
-        return $contentObject->dataWrap($data, $configuration);
+        if (!empty($configuration)) {
+            /** @var ContentObjectRenderer $contentObject */
+            $contentObject = GeneralUtility::makeInstance(ContentObjectRenderer::class);
+            return $contentObject->dataWrap($data, $configuration);
+        } else {
+            return $data;
+        }
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the TYPO3 CMS project.
  *
@@ -27,9 +29,10 @@ class EditViewConfiguration extends AbstractViewConfiguration
      *
      * @param array $arguments
      *            Arguments from the action
+     *            
      * @return array The view configuration
      */
-    public function getConfiguration($arguments)
+    public function getConfiguration(array $arguments): array
     {
         // Gets the special parameters from arguments, uncompresses it and modifies it if needed
         $special = $arguments['special'];
@@ -37,7 +40,7 @@ class EditViewConfiguration extends AbstractViewConfiguration
         $uncompressedParameters['mode'] = AbstractController::EDIT_MODE;
 
         // Gets the uid
-        $uid = $uncompressedParameters['uid'];
+        $uid = intval($uncompressedParameters['uid']);
 
         // Gets the main repository
         $mainRepository = $this->controller->getMainRepository();
@@ -64,7 +67,7 @@ class EditViewConfiguration extends AbstractViewConfiguration
         $this->addGeneralViewConfiguration('controllerName', $this->controller->getControllerName());
         $this->addGeneralViewConfiguration('object', $this->object);
         $this->addGeneralViewConfiguration('special', $special);
-        $this->addGeneralViewConfiguration('contentUid', $this->controller->getContentObjectRenderer()->data['uid']);
+        $this->addGeneralViewConfiguration('contentUid', $this->controller->getContentObjectUid());
         $this->addGeneralViewConfiguration('currentMode', $uncompressedParameters['mode']);
         $userIsAllowedToInputData = $this->controller->getFrontendUserManager()->userIsAllowedToInputData() && ! $mainRepository->isInDraftWorkspace($uid);
         $this->addGeneralViewConfiguration('userIsAllowedToInputData', $userIsAllowedToInputData);

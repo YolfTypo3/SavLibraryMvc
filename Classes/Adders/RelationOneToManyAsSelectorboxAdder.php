@@ -19,7 +19,6 @@ namespace YolfTypo3\SavLibraryMvc\Adders;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
-use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 
 /**
  * Field configuration adder for RelationOneToManyAsSelectorbox type.
@@ -57,9 +56,10 @@ final class RelationOneToManyAsSelectorboxAdder extends AbstractAdder
 
         // Processes the options
         if (is_array($this->fieldConfiguration['items'][0])) {
-            $extensionKey = $this->fieldConfigurationManager->getController()->getControllerExtensionKey();
+            $extensionKey = $this->controller->getControllerExtensionKey();
+            $itemLabel = $this->fieldConfiguration['items'][0]['label'] ?? $this->fieldConfiguration['items'][0][0];
             $options = [
-                '' => LocalizationUtility::translate($this->fieldConfiguration['items'][0][0], $extensionKey)
+                '' => LocalizationUtility::translate($itemLabel, $extensionKey)
             ];
         } else {
             $options = [];
@@ -95,16 +95,17 @@ final class RelationOneToManyAsSelectorboxAdder extends AbstractAdder
             if (empty($this->fieldConfiguration['labelSelect'])) {
                 $repositoryClassName = $value->resolveRepositoryClassName();
                 $repository = GeneralUtility::makeInstance($repositoryClassName);
-                $repository->setController($this->fieldConfigurationManager->getController());
+                $repository->setController($this->controller);
                 $labelGetter = 'get' . GeneralUtility::underscoredToUpperCamelCase($repository->getDataMapFactory()->getLabelField());
                 $addedFieldConfiguration['value'] = $value->$labelGetter();
             } else {
                 $addedFieldConfiguration['value'] = $this->parseLabel($value, $this->fieldConfiguration['labelSelect']);
             }
         } else {
-            if (!empty($this->fieldConfiguration['items'][0][0])) {
-                $extensionKey = $this->fieldConfigurationManager->getController()->getControllerExtensionKey();
-                $addedFieldConfiguration['value'] = LocalizationUtility::translate($this->fieldConfiguration['items'][0][0], $extensionKey);
+            $itemLabel = $this->fieldConfiguration['items'][0]['label'] ?? $this->fieldConfiguration['items'][0][0];
+            if (!empty($itemLabel)) {
+                $extensionKey = $this->controller->getControllerExtensionKey();
+                $addedFieldConfiguration['value'] = LocalizationUtility::translate($itemLabel, $extensionKey);
             } else {
                 throw new \Exception(sprintf(
                     'No label item defined for "%s".',

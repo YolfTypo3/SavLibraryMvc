@@ -280,6 +280,7 @@ class WhereClauseParser
                 );
             }
         }
+
         return $rightHandSideOperand;
     }
 
@@ -300,9 +301,9 @@ class WhereClauseParser
 
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable('fe_groups')->createQueryBuilder();
         $queryBuilder->select('uid','title','subgroup')->from('fe_groups');
-        $queryResult = $queryBuilder->execute();
+        $queryResult = $queryBuilder->executeQuery();
 
-        while ($row = $queryResult->fetch()) {
+        while ($row = $queryResult->fetchAssociative()) {
             if (in_array($row['title'], $groups)) {
                 if (empty($row['subgroup'])) {
                     $groups = explode(',',$row['uid']);
@@ -320,9 +321,9 @@ class WhereClauseParser
         }
 
         if ($operator == '=') {
-            return $query->logicalAnd($result);
+            return $query->logicalAnd(...$result);
         } else {
-            return $query->logicalOr($result);
+            return $query->logicalOr(...$result);
         }
     }
 

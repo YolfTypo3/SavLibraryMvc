@@ -20,7 +20,6 @@ namespace YolfTypo3\SavLibraryMvc\Adders;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
-use YolfTypo3\SavLibraryMvc\Domain\Repository\AbstractRepository;
 use YolfTypo3\SavLibraryMvc\Managers\AdditionalHeaderManager;
 
 /**
@@ -38,6 +37,9 @@ final class RelationManyToManyAsSubformAdder extends AbstractAdder
     {
         $addedFieldConfiguration = [];
 
+        //Intializes the general configuration
+        $generalConfiguration = [];
+        
         // Sets the subform flag
         $subformFlag = $this->fieldConfigurationManager->getSubformFlag();
         $this->fieldConfigurationManager->setSubformFlag(true);
@@ -46,12 +48,9 @@ final class RelationManyToManyAsSubformAdder extends AbstractAdder
         $propertyName = $this->fieldConfiguration['propertyName'];
         $subformPropertyName = $this->fieldConfigurationManager->getSubformPropertyName();
         $this->fieldConfigurationManager->setSubformPropertyName($propertyName);
-
+        
         // Saves the domain object
         $savedObject = $this->fieldConfigurationManager->getDomainObject();
-
-        //Intializes the general configuration
-        $generalConfiguration = [];
 
         // Sets the flag to show first and last buttons
         $noFirstLast = $this->fieldConfiguration['noFirstLast'] ?? false;
@@ -63,10 +62,10 @@ final class RelationManyToManyAsSubformAdder extends AbstractAdder
         $generalConfiguration['lastPageInSubform'] = $lastPageInSubform;
 
         // Page information for the page browser
-        $maxPagesInSubform = $this->fieldConfigurationManager->getController()->getSetting('maxItems');
+        $maxPagesInSubform = $this->controller->getSetting('maxItems');
 
         // Gets the page for the subform
-        $arguments = $this->fieldConfigurationManager->getController()->getArguments();
+        $arguments = $this->controller->getArguments();
         $uncompressedParameters = AbstractController::uncompressParameters($arguments['special']);
         $subformActivePages = $uncompressedParameters['subformActivePages'] ?? null;
         $uncompressedSubformActivePages = AbstractController::uncompressSubformActivePages($subformActivePages);
@@ -79,7 +78,7 @@ final class RelationManyToManyAsSubformAdder extends AbstractAdder
             $pagesInSubform[$i] = $i + 1;
         }
         $generalConfiguration['pagesInSubform'] = $pagesInSubform;
-        $generalConfiguration['subformUidLocal'] = $this->fieldConfigurationManager->getDomainObject()->getUid();
+        $generalConfiguration['subformUidLocal'] = $this->fieldConfigurationManager->getDomainObject()->getUid() ?? 0;
 
         // Adds the special arguments to the general configuration
         $generalConfiguration['special'] = $arguments['special'];
@@ -104,18 +103,15 @@ final class RelationManyToManyAsSubformAdder extends AbstractAdder
         $count = 0;
         $maxSubformItems = $maxSubformItems ? $maxSubformItems : $maxitems;
 
-        // Gets the controller
-        $controller = $this->fieldConfigurationManager->getController();
-
         // Gets the repository
         $repository = $this->getRepository();
 
         // Gets the controller action name
-        $controllerActionName = $controller->getControllerActionName();
+        $controllerActionName = $this->controller->getControllerActionName();
 
         // Gets the view identifier
-        $viewIdentifier = $controller->getViewerConfiguration($controllerActionName)->getViewIdentifier(false);
-
+        $viewIdentifier = $this->controller->getViewerConfiguration($controllerActionName)->getViewIdentifier(false);
+        
         // Checks if a new item was requested
         $isNewItemInSubform = isset($uncompressedParameters['subformKey']) &&
             isset($uncompressedParameters['subformUidLocal']) &&
@@ -126,11 +122,10 @@ final class RelationManyToManyAsSubformAdder extends AbstractAdder
 
         // Stores the fields configuration
         $this->fieldConfigurationManager->storeFieldsConfiguration();
-
         $items = [];
         if ($isNewItemInSubform) {
             // Creates a new object
-            $subform = $controller->getSubform((int) $uncompressedParameters['subformKey']);
+            $subform = $this->controller->getSubform((int) $uncompressedParameters['subformKey']);
             $subformForeignRepository = GeneralUtility::makeInstance($subform['foreignRepository']);
             $object = $subformForeignRepository->createModelObject();
 
@@ -182,12 +177,11 @@ final class RelationManyToManyAsSubformAdder extends AbstractAdder
         // Adds the javascript to confirm the delete action
         $edit = $this->fieldConfiguration['edit'] ?? false;
         if ($edit) {
-            AdditionalHeaderManager::addConfirmDeleteJavaScript('subformItem');
+            AdditionalHeaderManager::addConfirmDeleteJavaScript();
         }
 
         // Restores the field configuration
         $this->fieldConfigurationManager->restoreFieldsConfiguration();
-
         $addedFieldConfiguration['subformConfiguration'] = [
             'items' => $items,
             'general' => $generalConfiguration

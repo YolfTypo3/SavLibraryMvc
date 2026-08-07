@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the TYPO3 CMS project.
  *
@@ -15,9 +17,10 @@
 
 namespace YolfTypo3\SavLibraryMvc\Managers;
 
+use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
-use YolfTypo3\SavLibraryMvc\Controller\DefaultController;
 
 /**
  * Frontend user manager.
@@ -37,21 +40,48 @@ class FrontendUserManager
     /**
      * Controller
      *
-     * @var DefaultController
+     * @var AbstractController
      */
-    protected $controller = null;
+    protected ?AbstractController $controller = null;
 
     /**
      * Sets the controller
      *
-     * @param DefaultController $controller
+     * @param AbstractController $controller
+     * 
      * @return void
      */
-    public function setController(DefaultController $controller)
+    public function setController(AbstractController $controller): void
     {
         $this->controller = $controller;
     }
 
+    /**
+     * Gets the Frontend user
+     *
+     * @return FrontendUserAuthentication
+     */
+    public function getFrontendUser(): FrontendUserAuthentication
+    {
+        return $this->controller->getRequest()->getAttribute('frontend.user');
+    }
+
+    /**
+     * Gets the Frontend user id
+     *
+     * @return int
+     */
+    public function getUserId(): ?int
+    {
+        $typo3Version = GeneralUtility::makeInstance(Typo3Version::class);
+        if ($typo3Version->getMajorVersion() < 13) {
+            // @extensionScannerIgnoreLine
+            return $this->getFrontendUser()->user['uid'] ?? null;
+        } else {
+            return $this->getFrontendUser()->getUserId();
+        }
+    }
+    
     /**
      * Checks if the a user is authenticated in FE.
      *
@@ -59,7 +89,7 @@ class FrontendUserManager
      */
     public function userIsAuthenticated(): bool
     {
-        return (!isset($GLOBALS['TSFE']->fe_user->user['uid']) ? false : true);
+    return (is_null($this->getUserId()) ? false : true);
     }
 
     /**
@@ -77,10 +107,12 @@ class FrontendUserManager
         // Condition on date
         $time = time();
         $conditionOnInputDate = ($this->controller->getSetting('inputStartDate') &&
-            ($time >= $this->controller->getSetting('inputStartDate')) &&
+            ($time >= (int) $this->controller->getSetting('inputStartDate')) &&
             $this->controller->getSetting('inputEndDate') &&
-            ($time <= $this->controller->getSetting('inputEndDate')));
+            ($time <= (int) $this->controller->getSetting('inputEndDate')));
+
         switch ($this->controller->getSetting('dateUserRestriction')) {
+            case '':
             case self::NOBODY:
                 $conditionOnInputDate = true;
             case self::ALL:
@@ -97,7 +129,7 @@ class FrontendUserManager
         }
 
         // Condition on allowedGroups
-        $result = (count(array_intersect(explode(',', $this->controller->getSetting('allowedGroups')), array_keys($GLOBALS['TSFE']->fe_user->groupData['uid']))) > 0 ? true : false);
+        $result = (count(array_intersect(explode(',', $this->controller->getSetting('allowedGroups')), array_keys($this->getFrontEndUser()->groupData['uid']))) > 0 ? true : false);
         $conditionOnAllowedGroups = ($this->controller->getSetting('allowedGroups') ? $result : true);
 
         return $this->controller->getSetting('inputIsAllowed') && $conditionOnAllowedGroups && $conditionOnInputDate;
@@ -118,8 +150,8 @@ class FrontendUserManager
             return true;
         }
 
-        // Gets the admin configuration fronm the user TS Config
-        $inputAdminConfiguration = $GLOBALS['TSFE']->fe_user->getUserTSconf();
+        // Gets the admin configuration from the user configuration
+        $inputAdminConfiguration = $this->getUserConfiguration();
 
         // Condition on the Input Admin Field
         $conditionOnInputAdminField = true;
@@ -138,7 +170,7 @@ class FrontendUserManager
                 case 'cruser_id_frontend':
                 case 'cruser_id':
                     // Checks if the user created the record
-                    if ($fieldValue != $GLOBALS['TSFE']->fe_user->user['uid']) {
+                    if ($fieldValue != $this->controller->getFrontEndUser()->user['uid']) {
                         $conditionOnInputAdminField = false;
                     }
                     break;
@@ -161,11 +193,11 @@ class FrontendUserManager
         // Gets the extension key
         $extensionKey = $this->controller->getControllerExtensionKey();
 
-        // Gets the user TypoScript configuration
-        $userTypoScriptConfiguration = $GLOBALS['TSFE']->fe_user->getUserTSconf();
+        // Gets the user configuration
+        $userConfiguration = $this->getUserConfiguration();
 
         // Sets the condition
-        $condition = (($userTypoScriptConfiguration[$extensionKey . '_Admin'] ?? null) == '*');
+        $condition = (($userConfiguration[$extensionKey . '_Admin'] ?? null) == '*');
 
         return $condition;
     }
@@ -180,11 +212,11 @@ class FrontendUserManager
         // Gets the extension key
         $extensionKey = $this->controller->getControllerExtensionKey();
 
-        // Gets the user TypoScript configuration
-        $userTypoScriptConfiguration = $GLOBALS['TSFE']->fe_user->getUserTSconf();
+        // Gets the user configuration
+        $userConfiguration = $this->getUserConfiguration();
 
         // Sets the condition
-        $condition = (($userTypoScriptConfiguration[$extensionKey . '_Export'] ?? null) == '*' || ($userTypoScriptConfiguration[$extensionKey . '_ExportWithQuery'] ?? null) == '*');
+        $condition = (($userConfiguration[$extensionKey . '_Export'] ?? null) == '*' || ($userConfiguration[$extensionKey . '_ExportWithQuery'] ?? null) == '*');
 
         return $condition;
     }
@@ -204,13 +236,34 @@ class FrontendUserManager
         // Gets the extension key
         $extensionKey = $this->controller->getControllerExtensionKey();
 
-        // Gets the user TypoScript configuration
-        $userTypoScriptConfiguration = $GLOBALS['TSFE']->fe_user->getUserTSconf();
+        // Gets the user configuration
+        $userConfiguration = $this->getUserConfiguration();
 
         // Sets the condition
-        $condition = ($userTypoScriptConfiguration[$extensionKey . '_ExportWithQuery'] == '*');
+        $condition = ($userConfiguration[$extensionKey . '_ExportWithQuery'] == '*');
 
         return $condition;
     }
 
+    /**
+     * Gets the Frontend user configuration
+     *
+     * @return array
+     */
+    public function getUserConfiguration(): array
+    {
+        $configurationArray = explode(chr(10), $this->getFrontendUser()->user['tx_savlibrarymvc_config'] ?? '');
+        $result = [];
+        
+        foreach ($configurationArray as $configurationString) {
+            $position = strpos($configurationString, '=');
+            if ($position !== false) {
+                $parts = explode('=', $configurationString);
+                $result[trim($parts[0])] = trim($parts[1]);
+            }
+        }
+        
+        return $result;
+    }
+    
 }

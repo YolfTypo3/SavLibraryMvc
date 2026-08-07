@@ -17,45 +17,40 @@ declare(strict_types=1);
 
 namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
 
-use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
-use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 
 /**
  * Removes empty lines
  *
  * @package SavLibraryMvc
  */
-class RemoveEmptyLinesViewHelper extends AbstractViewHelper
+final class RemoveEmptyLinesViewHelper extends AbstractViewHelper
 {
-    use CompileWithRenderStatic;
 
     /**
      * Initializes arguments.
+     * 
+     * @return void
      */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         $this->registerArgument('value', 'string', 'String', false, null);
         $this->registerArgument('convertAmpersand', 'bool', '', false, false);
     }
 
     /**
-     * Renders the viewhelper
+     * Renders the view helper
      *
-     * @param array $arguments
-     * @param \Closure $renderChildrenClosure
-     * @param RenderingContextInterface $renderingContext
-     *
-     * @return array The range array
+     * @return string
      */
-    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
+    public function render(): string
     {
         // Gets the arguments
-        $value = $arguments['value'];
-        $convertAmpersand = $arguments['convertAmpersand'];
+        $value = $this->arguments['value'];
+        $convertAmpersand = $this->arguments['convertAmpersand'];
 
         if ($value === null) {
-            $value = $renderChildrenClosure();
+            $value = $this->renderChildren();
         }
         $parterns = [];
         $replace = [];

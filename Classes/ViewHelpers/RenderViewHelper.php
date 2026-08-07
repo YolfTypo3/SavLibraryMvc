@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the TYPO3 CMS project.
  *
@@ -16,23 +18,21 @@
 namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
-use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
-use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
-use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
+use TYPO3\CMS\Core\EventDispatcher\NoopEventDispatcher;
+use TYPO3\CMS\Core\TypoScript\TypoScriptStringFactory;
+use TYPO3\CMS\Core\TypoScript\AST\AstBuilder;
 
 /**
  * Class RenderViewHelper
  * @inheritdoc
  */
-class RenderViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\RenderViewHelper
+class RenderViewHelper extends \TYPO3Fluid\Fluid\ViewHelpers\RenderViewHelper
 {
-    use CompileWithRenderStatic;
 
     /**
      * @var array
      */
-    protected static $attributes = [
+    protected array $attributes = [
         'addLeftIfNotNull',
         'addLeftIfNull',
         'addRightIfNotNull',
@@ -41,27 +41,23 @@ class RenderViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\RenderViewHelper
     ];
 
     /**
-     * Renders the viewhelper
+     * Renders the view helper
      *
-     * @param array $arguments
-     * @param \Closure $renderChildrenClosure
-     * @param RenderingContextInterface $renderingContext
-     *
-     * @return mixed
+     * @return string
      */
-    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
+    public function render(): string
     {
         // Gets the content
-        $content = parent::renderStatic($arguments, $renderChildrenClosure, $renderingContext);
+        $content = parent::render();
 
         // Special processing
-        $fiedConfiguration = $arguments['arguments']['field'];
-        $specialAttributes = array_intersect(array_keys($fiedConfiguration), self::$attributes);
+        $fiedConfiguration = $this->arguments['arguments']['field'];
+        $specialAttributes = array_intersect(array_keys($fiedConfiguration), $this->attributes);
         if (! empty($specialAttributes)) {
             foreach ($specialAttributes as $specialAttribute) {
                 $addAttributeBasedMethod = 'postProcessorFor' . ucfirst($specialAttribute);
-                if (method_exists(static::class, $addAttributeBasedMethod)) {
-                    $content = self::$addAttributeBasedMethod($content, $fiedConfiguration);
+                if (method_exists($this, $addAttributeBasedMethod)) {
+                    $content = $this->$addAttributeBasedMethod($content, $fiedConfiguration);
                 }
             }
         }
@@ -72,9 +68,11 @@ class RenderViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\RenderViewHelper
      * Post-processor for the attribute addLeftIfNotNull.
      *
      * @param string $fieldName
-     * @return mixed
+     * @param array $fieldConfiguration
+     * 
+     * @return string
      */
-    protected static function postProcessorForAddLeftIfNotNull(?string $content, $fieldConfiguration)
+    protected function postProcessorForAddLeftIfNotNull(?string $content, array $fieldConfiguration): string
     {
         if (!empty($fieldConfiguration['value'])) {
             return $fieldConfiguration['addLeftIfNotNull'] .  $content;
@@ -86,9 +84,11 @@ class RenderViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\RenderViewHelper
      * Post-processor for the attribute addLeftIfNull.
      *
      * @param string $fieldName
-     * @return mixed
+     * @param array $fieldConfiguration
+     * 
+     * @return string
      */
-    protected static function postProcessorForAddLeftIfNull(?string $content, $fieldConfiguration)
+    protected function postProcessorForAddLeftIfNull(?string $content, array $fieldConfiguration): string
     {
         if (empty($fieldConfiguration['value'])) {
             return $fieldConfiguration['addLeftIfNull'] .  $content;
@@ -100,9 +100,11 @@ class RenderViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\RenderViewHelper
      * Post-processor for the attribute addRightIfNotNull.
      *
      * @param string $fieldName
-     * @return mixed
+     * @param array $fieldConfiguration
+     * 
+     * @return string
      */
-    protected static function postProcessorForAddRightIfNotNull(?string $content, $fieldConfiguration)
+    protected function postProcessorForAddRightIfNotNull(?string $content, array $fieldConfiguration): string
     {
         if (! empty($fieldConfiguration['value'])) {
             return $content . $fieldConfiguration['addRightIfNotNull'];
@@ -114,9 +116,11 @@ class RenderViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\RenderViewHelper
      * Post-processor for the attribute addRightIfNull.
      *
      * @param string $fieldName
-     * @return mixed
+     * @param array $fieldConfiguration
+     * 
+     * @return string
      */
-    protected static function postProcessorForAddRightIfNull(?string $content, $fieldConfiguration)
+    protected function postProcessorForAddRightIfNull(?string $content, array $fieldConfiguration): string
     {
         if (! empty($fieldConfiguration['value'])) {
             return $content . $fieldConfiguration['addRightIfNull'];
@@ -128,20 +132,23 @@ class RenderViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\RenderViewHelper
      * Post-processor for the attribute addRightIfNull.
      *
      * @param string $fieldName
-     * @return mixed
+     * @param array $fieldConfiguration
+     * 
+     * @return string
      */
-    protected static function postProcessorForStdWrapValue(?string $content, $fieldConfiguration)
+    protected function postProcessorForStdWrapValue(?string $content, array $fieldConfiguration): string
     {
         if (! empty($fieldConfiguration['value'])) {
            // The value is wrapped using the stdWrap TypoScript
            $configuration = $fieldConfiguration['stdWrapValue'];
 
-           $TSparser = GeneralUtility::makeInstance(TypoScriptParser::class);
-           $TSparser->parse($configuration);
-
-           $contentObjectRenderer = GeneralUtility::makeInstance(ContentObjectRenderer::class);
-           $content = $contentObjectRenderer->stdWrap($content, $TSparser->setup);
-
+           /** @var TypoScriptStringFactory $typoScriptStringFactory */
+           $typoScriptStringFactory = GeneralUtility::makeInstance(TypoScriptStringFactory::class);
+           $parsedTypoScript = $typoScriptStringFactory->parseFromString($configuration, new AstBuilder(new NoopEventDispatcher()));
+           
+           $controller = $this->getRequest()->getAttribute('controller');
+           $contentObjectRenderer = $controller->getContentObjectRenderer();
+           $content = $contentObjectRenderer->stdWrap($content, $parsedTypoScript->toArray());
         }
         return $content;
     }

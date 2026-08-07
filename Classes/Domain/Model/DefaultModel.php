@@ -17,17 +17,14 @@ declare(strict_types=1);
 
 namespace YolfTypo3\SavLibraryMvc\Domain\Model;
 
-use TYPO3\CMS\Core\Core\Environment;
-use TYPO3\CMS\Core\Resource\Folder;
-use TYPO3\CMS\Core\Resource\DuplicationBehavior;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
+use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use YolfTypo3\SavLibraryMvc\Controller\FlashMessages;
 
 /**
  * Standard Model for the SAV Library MVC
  */
-class DefaultModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
+class DefaultModel extends AbstractEntity
 {
 
     /**
@@ -38,22 +35,21 @@ class DefaultModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     protected $cruserIdFrontend;
 
     /**
-     * The cruserIdFrontend variable
-     *
-     * @var int
-     */
-
-    /**
      * Getter for cruserId
      *
      * @return int
      */
-    public function getCruserId()
+    public function getCruserId(): int
     {
         return $this->cruserId;
     }
 
-    public function getCrdate()
+    /**
+     * Getter for crdate
+     *
+     * @return int
+     */
+    public function getCrdate(): int
     {
         return $this->crdate;
     }
@@ -62,8 +58,10 @@ class DefaultModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * Setter for setCruserIdFrontend
      *
      * @param int $cruserIdFrontend
+     * 
+     * @return void
      */
-    public function setCruserIdFrontend($cruserIdFrontend)
+    public function setCruserIdFrontend(int $cruserIdFrontend): void
     {
         $this->cruserIdFrontend = $cruserIdFrontend;
     }
@@ -73,7 +71,7 @@ class DefaultModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      *
      * @return int
      */
-    public function getCruserIdFrontend()
+    public function getCruserIdFrontend(): int
     {
         return $this->cruserIdFrontend;
     }
@@ -82,87 +80,20 @@ class DefaultModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * Setter for uid.
      *
      * @param int $uid
+     * 
      * @return void
      */
-    public function setUid($uid)
+    public function setUid(?int $uid): void
     {
         $this->uid = $uid;
     }
 
     /**
-     * Updates the file storage with the uploaded file
-     *
-     * @param ObjectStorage $fileStorage
-     * @param ObjectStorage $uploadedFileStorage
-     * @param array $fieldConfiguration
-     * @return void
-     */
-    protected function updateFileStorage($fileStorage, $uploadedFileStorage, $fieldConfiguration)
-    {
-        // Gets the viewId
-        $viewId = $this->repository->getController()->getArguments()['viewId'];
-
-        // Gets the configuration for the view
-        $configuration = $fieldConfiguration['config'][$viewId];
-        $uploadFolder = $configuration['uploadFolder'] ?? null;
-
-        // Gets the uploaded file
-        $uploadedFile = $uploadedFileStorage->current();
-        if ($uploadedFile === null) {
-            return $fileStorage;
-        }
-
-        $properties = $uploadedFile->_getProperties();
-        if ($properties['uidLocal'] === null) {
-            return $fileStorage;
-        }
-
-        // Moves the file if an upload folder is set
-        if ($uploadFolder !== null) {
-            // Gets the original file and identifier
-            $originalFile = $uploadedFile->getOriginalResource()->getOriginalFile();
-            $originalFileIdentifier = $originalFile->getPublicUrl();
-
-            // Gets the resource storage
-            $storage = $originalFile->getStorage();
-
-            // Creates the new folder and moves the file
-            if (! $storage->hasFolder($uploadFolder)) {
-                $folder = $storage->createFolder($uploadFolder);
-            } else {
-                $folder = $storage->getFolder($uploadFolder);
-            }
-            $originalFile->moveTo($folder, null, DuplicationBehavior::REPLACE);
-
-            // Deletes the upload folder
-            $originalFileIdentifierPathInfo = pathinfo($originalFileIdentifier);
-            GeneralUtility::rmdir(Environment::getPublicPath() . '/'. $originalFileIdentifierPathInfo['dirname']);
-        }
-
-        if ($uploadedFileStorage->count() > 0 && $uploadedFile->_getProperty('originalResource') !== null) {
-            $storage = new ObjectStorage();
-
-            // Duplicates existing files
-            if ($fileStorage !== null) {
-                foreach ($fileStorage as $file) {
-                    $storage->attach($file);
-                }
-            }
-            $storage->attach($uploadedFile);
-        } else {
-            $storage = null;
-        }
-
-        return $storage;
-    }
-
-    /**
      * Resolves the table name from an object
-     *
-     * @var ObjectStorage $object
+     * 
      * @return string
      */
-    public function resolveTableNameFromObject()
+    public function resolveTableNameFromObject(): string
     {
         // Gets the model class name
         $objectClassName = get_class($this);
@@ -177,10 +108,9 @@ class DefaultModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     /**
      * Resolves the repository class name
      *
-     * @var string $repositoryClassName
      * @return string
      */
-    public function resolveRepositoryClassName()
+    public function resolveRepositoryClassName(): string
     {
         $objectClassName = get_class($this);
         $repositoryClassName = preg_replace('/\\\\Model\\\\(\w+)$/', '\\\\Repository\\\\$1Repository', $objectClassName);
@@ -191,16 +121,17 @@ class DefaultModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     /**
      * Gets the field value from teh field name
      *
-     * @var ObjectStorage $object
+     * @var string $fieldName
+     * 
      * @return string
      */
-    public function getFieldValueFromFieldName($fieldName)
+    public function getFieldValueFromFieldName(string $fieldName): string
     {
         // Splits the fieldName
         $field = explode('.', $fieldName);
 
         if (empty($field[1])) {
-            // A short field nane is used
+            // A short field name is used
             $getterName = 'get' . GeneralUtility::underscoredToUpperCamelCase($field[0]);
         } else {
             if ($this->resolveTableNameFromObject() != $field[0]) {
@@ -213,9 +144,10 @@ class DefaultModel extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
         }
 
         if (! method_exists($this, $getterName)) {
-            return FlashMessages::addError('error.unknownFieldName', [
+            FlashMessages::addError('error.unknownFieldName', [
                 $fieldName
             ]);
+            return '';
         } else {
             return $this->$getterName();
         }

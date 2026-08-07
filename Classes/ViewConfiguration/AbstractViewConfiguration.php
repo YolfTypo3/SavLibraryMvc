@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the TYPO3 CMS project.
  *
@@ -15,8 +17,7 @@
 
 namespace YolfTypo3\SavLibraryMvc\ViewConfiguration;
 
-use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
-use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
+use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
 use YolfTypo3\SavLibraryMvc\Controller\DefaultController;
 use YolfTypo3\SavLibraryMvc\Parser\TemplateParser;
 
@@ -45,32 +46,32 @@ abstract class AbstractViewConfiguration
      *
      * @var DefaultController
      */
-    protected $controller = null;
+    protected ?DefaultController $controller = null;
 
     /**
      *
      * @var TemplateParser
      */
-    protected $templateParser = null;
+    protected ?TemplateParser $templateParser = null;
 
     /**
      *
      * @var array
      */
-    protected $generalViewConfiguration = [];
+    protected array $generalViewConfiguration = [];
 
     /**
      *
      * @var int
      */
-    protected $viewIdentifier = null;
+    protected ?int $viewIdentifier = null;
 
     /**
-     * Storage object
+     * Domain object
      *
-     * @var ObjectStorage $object
+     * @var DomainObjectInterface $object
      */
-    protected $object;
+    protected DomainObjectInterface $object;
 
     /**
      * Sets the controller
@@ -79,7 +80,7 @@ abstract class AbstractViewConfiguration
      *
      * @return void
      */
-    public function setController(DefaultController $controller)
+    public function setController(DefaultController $controller): void
     {
         $this->controller = $controller;
         $this->templateParser->setController($controller);
@@ -92,7 +93,7 @@ abstract class AbstractViewConfiguration
      *
      * @return void
      */
-    public function injectTemplateParser(TemplateParser $templateParser)
+    public function injectTemplateParser(TemplateParser $templateParser): void
     {
         $this->templateParser = $templateParser;
     }
@@ -111,11 +112,11 @@ abstract class AbstractViewConfiguration
     /**
      * Gets the view identifer.
      *
-     * @param boolean $checkViewsWithCondition
+     * @param bool $checkViewsWithCondition
      *
      * @return int
      */
-    public function getViewIdentifier($checkViewsWithCondition = true): int
+    public function getViewIdentifier(bool $checkViewsWithCondition = true): int
     {
         if ($this->viewIdentifier !== null) {
             return $this->viewIdentifier;
@@ -167,7 +168,7 @@ abstract class AbstractViewConfiguration
      *            The value
      * @return void
      */
-    public function addGeneralViewConfiguration($key, $value)
+    public function addGeneralViewConfiguration(string $key, mixed $value): void
     {
         $this->generalViewConfiguration[$key] = $value;
     }
@@ -175,12 +176,12 @@ abstract class AbstractViewConfiguration
     /**
      * Gets the general view configuration.
      *
-     * @param string $key
+     * @param string|null $key
      *            The key
      *
      * @return mixed
      */
-    public function getGeneralViewConfiguration($key = null)
+    public function getGeneralViewConfiguration(?string $key = null): mixed
     {
         if ($key === null) {
             return $this->generalViewConfiguration;
@@ -191,14 +192,14 @@ abstract class AbstractViewConfiguration
     /**
      * Replaces the localisation markers and parses the template
      *
-     * @param string $viewIdentifier
+     * @param int $viewIdentifier
      *            The view identifier
      * @param array $configuration
      *            The configuration used for replacements
      *
      * @return string The parsed title
      */
-    protected function parseTitle($viewIdentifier, $configuration)
+    protected function parseTitle(int $viewIdentifier, array $configuration): string 
     {
         // Gets and processes the title
         $title = $this->controller->getViewTitleBar($viewIdentifier);

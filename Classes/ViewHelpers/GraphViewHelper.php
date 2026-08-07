@@ -17,13 +17,16 @@ declare(strict_types=1);
 
 namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
 
+use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 use TYPO3\CMS\Extbase\Mvc\Request;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 use YolfTypo3\SavLibraryMvc\Controller\FlashMessages;
 use YolfTypo3\SavLibraryMvc\Managers\AdditionalHeaderManager;
+use YolfTypo3\SavCharts\Controller\DefaultController;
 use YolfTypo3\SavCharts\XmlParser\XmlParser;
 
 /**
@@ -31,27 +34,30 @@ use YolfTypo3\SavCharts\XmlParser\XmlParser;
  *
  * @package SavLibraryMvc
  */
-class GraphViewHelper extends AbstractViewHelper
+final class GraphViewHelper extends AbstractViewHelper
 {
-
+  
     /**
      * The xml parser
      *
-     * @var XmlParser
+     * @var XmlParser $xmlParser
      */
-    protected $xmlParser;
+    protected XmlParser $xmlParser;
 
     /**
      * If true the template is not processed
      *
      * @var bool
      */
-    protected $doNotProcessTemplate = false;
+    protected bool $doNotProcessTemplate = false;
 
+   
     /**
      * Initializes arguments.
+     * 
+     * @return void
      */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         $this->registerArgument('field', 'array', 'Field', true);
         $this->registerArgument('contentUid', 'int', 'Content uid', true);
@@ -68,8 +74,26 @@ class GraphViewHelper extends AbstractViewHelper
         // Checks that sav_charts is loaded
         if (ExtensionManagementUtility::isLoaded('sav_charts')) {
 
+            // Creates the configuration manager
+            $configurationManager = GeneralUtility::makeInstance(ConfigurationManager::class);
+            $configurationManager->setConfiguration([
+                'extensionName' => 'SavCharts',
+                'pluginName' => 'Default',
+                'vendorName' => 'YolfTypo3',
+                'settings' => [
+                    'flexform' => [
+                        'allowQueries' => ($this->getRequest()->getAttribute('controller')->getSetting('allowqueries') ? 1 : 0)
+                    ]
+                ]
+            ]);
+            
+            // Creates an instance of the controller
+            $controller = GeneralUtility::makeInstance(DefaultController::class);
+            $controller->injectConfigurationManager($configurationManager);
+            $controller->setRequest($this->getRequest());
+            
             // Creates the xml parser
-            $this->xmlParser = GeneralUtility::makeInstance(XmlParser::class);
+            $this->xmlParser = new (XmlParser::class)($controller);
             $this->xmlParser->clearXmlTagResults();
 
             // Processes the tags
@@ -91,7 +115,7 @@ class GraphViewHelper extends AbstractViewHelper
      *
      * @return void
      */
-    protected function processTags()
+    protected function processTags(): void
     {
         // Gets the arguments
         $field = $this->arguments['field'];
@@ -109,8 +133,7 @@ class GraphViewHelper extends AbstractViewHelper
             $uid = $uncompressedParameters['uid'];
 
             // Gets the controller
-            $controllerObjectName = $this->getRequest()->getControllerObjectName();
-            $controller = GeneralUtility::makeInstance($controllerObjectName);
+            $controller = $this->getRequest()->getAttribute('controller');
 
             // Gets the main repository
             $mainRepository = $controller->getMainRepository();
@@ -173,8 +196,9 @@ class GraphViewHelper extends AbstractViewHelper
         if (empty($graphTemplate)) {
             FlashMessages::addError('error.graphTemplateNotSet');
         } else {
-            if (file_exists(AbstractController::getSitePath() . $graphTemplate)) {
-                $this->xmlParser->loadXmlFile($graphTemplate);
+            $templateFileName = GeneralUtility::getFileAbsFileName($graphTemplate);
+            if (file_exists($templateFileName)) {
+                $this->xmlParser->loadXmlFile($templateFileName);
                 $this->xmlParser->parseXml();
                 // Post-processing to get the javascript
                 $result = $this->xmlParser->postProcessing();
@@ -182,16 +206,15 @@ class GraphViewHelper extends AbstractViewHelper
                 // Adds the latest javascript file
                 $javaScriptRootDirectory = ExtensionManagementUtility::extPath('sav_charts') . 'Resources/Public/JavaScript';
                 $javaScriptFiles = scandir($javaScriptRootDirectory, SCANDIR_SORT_DESCENDING);
-                $extensionWebPath = AbstractController::getExtensionWebPath('sav_charts');
-                $javaScriptFooterFile = $extensionWebPath . 'Resources/Public/JavaScript/' . $javaScriptFiles[0];
+                $javaScriptFooterFile = 'EXT:sav_charts/Resources/Public/JavaScript/' . $javaScriptFiles[0];
                 AdditionalHeaderManager::addJavaScriptFooterFile($javaScriptFooterFile);
 
                 // Prepares the content
                 $canvases = $result['canvases'];
                 if (! empty($canvases)) {
                     foreach ($canvases as $canvas) {
-                        $chartId = str_replace('###contentObjectUid###', $contentUid, $canvas['chartId']);
-                        $javaScriptFooterInlineCode = str_replace('###contentObjectUid###', $contentUid, $result['javaScriptFooterInlineCode']);
+                        $chartId = str_replace('###contentObjectUid###', (string) $contentUid, $canvas['chartId']);
+                        $javaScriptFooterInlineCode = str_replace('###contentObjectUid###', (string) $contentUid, $result['javaScriptFooterInlineCode']);
 
                         $content .= '<div class="charts chart' . $chartId . '">' . '<canvas id="canvas' . $chartId . '" width="' . $canvas['width'] . '" height="' . $canvas['height'] . '"></canvas>' . '</div>';
 
@@ -216,15 +239,8 @@ class GraphViewHelper extends AbstractViewHelper
      */
     protected function getRequest(): Request
     {
-        if (method_exists($this->renderingContext, 'getRequest')) {
-            return $this->renderingContext->getRequest();
-        } else {
-            // For TYPO3 v10
-            // @extensionScannerIgnoreLine
-            return $this->renderingContext
-                ->getControllerContext()
-                ->getRequest();
-        }
+        $request = $this->renderingContext->getAttribute(ServerRequestInterface::class);
+        return $request;
     }
 
 }

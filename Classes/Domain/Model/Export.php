@@ -15,13 +15,6 @@
 
 namespace YolfTypo3\SavLibraryMvc\Domain\Model;
 
-use TYPO3\CMS\Core\Core\Environment;
-use TYPO3\CMS\Core\Resource\Folder;
-use TYPO3\CMS\Core\Resource\DuplicationBehavior;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
-use YolfTypo3\SavLibraryMvc\Controller\FlashMessages;
-
 /**
  * Export Model for the SAV Library MVC
  */
@@ -34,42 +27,42 @@ class Export extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * @var string
      * @TYPO3\CMS\Extbase\Annotation\Validate("String")
      */
-    protected $name;
+    protected string $name;
 
     /**
      * The content id
      *
      * @var int
      */
-    protected $cid;
+    protected int $cid;
 
     /**
      * The templateFile variable.
      *
      * @var string
      */
-    protected $templateFile;
+    protected string $templateFile;
 
     /**
      * The variables variable.
      *
      * @var string
      */
-    protected $variables;
+    protected string $variables;
 
     /**
      * The xsltFile variable.
      *
      * @var string
      */
-    protected $xsltFile;
+    protected string $xsltFile;
 
     /**
      * The exec variable.
      *
      * @var string
      */
-    protected $exec;
+    protected string $exec;
 
     /**
      * Getter for name
@@ -85,9 +78,10 @@ class Export extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * Setter for name
      *
      * @param string $name
+     * 
      * @return void
      */
-    public function setName(string $name)
+    public function setName(string $name): void
     {
         $this->name =  $name;
     }
@@ -107,9 +101,10 @@ class Export extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * Setter for cid
      *
      * @param int $cid
+     * 
      * @return void
      */
-    public function setCid(int $cid)
+    public function setCid(int $cid): void
     {
         $this->cid =  $cid;
     }
@@ -128,9 +123,10 @@ class Export extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * Setter for templateFile
      *
      * @param string $templateFile
+     * 
      * @return void
      */
-    public function setTemplateFile(string $templateFile)
+    public function setTemplateFile(string $templateFile): void
     {
         $this->templateFile =  $templateFile;
     }
@@ -149,9 +145,10 @@ class Export extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * Setter for variables
      *
      * @param string $variables
+     * 
      * @return void
      */
-    public function setVariables(string $variables)
+    public function setVariables(string $variables): void
     {
         $this->variables =  $variables;
     }
@@ -170,9 +167,10 @@ class Export extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * Setter for xsltFile
      *
      * @param string $xsltFile
+     * 
      * @return void
      */
-    public function setXsltFile(string $xsltFile)
+    public function setXsltFile(string $xsltFile): void
     {
         $this->xsltFile =  $xsltFile;
     }
@@ -191,9 +189,10 @@ class Export extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * Setter for exec
      *
      * @param string $exec
+     * 
      * @return void
      */
-    public function setExec(string $exec)
+    public function setExec(string $exec): void
     {
         $this->exec =  $exec;
     }

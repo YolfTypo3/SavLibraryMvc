@@ -19,7 +19,7 @@ namespace YolfTypo3\SavLibraryMvc\Form\Element;
 
 use TYPO3\CMS\Backend\Form\Element\AbstractFormElement;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Localization\LanguageService;
+use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
 
 /**
  * Help rendering type
@@ -37,9 +37,9 @@ class Help extends AbstractFormElement
     /**
      * The TYPO3 documentation root URL
      *
-     * @var array
+     * @var string
      */
-    protected $documentationRootUrl = 'https://docs.typo3.org/p/yolftypo3/sav-library-mvc/master/en-us/';
+    protected string $documentationRootUrl = 'https://docs.typo3.org/p/yolftypo3/sav-library-mvc/master/en-us/';
 
     public function render(): array
     {
@@ -49,7 +49,8 @@ class Help extends AbstractFormElement
 
         $documentationUrl = $this->documentationRootUrl . $section . '/Index.html#' . $tag;
 
-        $languageService = GeneralUtility::makeInstance(LanguageService::class);
+        $languageService = GeneralUtility::makeInstance(LanguageServiceFactory::class)
+        ->createFromUserPreferences($GLOBALS['BE_USER']);;
         $message = '<b>' . $languageService->sL('LLL:EXT:' . $this->extensionKey . '/Resources/Private/Language/locallang.xlf:extensionFlexform.help') . '</b>';
 
         $result = $this->initializeResultArray();

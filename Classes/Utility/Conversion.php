@@ -109,4 +109,5 @@ class Conversion
         $output = self::upperCamel($string);
         return lcfirst($output);
     }
+    
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the TYPO3 CMS project.
  *
@@ -15,9 +17,7 @@
 
 namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
 
-use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
-use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 use YolfTypo3\SavLibraryMvc\Managers\AdditionalHeaderManager;
 
 /**
@@ -34,20 +34,15 @@ use YolfTypo3\SavLibraryMvc\Managers\AdditionalHeaderManager;
  *
  * @package SavLibraryMvc
  */
-class AddAdditionalJavaScriptHeaderViewHelper extends AbstractViewHelper
+final class AddAdditionalJavaScriptHeaderViewHelper extends AbstractViewHelper
 {
-    use CompileWithRenderStatic;
 
     /**
-     * Renders the viewhelper
+     * Renders the view helper
      *
-     * @param array $arguments
-     * @param \Closure $renderChildrenClosure
-     * @param RenderingContextInterface $renderingContext
-     *
-     * @return array The range array
+     * @return void
      */
-    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
+    public function render(): void
     {
         AdditionalHeaderManager::addAdditionalJavaScriptHeader();
     }

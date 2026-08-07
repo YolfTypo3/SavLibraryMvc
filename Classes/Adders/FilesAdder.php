@@ -17,14 +17,15 @@ declare(strict_types=1);
 
 namespace YolfTypo3\SavLibraryMvc\Adders;
 
-use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
-use TYPO3\CMS\Core\Resource\AbstractFile;
+use TYPO3\CMS\Core\Imaging\IconSize;
+use TYPO3\CMS\Core\Resource\FileType;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 use YolfTypo3\SavLibraryMvc\Controller\FlashMessages;
 use YolfTypo3\SavLibraryMvc\Managers\AdditionalHeaderManager;
+use YolfTypo3\SavLibraryMvc\Utility\Conversion;
 
 /**
  * Field configuration adder for Files type.
@@ -52,6 +53,7 @@ final class FilesAdder extends AbstractAdder
                 $fileConfiguration['fileName'] = $originalResource->getPublicUrl();
                 $fileConfiguration['shortFileName'] = $originalResource->getName();
                 $fileConfiguration['uid'] = $object->getUid();
+                $fileConfiguration['fileUid'] =  $originalResource->getOriginalFile()->getUid();
 
                 // Checks if the file exists
                 if (! is_file(AbstractController::getSitePath() . rawurldecode($fileConfiguration['fileName']))) {
@@ -61,23 +63,22 @@ final class FilesAdder extends AbstractAdder
                     ]);
                 }
                 $type = $originalResource->getType();
-
                 switch ($type) {
-                    case AbstractFile::FILETYPE_IMAGE:
+                    case FileType::IMAGE->value:
                         $fileConfiguration['value'] = $originalResource;
                         $fileConfiguration['renderAs'] = self::RENDER_FILE_AS_IMAGE_OBJECT;
                         break;
-                    case AbstractFile::FILETYPE_TEXT:
-                    case AbstractFile::FILETYPE_AUDIO:
-                    case AbstractFile::FILETYPE_VIDEO:
-                    case AbstractFile::FILETYPE_APPLICATION:
+                    case FileType::TEXT->value:
+                    case FileType::AUDIO->value:
+                    case FileType::VIDEO->value:
+                    case FileType::APPLICATION->value:
                         $fileConfiguration['renderAs'] = self::RENDER_FILE_AS_LINK;
                         // Gets the value
                         $fileConfiguration['value'] = $originalResource->getPublicUrl();
 
                         // Gets the message attribute
-                        $fieldMessage = $this->fieldConfiguration['fieldMessage'];
-                        if ($fieldMessage) {
+                        $fieldMessage = $this->fieldConfiguration['fieldMessage'] ?? null;
+                        if (! empty($fieldMessage)) {
                             $fileConfiguration['message'] = $this->fieldConfigurationManager->getFieldConfiguration($fieldMessage)['value'];
                         }
                         if (empty($this->fieldConfiguration['message']) && empty($fieldMessage)) {
@@ -90,7 +91,7 @@ final class FilesAdder extends AbstractAdder
                 if ($addIcon) {
                     $iconFactory = GeneralUtility::makeInstance(IconFactory::class);
                     $pathParts = pathinfo($originalResource->getName());
-                    $fileConfiguration['icon'] = $iconFactory->getIconForFileExtension($pathParts['extension'], Icon::SIZE_SMALL)->render();
+                    $fileConfiguration['icon'] = $iconFactory->getIconForFileExtension($pathParts['extension'], IconSize::SMALL)->render();
                 }
                 // Adds file information
                 $files[] = $fileConfiguration;
@@ -132,9 +133,10 @@ final class FilesAdder extends AbstractAdder
         // Adds the javascript to confirm the delete action
         $edit = $this->fieldConfiguration['edit'] ?? null;
         if ($edit == AbstractController::EDIT_MODE) {
-            AdditionalHeaderManager::addConfirmDeleteJavaScript('file');
+            AdditionalHeaderManager::addConfirmDeleteJavaScript();
         }
 
         return $addedFieldConfiguration;
     }
+    
 }

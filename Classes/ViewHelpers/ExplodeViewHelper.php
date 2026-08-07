@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the TYPO3 CMS project.
  *
@@ -15,44 +17,40 @@
 
 namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
 
-use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
-use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 
 /**
  * Explodes a string
  *
  * @package SavLibraryMvc
  */
-class ExplodeViewHelper extends AbstractViewHelper
+final class ExplodeViewHelper extends AbstractViewHelper
 {
-    use CompileWithRenderStatic;
+ 
     /**
      * Initializes arguments.
+     * 
+     * @return void
      */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         $this->registerArgument('delimiter', 'string', 'Delimiter', true);
         $this->registerArgument('string', 'string', 'String to explode', false, null);
     }
 
     /**
-     * Renders the viewhelper
-     *
-     * @param array $arguments
-     * @param \Closure $renderChildrenClosure
-     * @param RenderingContextInterface $renderingContext
+     * Renders the view helper
      *
      * @return array the options array
      */
-    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
+    public function render(): array
     {
         // Gets the arguments
-        $delimiter = $arguments['delimiter'];
-        $string = $arguments['string'];
+        $delimiter = $this->arguments['delimiter'];
+        $string = $this->arguments['string'];
 
         if ($string === null) {
-            $string = $renderChildrenClosure();
+            $string = $this->renderChildren();
         }
 
         return explode($delimiter, $string);

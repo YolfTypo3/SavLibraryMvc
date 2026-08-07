@@ -6,15 +6,13 @@
 Changelog
 =========
 
-.. tabularcolumns:: |r|p{13.7cm}|
-
 =======  ===========================================================================
 Version  Changes
 =======  ===========================================================================
+14.3.0   - Compatibility changed to TYPO3 13.4.x and 14.3.x.
 11.5.0   - Compatibility changed to TYPO3 10.4.x and 11.5.x.
 9.5.0	 - Compatibility with TYPO3 7.6 removed.
          - Compatibility changed to TYPO3 9.5.x
-
 1.1.0    - Processing for RichTextEditor modified.
          - Compatibility changed to TYPO3 8.9.x
          - composer.json added

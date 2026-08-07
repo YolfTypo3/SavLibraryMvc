@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the TYPO3 CMS project.
  *
@@ -15,9 +17,7 @@
 
 namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
 
-use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
-use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 
 /**
  * A view helper for building the options for the field selector.
@@ -30,14 +30,15 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
  *
  * Output:
  */
-class CheckBreakConditionViewHelper extends AbstractViewHelper
+final class CheckBreakConditionViewHelper extends AbstractViewHelper
 {
-    use CompileWithRenderStatic;
 
     /**
      * Initializes arguments.
+     * 
+     * @return void
      */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         $this->registerArgument('counter', 'integer', 'Counter', false, null);
         $this->registerArgument('breakCount', 'integer', 'Break count', false, null);
@@ -46,20 +47,16 @@ class CheckBreakConditionViewHelper extends AbstractViewHelper
     /**
      * Renders the viewhelper
      *
-     * @param array $arguments
-     * @param \Closure $renderChildrenClosure
-     * @param RenderingContextInterface $renderingContext
-     *
-     * @return array the options array
+     * @return bool
      */
-    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
+    public function render(): bool
     {
         // Gets the arguments
-        $counter = $arguments['counter'];
-        $breakCount = $arguments['breakCount'];
+        $counter = $this->arguments['counter'];
+        $breakCount = $this->arguments['breakCount'];
 
         if ($counter === null) {
-            $counter = $renderChildrenClosure();
+            $counter = $this->renderChildren();
         }
         if ($breakCount != 0) {
             return (($counter % $breakCount) == 0);

@@ -22,6 +22,7 @@ use TYPO3\CMS\Core\Utility\ClassNamingUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 use TYPO3\CMS\Extbase\Persistence\RepositoryInterface;
+use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 use YolfTypo3\SavLibraryMvc\Managers\FieldConfigurationManager;
 use YolfTypo3\SavLibraryMvc\Parser\OrderByClauseParser;
 use YolfTypo3\SavLibraryMvc\Parser\WhereClauseParser;
@@ -34,7 +35,7 @@ abstract class AbstractAdder
      *
      * @var FieldConfigurationManager
      */
-    protected $fieldConfigurationManager;
+    protected FieldConfigurationManager $fieldConfigurationManager;
 
     /**
      * Field configuration
@@ -42,19 +43,27 @@ abstract class AbstractAdder
      * @var array
      */
     protected $fieldConfiguration;
+    
+    /**
+     * Controller
+     *
+     * @var AbstractController $controller
+     */
+    protected AbstractController $controller;
+    
 
     abstract public function render(): array;
 
     /**
      * Constructor
      *
-     * @param FieldConfigurationManager $fieldConfigurationManager
-     * @return void
+     * @param AbstractController $controller
      */
-    public function __construct(FieldConfigurationManager $fieldConfigurationManager)
+    public function __construct(AbstractController $controller)
     {
-        $this->fieldConfigurationManager = $fieldConfigurationManager;
-        $this->fieldConfiguration = $fieldConfigurationManager->getFieldConfiguration();
+        $this->controller = $controller;
+        $this->fieldConfigurationManager = $controller->getFieldConfigurationManager();
+        $this->fieldConfiguration = $this->fieldConfigurationManager->getFieldConfiguration();
     }
 
     /**
@@ -68,8 +77,7 @@ abstract class AbstractAdder
         $repositoryClassName = ClassNamingUtility::translateModelNameToRepositoryName($foreignModel);
         $repository = GeneralUtility::makeInstance(ltrim($repositoryClassName, '\\'));
         if (method_exists($repository, 'setController')) {
-            $controller = $this->fieldConfigurationManager->getController();
-            $repository->setController($controller);
+            $repository->setController($this->controller);
         }
 
         return $repository;
@@ -79,9 +87,10 @@ abstract class AbstractAdder
      * Gets the query for a given repositoy
      *
      * @param RepositoryInterface $repository
+     * 
      * @return QueryInterface
      */
-    protected function getQuery($repository): QueryInterface
+    protected function getQuery(RepositoryInterface $repository): QueryInterface
     {
         // Sets the ordering if any
         if (! empty($this->fieldConfiguration['orderSelect'])) {
@@ -97,7 +106,8 @@ abstract class AbstractAdder
         if (! empty($this->fieldConfiguration['whereSelect'])) {
             $whereClauseParser = GeneralUtility::makeInstance(WhereClauseParser::class);
             $whereClauseParser->injectRepository($repository);
-            $query = $query->matching($whereClauseParser->processWhereClause($query, $this->fieldConfiguration['whereSelect']));
+            $whereClause = $this->fieldConfigurationManager->parseFieldTags($this->fieldConfiguration['whereSelect']);
+            $query = $query->matching($whereClauseParser->processWhereClause($query, $whereClause));
         }
 
         return $query;
@@ -111,7 +121,7 @@ abstract class AbstractAdder
      *            The string to process     *
      * @return string
      */
-    protected function parseLabel($object, string $label): string
+    protected function parseLabel(object $object, string $label): string
     {
         // Checks if the value must be parsed
         $matches = [];

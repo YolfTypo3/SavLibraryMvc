@@ -54,7 +54,7 @@ final class RelationManyToManyAsDoubleSelectorboxAdder extends AbstractAdder
         // Adds the javaScript for the selectorboxes
         $fieldName = $this->fieldConfiguration['fieldName'];
         $propertyName = $this->fieldConfiguration['propertyName'];
-        $pluginNameSpace = $this->fieldConfigurationManager->getController()->getPluginNameSpace();
+        $pluginNameSpace = $this->controller->getPluginNameSpace();
         if ($this->fieldConfigurationManager->isSelected($fieldName, true)) {
             AdditionalHeaderManager::addJavaScript('selectAll', 'if (x == \'' . 'data' . '\')	selectAll(x, \'' . $pluginNameSpace . '[data][' . str_replace('.', '][', $propertyName) . '][]\');');
         }
@@ -79,7 +79,16 @@ final class RelationManyToManyAsDoubleSelectorboxAdder extends AbstractAdder
             $selectedObjects = $value;
         } else {
             $items = explode(',', $value);
-            $selectedObjects = $query->matching($query->in('uid', $items))->execute();
+            // Adds the restriction
+            $constraint = $query->in('uid', $items);
+            if ($query->getConstraint() !== null) {
+                $constraint = $query->logicalAnd(
+                    $query->getConstraint(),
+                    $constraint
+                );
+            }
+            $query = $query->matching($constraint);
+            $selectedObjects = $query->execute();
         }
 
         // Gets the list of uid.
@@ -103,14 +112,24 @@ final class RelationManyToManyAsDoubleSelectorboxAdder extends AbstractAdder
         }
 
         // Gets the unselected objects
+        $repository = $this->getRepository();
+        $query = $this->getQuery($repository);
+
         if (empty($uidSelectedObjects)) {
-            $unselectedObjects = $this->getQuery($repository)->execute();
+            $unselectedObjects = $query->execute();
         } else {
-            $unselectedObjects = $query->matching(
-                $query->logicalNot(
-                    $query->in('uid', $uidSelectedObjects)
-                )
-            )->execute();
+            // Adds the restriction
+            $constraint = $query->logicalNot(
+                $query->in('uid', $uidSelectedObjects)
+                );
+            if ($query->getConstraint() !== null) {
+                $constraint = $query->logicalAnd(
+                    $query->getConstraint(),
+                    $constraint
+                    );
+            }
+            $query = $query->matching($constraint);
+            $unselectedObjects = $query->execute();
         }
         $unselectedOptions = [];
         foreach ($unselectedObjects as $object) {
@@ -158,12 +177,20 @@ final class RelationManyToManyAsDoubleSelectorboxAdder extends AbstractAdder
         } else {
             if (!empty($value)) {
                 $items = explode(',', $value);
-                $selectedObjects = $query->matching($query->in('uid', $items))->execute();
+                // Adds the restriction
+                $constraint = $query->in('uid', $items);
+                if ($query->getConstraint() !== null) {
+                    $constraint = $query->logicalAnd(
+                        $query->getConstraint(),
+                        $constraint
+                        );
+                }
+                $query = $query->matching($constraint);
+                $selectedObjects = $query->execute();
             } else {
                 $selectedObjects = null;
             }
         }
-
 
         $selectedItems = [];
         if ($selectedObjects !== null) {

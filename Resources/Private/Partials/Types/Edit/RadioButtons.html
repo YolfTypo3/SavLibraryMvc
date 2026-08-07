@@ -3,9 +3,9 @@
     <div
         class="radioButton item{itemKey}{f:if(condition:'{itemKey->sav:CheckBreakCondition(breakCount:field.cols)}', then:' clearLeft')}">
         <f:form.radio class="radioButton" property="{field.propertyName}"
-            value="{item.1}" checked="{field.value} == {item.1}"
+            value="{item.value}" checked="{field.value} == {item.value}"
             additionalAttributes="{onchange:'document.changed=1;'}" />
-        <span class="radioButton"><f:translate key="{item.0}" /></span>
+        <span class="radioButton"><f:translate key="{item.label}" /></span>
     </div>
 </f:for>
 

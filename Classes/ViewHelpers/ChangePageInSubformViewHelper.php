@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the TYPO3 CMS project.
  *
@@ -23,23 +25,25 @@ use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
  *
  * @package SavLibraryMvc
  */
-class ChangePageInSubformViewHelper extends AbstractViewHelper
+final class ChangePageInSubformViewHelper extends AbstractViewHelper
 {
 
     /**
      * Initializes arguments.
+     * 
+     * @return void
      */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         $this->registerArgument('arguments', 'array', 'Arguments', true);
     }
 
     /**
-     * Renders the viewhelper
+     * Renders the view helper
      *
      * @return string The modified compressed parameters
      */
-    public function render()
+    public function render(): string
     {
         // Gets the arguments
         $arguments = $this->arguments['arguments'];
@@ -49,7 +53,7 @@ class ChangePageInSubformViewHelper extends AbstractViewHelper
 
         // Gets the uncompressed subform active pages
         $uncompressedParameters = AbstractController::uncompressParameters($special);
-        $compressedSubformActivePages = $uncompressedParameters['subformActivePages'];
+        $compressedSubformActivePages = $uncompressedParameters['subformActivePages'] ?? null;
         $subformKey = $arguments['subformKey'];
         $uncompressedSubformActivePages = AbstractController::uncompressSubformActivePages($compressedSubformActivePages);
 
@@ -62,10 +66,10 @@ class ChangePageInSubformViewHelper extends AbstractViewHelper
                 $uncompressedSubformActivePages[$subformKey] = $arguments['lastPageInSubform'];
                 break;
             case 'previousPage':
-                $uncompressedSubformActivePages[$subformKey] = $uncompressedSubformActivePages[$subformKey] - 1;
+                $uncompressedSubformActivePages[$subformKey] = ($uncompressedSubformActivePages[$subformKey] ?? 0) - 1;
                 break;
             case 'nextPage':
-                $uncompressedSubformActivePages[$subformKey] = $uncompressedSubformActivePages[$subformKey] + 1;
+                $uncompressedSubformActivePages[$subformKey] = ($uncompressedSubformActivePages[$subformKey] ?? 0) + 1;
                 break;
             case 'changePage':
                 $uncompressedSubformActivePages[$subformKey] = $arguments['subformPage'];

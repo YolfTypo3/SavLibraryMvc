@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the TYPO3 CMS project.
  *
@@ -23,12 +25,13 @@ class ObjectStorage extends \TYPO3\CMS\Extbase\Persistence\ObjectStorage
      * If it is the first one, it becomes the last one.
      *
      * @param mixed $object
-     * @return void | null
+     * 
+     * @return void
      */
-    public function moveDown($object)
+    public function moveDown(mixed $object): void
     {
         if (! isset($this->addedObjectsPositions[spl_object_hash($object)])) {
-            return null;
+            return;
         }
         // Gets the next position
         $position = $this->addedObjectsPositions[spl_object_hash($object)];
@@ -55,12 +58,12 @@ class ObjectStorage extends \TYPO3\CMS\Extbase\Persistence\ObjectStorage
      * If it is the last one, it becomes the first one.
      *
      * @param mixed $object
-     * @return void | null
+     * @return void
      */
-    public function moveUp($object)
+    public function moveUp(mixed $object): void
     {
         if (! isset($this->addedObjectsPositions[spl_object_hash($object)])) {
-            return null;
+            return;
         }
         // Gets the next position
         $position = $this->addedObjectsPositions[spl_object_hash($object)];

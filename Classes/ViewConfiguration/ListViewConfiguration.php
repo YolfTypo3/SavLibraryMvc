@@ -65,7 +65,7 @@ class ListViewConfiguration extends AbstractViewConfiguration
         $this->addGeneralViewConfiguration('extensionKey', $this->controller->getControllerExtensionKey());
         $this->addGeneralViewConfiguration('controllerName', $this->controller->getControllerName());
         $this->addGeneralViewConfiguration('special', $special);
-        $this->addGeneralViewConfiguration('contentUid', $this->controller->getContentObjectRenderer()->data['uid']);
+        $this->addGeneralViewConfiguration('contentUid', $this->controller->getContentObjectUid());
         $this->addGeneralViewConfiguration('orderLink', $uncompressedParameters['orderLink'] ?? null);
         $this->addGeneralViewConfiguration('currentMode', $uncompressedParameters['mode']);
         $this->addGeneralViewConfiguration('page', $page);
@@ -150,7 +150,7 @@ class ListViewConfiguration extends AbstractViewConfiguration
 
         // Adds the javascript to confirm the delete action
         if ($uncompressedParameters['mode'] == AbstractController::EDIT_MODE) {
-            AdditionalHeaderManager::addConfirmDeleteJavaScript('item');
+            AdditionalHeaderManager::addConfirmDeleteJavaScript();
         }
 
         // Returns the view configuration

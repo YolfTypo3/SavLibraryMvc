@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the TYPO3 CMS project.
  *
@@ -15,23 +17,22 @@
 
 namespace YolfTypo3\SavLibraryMvc\ViewHelpers;
 
-use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
-use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 
 /**
  * Returns an item in an array
  *
  * @package SavLibraryMvc
  */
-class GetItemViewHelper extends AbstractViewHelper
+final class GetItemViewHelper extends AbstractViewHelper
 {
-    use CompileWithRenderStatic;
 
     /**
      * Initializes arguments.
+     * 
+     * @return void
      */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         $this->registerArgument('value', 'array', 'Value of the parameter to change', false, null);
         $this->registerArgument('key', 'string', 'Key of the parameter to change', false, null);
@@ -39,23 +40,19 @@ class GetItemViewHelper extends AbstractViewHelper
     }
 
     /**
-     * Renders the viewhelper
+     * Renders the view helper
      *
-     * @param array $arguments
-     * @param \Closure $renderChildrenClosure
-     * @param RenderingContextInterface $renderingContext
-     *
-     * @return array the options array
+     * @return mixed
      */
-    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
+    public function render(): mixed
     {
         // Gets the arguments
-        $value = $arguments['value'];
-        $key = $arguments['key'];
-        $offset = $arguments['offset'];
+        $value = $this->arguments['value'];
+        $key = $this->arguments['key'];
+        $offset = $this->arguments['offset'];
 
         if ($value === null) {
-            $value = $renderChildrenClosure();
+            $value = $this->renderChildren();
         }
 
         return $value[$key + $offset] ?? null;

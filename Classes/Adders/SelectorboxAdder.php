@@ -18,7 +18,6 @@ declare(strict_types=1);
 namespace YolfTypo3\SavLibraryMvc\Adders;
 
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
-use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 
 /**
  * Field configuration adder for Selectorbox type.
@@ -50,11 +49,13 @@ final class SelectorboxAdder extends AbstractAdder
     {
         $addedFieldConfiguration = [];
 
-        $extensionKey = $this->fieldConfigurationManager->getController()->getControllerExtensionKey();
+        $extensionKey = $this->controller->getControllerExtensionKey();
         $items = $this->fieldConfiguration['items'];
         $options = [];
         foreach ($items as $item) {
-            $options[$item[1]] = LocalizationUtility::translate($item[0], $extensionKey);
+            $itemValue = $item['value'] ??  $item[1];
+            $itemLabel = $item['label'] ??  $item[0];
+            $options[$itemValue] = LocalizationUtility::translate($itemLabel, $extensionKey);
         }
 
         $addedFieldConfiguration['options'] = $options;
@@ -72,12 +73,15 @@ final class SelectorboxAdder extends AbstractAdder
     {
         $addedFieldConfiguration = [];
 
-        $extensionKey = $this->fieldConfigurationManager->getController()->getControllerExtensionKey();
+        $extensionKey = $this->controller->getControllerExtensionKey();
         $items = $this->fieldConfiguration['items'];
         $value = $this->fieldConfiguration['value'];
+        $selectedOption = null;
         foreach ($items as $item) {
-            if ($item[1] == $value) {
-                $selectedOption = LocalizationUtility::translate($item[0], $extensionKey);
+            $itemValue = $item['value'] ??  $item[1];
+            if ($itemValue == $value) {
+                $itemLabel = $item['label'] ??  $item[0];
+                $selectedOption = LocalizationUtility::translate($itemLabel, $extensionKey);
                 break;
             }
         }

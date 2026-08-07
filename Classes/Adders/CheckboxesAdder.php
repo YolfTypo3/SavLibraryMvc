@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace YolfTypo3\SavLibraryMvc\Adders;
 
-use YolfTypo3\SavLibraryMvc\Adders\CheckboxAdder;
 use YolfTypo3\SavLibraryMvc\Utility\Conversion;
 
 /**
@@ -44,7 +43,8 @@ final class CheckboxesAdder extends AbstractAdder
         $values = $addedFieldConfiguration['checkboxes'];
         $renderedValues = [];
         foreach ($this->fieldConfiguration['items'] as $itemKey => $item) {
-            $value = ($values[$itemKey] ? true : false);
+            $addedFieldConfiguration['items'][$itemKey]['label'] = $this->fieldConfiguration['items'][$itemKey]['label'] ?? $this->fieldConfiguration['items'][$itemKey][0];
+            $value = ($values[$itemKey] ?? null ? true : false);
             $renderedValues[] = CheckboxAdder::renderValueInDefaultMode($value, $this->fieldConfiguration);
         }
         $addedFieldConfiguration['renderedValues'] = $renderedValues;

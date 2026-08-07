@@ -22,7 +22,6 @@ use Symfony\Component\Yaml\Yaml;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\CommandUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 use YolfTypo3\SavLibraryMvc\Controller\FlashMessages;
 use YolfTypo3\SavLibraryMvc\Domain\Model\Export;
@@ -57,7 +56,7 @@ class ExportViewConfiguration extends AbstractViewConfiguration
         $exportIsLoaded = isset($uncompressedParameters['exportUid']);
 
         // Gets the content Id
-        $contentId = $this->controller->getContentObjectRenderer()->data['uid'];
+        $contentId = $this->controller->getContentObjectUid();
 
         // Gets the main repository
         $exportRepository = $this->controller->getExportRepository();
@@ -85,7 +84,7 @@ class ExportViewConfiguration extends AbstractViewConfiguration
         if ($arguments['filter']) {
             $constraints[] = $query->like('name', '%' . $arguments['filter'] . '%');
         }
-        $options = $query->matching($query->logicalAnd($constraints))->execute();
+        $options = $query->matching($query->logicalAnd(...$constraints))->execute();
 
 
         // Sets general configuration values
@@ -115,7 +114,7 @@ class ExportViewConfiguration extends AbstractViewConfiguration
      * @param Export $exportConfiguration
      * @return void
      */
-    protected function executeExport(Export $exportConfiguration)
+    protected function executeExport(Export $exportConfiguration): void
     {
         // Gets the template
         $templateFileName = GeneralUtility::getFileAbsFileName($exportConfiguration->getTemplateFile());
@@ -272,8 +271,9 @@ class ExportViewConfiguration extends AbstractViewConfiguration
 
         // Special processing for white spaces in windows directories
         $cmd = preg_replace('/\/(\w+(?:\s+\w+)+)/', '/"$1"', $cmd);
-        file_put_contents('truc.txt', $cmd);
+
         // Executes the command
+        $returnValue = 0;
         CommandUtility::exec($cmd, $_, $returnValue);
 
         return (int) $returnValue;

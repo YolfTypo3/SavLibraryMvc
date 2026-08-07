@@ -16,20 +16,19 @@
 namespace YolfTypo3\SavLibraryMvc\Persistence\Mapper;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMap;
-use YolfTypo3\SavLibraryMvc\Controller\DefaultController;
+use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 
 /**
  * Extends the generic DataMapFactory.
  */
-class DataMapFactory extends \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapFactory
+class DataMapFactory
 {
 
     /**
      * Controller
      *
-     * @var DefaultController
+     * @var AbstractController
      */
     protected $controller = null;
 
@@ -83,13 +82,19 @@ class DataMapFactory extends \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataM
      */
     protected $savLibraryMvcControllers;
 
+    public function __construct(
+        private readonly \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapFactory $dataMapFactory,
+        #[Autowire(expression: 'service("package-dependent-cache-identifier").toString()')]
+        string $baseCacheIdentifier
+        ) {}
+    
     /**
      * Sets the controller
      *
-     * @param DefaultController $controller
+     * @param AbstractController $controller
      * @return void
      */
-    public function setController(DefaultController $controller)
+    public function setController(AbstractController $controller)
     {
         $this->controller = $controller;
     }
@@ -102,12 +107,13 @@ class DataMapFactory extends \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataM
      */
     public function initialize($domainObjectName)
     {
-        $this->dataMap = $this->buildDataMap($domainObjectName);
+        $this->dataMap = $this->dataMapFactory->buildDataMap($domainObjectName);
         $this->controlSection = $this->getControlSection($this->dataMap->getTableName());
-        $this->columnsDefinition = $this->getColumnsDefinition($this->dataMap->getTableName());
+        $this->columnsDefinition = $GLOBALS['TCA'][$this->dataMap->getTableName()]['columns'] ?? [];
         $this->setSavLibraryMvcConfiguration();
     }
 
+    
     /**
      * Sets the savLibraryMvcColumns.
      *
@@ -116,9 +122,21 @@ class DataMapFactory extends \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataM
     protected function setSavLibraryMvcConfiguration()
     {
         $extensionKey = $this->controller->getControllerExtensionKey();
-        $this->savLibraryMvcConfiguration = is_array($this->controlSection['EXT'][$extensionKey]) ? $this->controlSection['EXT'][$extensionKey] : [];
-        $this->savLibraryMvcColumns = is_array($this->savLibraryMvcConfiguration['columns']) ? $this->savLibraryMvcConfiguration['columns'] : [];
-        $this->savLibraryMvcCtrl = is_array($this->savLibraryMvcConfiguration['ctrl']) ? $this->savLibraryMvcConfiguration['ctrl'] : [];
+
+        $this->savLibraryMvcConfiguration = $this->controlSection['EXT'][$extensionKey] ?? [];
+        $this->savLibraryMvcColumns = $this->savLibraryMvcConfiguration['columns'] ??  [];
+        $this->savLibraryMvcCtrl = $this->savLibraryMvcConfiguration['ctrl'] ?? [];
+    }
+
+    /**
+     * Returns the TCA ctrl section of the specified table; or NULL if not set
+     *
+     * @param string $tableName An optional table name to fetch the columns definition from
+     * @return array|null The TCA columns definition
+     */
+    protected function getControlSection(string $tableName): ?array
+    {
+        return $GLOBALS['TCA'][$tableName]['ctrl'] ?? null;
     }
 
     /**
@@ -183,7 +201,7 @@ class DataMapFactory extends \TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataM
         }
         $columnName = $columnMap->getColumnName();
 
-        return $GLOBALS['TSFE']->sl($this->columnsDefinition[$columnName]['label']);
+        return $this->controller->getLanguageService()->sl($this->columnsDefinition[$columnName]['label']);
     }
 
     /**

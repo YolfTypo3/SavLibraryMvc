@@ -18,11 +18,12 @@ declare(strict_types=1);
 namespace YolfTypo3\SavLibraryMvc\DatePicker;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
 use YolfTypo3\SavLibraryMvc\Managers\AdditionalHeaderManager;
-use YolfTypo3\SavLibraryMvc\Controller\DefaultController;
 use YolfTypo3\SavLibraryMvc\Controller\FlashMessages;
 use YolfTypo3\SavLibraryMvc\Exception;
+use TYPO3\CMS\Extbase\Mvc\RequestInterface;
 
 /**
  * Date picker.
@@ -30,52 +31,62 @@ use YolfTypo3\SavLibraryMvc\Exception;
 final class DatePicker
 {
 
-    // Constants
-    const KEY = 'datePicker';
-
     /**
      * The date picker path
      *
      * @var string
      */
-    protected $datePickerPath = 'Classes/DatePicker/';
+    protected string $datePickerPath = 'Resources/Public/DatePicker/';
 
     /**
      * The date picker CSS file
      *
      * @var string
      */
-    protected $datePickerCssFile = 'calendar-win2k-2.css';
+    protected string $datePickerCssFile = 'calendar-win2k-2.css';
 
     /**
      * The javaScript file
      *
      * @var string
      */
-    protected $datePickerJsFile = 'calendar.js';
+    protected string $datePickerJsFile = 'calendar.js';
 
-    protected $datePickerJsSetupFile = 'calendar-setup.js';
+    protected string $datePickerJsSetupFile = 'calendar-setup.js';
 
-    protected $datePickerLanguageFile;
+    protected string $datePickerLanguageFile;
 
+    /**
+     * The controller
+     *
+     * @var AbstractController
+     */
+    protected AbstractController $controller;
+    
     /**
      * Extension key
      *
      * @var string $extensionKey
      */
-    protected $extensionKey;
+    protected string $extensionKey;
 
     /**
      * Constructor
      *
-     * @param string $extensionKey
+     * @param RequestInterface $request
+     * 
      * @return void
      */
-    public function __construct(string $extensionKey)
+    public function __construct(RequestInterface $request)
     {
-        $this->extensionKey = $extensionKey;
-        $this->datePickerLanguageFile = 'calendar-' . $GLOBALS['TSFE']->config['config']['language'] . '.js';
-        $extensionWebPath = AbstractController::getExtensionWebPath(AbstractController::LIBRARY_NAME);
+        // Gets the extension key
+        $this->extensionKey = $request->getControllerExtensionKey();
+        
+        // Gets the langauege code
+        $languageCode = $request->getAttribute('language')->getLocale()->getLanguageCode();
+                
+        $this->datePickerLanguageFile = 'calendar-' . $languageCode . '.js';
+        $extensionWebPath = ExtensionManagementUtility::extPath(AbstractController::LIBRARY_NAME);
         $datePickerLanguagePath = $extensionWebPath . $this->datePickerPath . 'lang/';
         if (file_exists($datePickerLanguagePath . $this->datePickerLanguageFile) === false) {
             $this->datePickerLanguageFile = 'calendar-en.js';
@@ -92,15 +103,17 @@ final class DatePicker
      *
      * @return void
      */
-    protected function addCascadingStyleSheet()
+    protected function addCascadingStyleSheet(): void
     {
         $libraryName = AbstractController::LIBRARY_NAME;
-        $key = self::KEY . '.';
+        $key = 'datePicker.';
         $extensionTypoScriptConfiguration = AbstractController::getTypoScriptConfiguration($this->extensionKey);
         $datePickerTypoScriptConfiguration = $extensionTypoScriptConfiguration[$key] ?? null;
-        if (! empty($datePickerTypoScriptConfiguration['stylesheet'])) {
+        // @extensionScannerIgnoreLine
+        $stylesheet = $datePickerTypoScriptConfiguration['stylesheet'] ?? null;
+        if (! empty($stylesheet)) {
             // The style sheet is given by the extension TypoScript
-            $cascadingStyleSheetAbsoluteFileName = GeneralUtility::getFileAbsFileName($datePickerTypoScriptConfiguration['stylesheet']);
+            $cascadingStyleSheetAbsoluteFileName = GeneralUtility::getFileAbsFileName($stylesheet);
             if (is_file($cascadingStyleSheetAbsoluteFileName)) {
                 $cascadingStyleSheet = substr($cascadingStyleSheetAbsoluteFileName, strlen(AbstractController::getSitePath()));
                 AdditionalHeaderManager::addCascadingStyleSheet($cascadingStyleSheet);
@@ -112,9 +125,11 @@ final class DatePicker
         } else {
             $libraryTypoScriptConfiguration = AbstractController::getTypoScriptConfiguration($libraryName);
             $datePickerTypoScriptConfiguration = $libraryTypoScriptConfiguration[$key] ?? null;
-            if (empty($datePickerTypoScriptConfiguration['stylesheet']) === false) {
+            // @extensionScannerIgnoreLine
+            $stylesheet = $datePickerTypoScriptConfiguration['stylesheet'] ?? null;
+            if (empty($stylesheet) === false) {
                 // The style sheet is given by the library TypoScript
-                $cascadingStyleSheetAbsoluteFileName = GeneralUtility::getFileAbsFileName($datePickerTypoScriptConfiguration['stylesheet']);
+                $cascadingStyleSheetAbsoluteFileName = GeneralUtility::getFileAbsFileName($stylesheet);
                 if (is_file($cascadingStyleSheetAbsoluteFileName)) {
                     $cascadingStyleSheet = substr($cascadingStyleSheetAbsoluteFileName, strlen(AbstractController::getSitePath()));
                     AdditionalHeaderManager::addCascadingStyleSheet($cascadingStyleSheet);
@@ -125,8 +140,7 @@ final class DatePicker
                 }
             } else {
                 // The style sheet is the default one
-                $extensionWebPath = AbstractController::getExtensionWebPath($libraryName);
-                $cascadingStyleSheet = $extensionWebPath . $this->datePickerPath . 'css/' . $this->datePickerCssFile;
+                $cascadingStyleSheet = 'EXT:' . $libraryName . '/' . $this->datePickerPath . 'css/' . $this->datePickerCssFile;
                 AdditionalHeaderManager::addCascadingStyleSheet($cascadingStyleSheet);
             }
         }
@@ -137,10 +151,9 @@ final class DatePicker
      *
      * @return void
      */
-    public function addJavaScript()
+    public function addJavaScript(): void
     {
-        $extensionWebPath = AbstractController::getExtensionWebPath(AbstractController::LIBRARY_NAME);
-        $datePickerSiteRelativePath = $extensionWebPath . $this->datePickerPath;
+        $datePickerSiteRelativePath = 'EXT:' . AbstractController::LIBRARY_NAME . '/' . $this->datePickerPath;
         AdditionalHeaderManager::addJavaScriptFile($datePickerSiteRelativePath . 'js/' . $this->datePickerJsFile);
         AdditionalHeaderManager::addJavaScriptFile($datePickerSiteRelativePath . 'lang/' . $this->datePickerLanguageFile);
         AdditionalHeaderManager::addJavaScriptFile($datePickerSiteRelativePath . 'js/' . $this->datePickerJsSetupFile);
@@ -154,16 +167,16 @@ final class DatePicker
     protected function getDatePickerFormat(): ?array
     {
         $libraryName = AbstractController::LIBRARY_NAME;
-        $key = self::KEY . '.';
+        $key = 'datePicker.';
         $extensionTypoScriptConfiguration = AbstractController::getTypoScriptConfiguration($this->extensionKey);
         $datePickerTypoScriptConfiguration = $extensionTypoScriptConfiguration[$key] ?? null;
-        if (is_array($datePickerTypoScriptConfiguration['format.'] ?? null)) {
-            return $datePickerTypoScriptConfiguration['format.'];
+        if (is_array($datePickerTypoScriptConfiguration['dateFormat.'] ?? null)) {
+            return $datePickerTypoScriptConfiguration['dateFormat.'];
         } else {
             $libraryTypoScriptConfiguration = AbstractController::getTypoScriptConfiguration($libraryName);
             $datePickerTypoScriptConfiguration = $libraryTypoScriptConfiguration[$key] ?? null;
-            if (is_array($datePickerTypoScriptConfiguration['format.'] ?? null)) {
-                return $datePickerTypoScriptConfiguration['format.'];
+            if (is_array($datePickerTypoScriptConfiguration['dateFormat.'] ?? null)) {
+                return $datePickerTypoScriptConfiguration['dateFormat.'];
             }
         }
         return null;
@@ -187,7 +200,7 @@ final class DatePicker
         $datePickerSetup[] = '/*<![CDATA[*/';
         $datePickerSetup[] = '  Calendar.setup({';
         $datePickerSetup[] = '    inputField     :    "input_' . $datePickerConfiguration['id'] . '",';
-        $datePickerSetup[] = '    ifFormat       :    "' . $datePickerConfiguration['format'] . '",';
+        $datePickerSetup[] = '    ifFormat       :    "' . $datePickerConfiguration['dateFormat'] . '",';
 
         // Gets the date picker format
         $datePickerFormat = $this->getDatePickerFormat();

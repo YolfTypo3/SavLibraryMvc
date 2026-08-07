@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the TYPO3 CMS project.
  *
@@ -39,7 +41,7 @@ class SingleViewConfiguration extends AbstractViewConfiguration
         $special = AbstractController::compressParameters($uncompressedParameters);
 
         // Gets the uid
-        $uid = $uncompressedParameters['uid'];
+        $uid = intval($uncompressedParameters['uid']);
 
         // Gets the main repository
         $mainRepository = $this->controller->getMainRepository();
@@ -57,7 +59,7 @@ class SingleViewConfiguration extends AbstractViewConfiguration
         $this->addGeneralViewConfiguration('extensionKey', $this->controller->getControllerExtensionKey());
         $this->addGeneralViewConfiguration('controllerName', $this->controller->getControllerName());
         $this->addGeneralViewConfiguration('special', $special);
-        $this->addGeneralViewConfiguration('contentUid', $this->controller->getContentObjectRenderer()->data['uid']);
+        $this->addGeneralViewConfiguration('contentUid', $this->controller->getContentObjectUid());
         $this->addGeneralViewConfiguration('currentMode', $uncompressedParameters['mode']);
         $userIsAllowedToInputData = $this->controller->getFrontendUserManager()->userIsAllowedToInputData() && ! $mainRepository->isInDraftWorkspace($uid);
         $this->addGeneralViewConfiguration('userIsAllowedToInputData', $userIsAllowedToInputData);

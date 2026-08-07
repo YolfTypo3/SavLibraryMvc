@@ -5,26 +5,34 @@
     <f:alias map="{file:'{field.files->sav:getItem(key:key)}'}">
         <div class="file item{key}">
             <f:if condition="{file.shortFileName}">  
-                <f:link.action action="deleteFile"
+                <f:link.action 
+                	action="deleteFile"
                     arguments="{
                         special:'{sav:changeCompressedParameters(arguments:{fileUid:file.uid})}'}"
                     title="{f:translate(key:'button.delete', extensionName:'SavLibraryMvc')}"
-                    onclick="return confirmDelete()">
+                    onclick="return confirmDelete('file');">
                     <core:icon identifier="actions-delete" />
                 </f:link.action>
                 <f:if condition="{file.icon}">
                     {file.icon}
                 </f:if>
-           <span class="filename">{file.shortFileName}</span>                
+            	<span class="filename">
+	            	<f:if condition="{file.fileUid} > 0">
+					<f:then>
+						<f:link.typolink parameter="t3://file?uid={file.fileUid}">{file.shortFileName}</f:link.typolink>
+					</f:then>
+	           		<f:else>
+	           			{file.fileName}
+	           		</f:else>
+	           		</f:if>
+            	</span>                
             </f:if>    
-
         </div>
     </f:alias>               
  </f:for>    
 
 <f:if condition="{field.files->f:count()} < {field.maxitems}">    
-    <f:form.hidden name="viewId" value="{general.viewId}" />     
-    <f:form.upload class="file" property="{field.propertyName}.0" 
+    <f:form.upload class="file" property="{field.propertyName}" multiple="1" 
         additionalAttributes="{onchange:'document.changed=1;'}" />
 </f:if>
 

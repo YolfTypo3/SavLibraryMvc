@@ -2,7 +2,7 @@
 <f:for each="{field.items}" as="item" key="itemKey">
     <div
         class="radioButton item{itemKey}{f:if(condition:'{itemKey->sav:CheckBreakCondition(breakCount:field.cols)}', then:' clearLeft')}">
-        <f:if condition="{field.value} == {item.1}">
+        <f:if condition="{field.value} == {item.value}">
             <f:then>
                 <f:comment>The radio buton is checked</f:comment>
                 <f:if condition="{field.displayAsImage}">
@@ -15,7 +15,7 @@
                         <f:translate key="itemviewer.radioButtonSelected" />
                     </f:else>
                 </f:if>
-                <span class="radioButtonMessage"><f:translate key="{item.0}" /></span>
+                <span class="radioButtonMessage"><f:translate key="{item.label}" /></span>
             </f:then>
             <f:else>
                 <f:comment>The radio buton is not checked</f:comment>
@@ -29,7 +29,7 @@
                         <f:translate key="itemviewer.radioButtonNotSelected" />
                     </f:else>
                 </f:if>
-                <span class="radioButtonMessage"><f:translate key="{item.0}" /></span>
+                <span class="radioButtonMessage"><f:translate key="{item.label}" /></span>
             </f:else>
         </f:if>
     </div>

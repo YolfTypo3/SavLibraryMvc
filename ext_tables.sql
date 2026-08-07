@@ -35,3 +35,10 @@ CREATE TABLE tx_savlibrarymvc_domain_model_export (
 	PRIMARY KEY (uid),
 	KEY parent (pid)
 );
+
+#
+# Table structure for table 'fe_users'
+#
+CREATE TABLE fe_users (
+    tx_savlibrarymvc_config tinytext,
+);

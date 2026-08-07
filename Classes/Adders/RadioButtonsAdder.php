@@ -36,6 +36,10 @@ final class RadioButtonsAdder extends AbstractAdder
         if ($horizontalLayout) {
             $addedFieldConfiguration['cols'] = count($this->fieldConfiguration['items']);
         }
+        foreach ($this->fieldConfiguration['items'] as $itemKey => $item) {
+            $addedFieldConfiguration['items'][$itemKey]['label'] = $this->fieldConfiguration['items'][$itemKey]['label'] ?? $this->fieldConfiguration['items'][$itemKey][0];
+            $addedFieldConfiguration['items'][$itemKey]['value'] = $this->fieldConfiguration['items'][$itemKey]['value'] ?? $this->fieldConfiguration['items'][$itemKey][1];
+        }
 
         return $addedFieldConfiguration;
     }
