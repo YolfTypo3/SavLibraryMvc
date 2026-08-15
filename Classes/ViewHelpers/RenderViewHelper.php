@@ -48,7 +48,7 @@ class RenderViewHelper extends \TYPO3Fluid\Fluid\ViewHelpers\RenderViewHelper
     public function render(): string
     {
         // Gets the content
-        $content = parent::render();
+        $content = parent::render() ?? '';
 
         // Special processing
         $fiedConfiguration = $this->arguments['arguments']['field'];

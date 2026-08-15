@@ -101,6 +101,12 @@ abstract class AbstractAdder
 
         // Creates the query
         $query = $repository->createQuery();
+        
+        // Adds the storage page if any
+        $storagePid = $this->controller->getSetting('storagePid');
+        if (!empty($storagePid)) {
+            $query->getQuerySettings()->setStoragePageIds([$storagePid]);
+        }
 
         // Adds restrictions if any
         if (! empty($this->fieldConfiguration['whereSelect'])) {

@@ -219,6 +219,9 @@
 			<trans-unit id="fatal.notAuthenticated" resname="fatal.notAuthenticated" xml:space="preserve">
 				<source>You must be authenticated to save, edit, delete data.</source>
 			</trans-unit>
+			<trans-unit id="extensionFlexform.storagePage" resname="extensionFlexform.storagePage" xml:space="preserve">
+				<source>Storage Page</source>
+			</trans-unit>			
 			<trans-unit id="fatal.notAllowedToExportData" resname="fatal.notAllowedToExportData" xml:space="preserve">
 				<source>You are not allowed to export data.</source>
 			</trans-unit>

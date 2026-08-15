@@ -297,7 +297,13 @@ class DefaultRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
      */
     protected function addConstraints(QueryInterface $query): QueryInterface
     {
-        // Gest the permanent filter constraints if any
+        // Adds the storage page if any
+        $storagePid = $this->controller->getSetting('storagePid');
+        if (!empty($storagePid)) {
+            $query->getQuerySettings()->setStoragePageIds([$storagePid]);
+        }
+        
+        // Gets the permanent filter constraints if any
         $permanentFilterClause = $this->controller->getSetting('permanentFilter');
         if (!empty($permanentFilterClause)) {
             $whereClauseParser = GeneralUtility::makeInstance(WhereClauseParser::class);

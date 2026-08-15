@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the TYPO3 CMS project.
  *
@@ -514,7 +516,7 @@ abstract class AbstractController extends ActionController
     public function getActiveFolder(int $viewIdentifier, ?string $folderIdentifier)
     {
         if (is_array($this->controllerConfiguration['folders'])) {
-            $folders = $this->controllerConfiguration['folders'][$viewIdentifier];
+            $folders = ($this->controllerConfiguration['folders'][$viewIdentifier] ?? null);
 
             if (is_array($folders)) {
                 // Sorts the folder by the order field

@@ -19,6 +19,7 @@ namespace YolfTypo3\SavLibraryMvc\Managers;
 
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\EventDispatcher\NoopEventDispatcher;
+use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\TypoScript\TypoScriptStringFactory;
 use TYPO3\CMS\Core\TypoScript\AST\AstBuilder;
@@ -641,8 +642,13 @@ class FieldConfigurationManager
 
         // Gets the mailTo information.
         $emailLinkBuilder = GeneralUtility::makeInstance(EmailLinkBuilder::class);
-        $mailTo = $emailLinkBuilder->processEmailLink($this->fieldConfiguration['value'], $message);
-
+        $typo3Version = new (Typo3Version::class);
+        if ($typo3Version->getMajorVersion() == 13) {
+            $mailTo = $emailLinkBuilder->processEmailLink($this->fieldConfiguration['value'], $message, []);
+        } else{
+            $mailTo = $emailLinkBuilder->processEmailLink($this->fieldConfiguration['value'], $message, [], $this->controller->getRequest());            
+        }
+        
         // Modifies the value if the email is valid
         if (GeneralUtility::validEmail($this->fieldConfiguration['value'])) {
             $modifiedConfiguration['value'] = '<a href="' . $mailTo[0] . '">' . $mailTo[1] . '</a>';
@@ -707,7 +713,7 @@ class FieldConfigurationManager
     {
         $fieldConfiguration = $this->savLibraryMvcColumns[$fieldName]['config'];
         $viewIdentifier = $this->getViewIdentifier();
-        $condition = is_array($fieldConfiguration[$viewIdentifier]) && $fieldConfiguration[$viewIdentifier]['selected'];
+        $condition = is_array($fieldConfiguration[$viewIdentifier] ?? null) && $fieldConfiguration[$viewIdentifier]['selected'];
 
         if ($checkFolder && isset($this->savLibraryMvcColumns[$fieldName]['folders'])) {
             if (isset($this->savLibraryMvcColumns[$fieldName]['folders'][$viewIdentifier])) {
