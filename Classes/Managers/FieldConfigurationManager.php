@@ -700,7 +700,6 @@ class FieldConfigurationManager
     }
 
 
-
     /**
      * Checks if a field is selected for the view.
      *

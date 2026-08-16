@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace YolfTypo3\SavLibraryMvc\Managers;
 
-use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 use YolfTypo3\SavLibraryMvc\Controller\AbstractController;
@@ -73,13 +72,7 @@ class FrontendUserManager
      */
     public function getUserId(): ?int
     {
-        $typo3Version = GeneralUtility::makeInstance(Typo3Version::class);
-        if ($typo3Version->getMajorVersion() < 13) {
-            // @extensionScannerIgnoreLine
-            return $this->getFrontendUser()->user['uid'] ?? null;
-        } else {
-            return $this->getFrontendUser()->getUserId();
-        }
+        return $this->getFrontendUser()->getUserId();
     }
     
     /**

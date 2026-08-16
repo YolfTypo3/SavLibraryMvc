@@ -17,11 +17,9 @@ declare(strict_types=1);
 
 namespace YolfTypo3\SavLibraryMvc\Parser;
 
-use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\View\ViewFactoryData;
 use TYPO3\CMS\Core\View\ViewFactoryInterface;
-use TYPO3\CMS\Fluid\View\StandaloneView;
 use TYPO3\CMS\Fluid\Core\Rendering\RenderingContextFactory;
 use YolfTypo3\SavLibraryMvc\Controller\DefaultController;
 
@@ -95,8 +93,6 @@ class TemplateParser
      */
     public function createView(string $template): mixed
     {
-        $typo3Version = new (Typo3Version::class);
-        
         // Sets the partial root paths
         $partialRootPaths = $this->controller->getPartialRootPaths();
         $convertedPartialRootPaths = [];
@@ -104,31 +100,16 @@ class TemplateParser
             $convertedPartialRootPaths[$partialRootPathKey] = GeneralUtility::getFileAbsFileName($partialRootPath);
         }
         
-        if ($typo3Version->getMajorVersion() < 13) {
-            // @extensionScannerIgnoreLine
-            $view = GeneralUtility::makeInstance(StandaloneView::class);
-            // Sets the server request
-            $view->getRenderingContext()->setRequest($this->controller->getRequest());
-            
-            // Sets the file source
-            $view->setTemplateSource($template);
-            
-            // Sets the partial root paths
-            $view->setPartialRootPaths($convertedPartialRootPaths);
-            
-            return $view;
-        } else {
-            $viewFactory = GeneralUtility::makeInstance(ViewFactoryInterface::class);
-            $viewFactoryData = new (ViewFactoryData::class)(
-                partialRootPaths: $convertedPartialRootPaths,
-                request: $this->controller->getRequest(),
-                );
-            
-            $view = $viewFactory->create($viewFactoryData);
-            $view->getRenderingContext()->getTemplatePaths()->setTemplateSource($template);
+        $viewFactory = GeneralUtility::makeInstance(ViewFactoryInterface::class);
+        $viewFactoryData = new (ViewFactoryData::class)(
+            partialRootPaths: $convertedPartialRootPaths,
+            request: $this->controller->getRequest(),
+            );
+        
+        $view = $viewFactory->create($viewFactoryData);
+        $view->getRenderingContext()->getTemplatePaths()->setTemplateSource($template);
 
-            return $view;
-        }
+        return $view;
     }    
     
 }
