@@ -1,7 +1,7 @@
 <?php
 return [
     'ctrl' => [
-        'title' => 'LLL:EXT:test/Resources/Private/Language/locallang_db.xlf:tx_test_domain_model_aaa',
+        'title' => 'LLL:EXT:sav_library_mvc/Resources/Private/Language/locallang_db.xlf:tx_savlibrarymvc_domain_model_export" resname="tx_savlibrarymvc_domain_model_export',
         'label' => 'r',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
@@ -9,7 +9,7 @@ return [
         'enablecolumns' => [
             'disabled' => 'hidden',
         ],
-        'iconfile' => 'EXT:test/Resources/Public/Icons/tx_savlibrarymvc_domain_model_export.gif'
+        'iconfile' => 'EXT:sav_library_mvc/Resources/Public/Icons/tx_savlibrarymvc_domain_model_export.gif'
     ],
     'columns' => [
         'hidden' => [

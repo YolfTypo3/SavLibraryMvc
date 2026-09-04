@@ -264,6 +264,9 @@
 			<trans-unit id="message.noAvailableInformation" resname="message.noAvailableInformation" xml:space="preserve">
 				<source>No available information</source>
 			</trans-unit>
+            <trans-unit id="tx_savlibrarymvc_domain_model_export" resname="tx_savlibrarymvc_domain_model_export" xml:space="preserve">
+                <source>Export</source>
+            </trans-unit>
 			<trans-unit id="tx_savlibrarymvc_domain_model_export.cid" resname="tx_savlibrarymvc_domain_model_export.cid" xml:space="preserve">
 				<source>Cid</source>
 			</trans-unit>
